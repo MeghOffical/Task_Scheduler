@@ -1,6 +1,6 @@
 # Stakeholders & Users for PlanIt — Task Scheduler
 
-## 1) Primary Users (Direct Users / Target Audience)
+## 1) Primary Users
 - **Student** → needs deadlines, reminders, simple UI  
 - **Working Professional** → needs work + personal task management, priorities  
 - **Freelancer / Contractor** → needs project tags (to label tasks with project names), time tracking  
@@ -8,14 +8,14 @@
 
 ---
 
-## 2) Secondary Users & Beneficiaries
+## 2) Secondary Users 
 *(These are the users who interact less with the system)*  
 - **Parent / Guardian (for students)** → oversight/view-only features (optional)  
 - **Team Lead / Small Team Member** → if later multi-user / sharing is added (collaboration features)  
 
 ---
 
-## 3) Internal Stakeholders (Project Team / Owners)
+## 3) Internal Stakeholders
 - **Project Owner / Lead** → Sets priorities, divides tasks and sets goals  
 - **Frontend Developer** → Builds UI (Python framework)  
 - **Backend / DB Developer** → Manages data storage (SQLite + Django)  
