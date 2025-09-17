@@ -1,17 +1,18 @@
 # Functional Requirements (FR)
 
-## FR-01 - Create Task
+## FR-01 - User Login
 
 **Description:**\
-A new task can be created by the user and include a title, optional
-description, priority, deadline (date and time), and optional tags.
+A registered user can log in using their email and password. The system
+validates credentials and prevents unauthorized access.
 
 **Acceptance:**\
-The task immediately shows up on the dashboard and persists to the local
-database.
+If credentials are correct, the user is redirected to the dashboard. If
+incorrect, an error message is shown. Login sessions persist until
+logout.
 
 **Identified by:**\
-Task observation, interviews, questionnaires, and stakeholder analysis.
+Stakeholder analysis, interviews, and task observation.
 
 ------------------------------------------------------------------------
 
