@@ -29,3 +29,35 @@ immediately. The user data is stored securely in the local database.
 
 **Identified by:**\
 Questionnaires, interviews, and stakeholder analysis.
+
+------------------------------------------------------------------------
+
+## FR-03 - Create Task
+
+**Description:**\
+A new task can be created by the user and include a title, optional
+description, priority, deadline (date and time), and optional tags.
+
+**Acceptance:**\
+The task immediately shows up on the dashboard and persists to the local
+database.
+
+**Identified by:**\
+Task observation, interviews, questionnaires, and stakeholder analysis.  
+
+------------------------------------------------------------------------
+
+## FR-04 - Password Recovery 
+
+**Description:**\ 
+Users can reset their password if they forget it, using their registered email.
+A temporary link or OTP is sent to verify identity.
+
+**Acceptance:**\
+Users can set a new password, and the system updates the database securely.
+An email confirmation is sent after successful reset.
+
+**Identified by:**\
+Task observation, interviews, questionnaires, and stakeholder analysis.
+
+------------------------------------------------------------------------
