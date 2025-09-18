@@ -114,8 +114,36 @@ Deleted tasks are no longer visible or in the database; they can be undone in a 
 Stakeholder analysis, questionnaires.
 
 ------------------------------------------------------------------------
+------------------------------------------------------------------------
 
-## FR-09 - Logout 
+## FR-09 - Export / Import (CSV)
+
+**Description:**  
+To populate tasks, export task lists to CSV and perform a basic import, beneficial to independent contractors.
+
+**Acceptance:**  
+Essential fields are included in the export, and duplicates are verified in the import.
+
+**Identified by:**  
+Interviews (freelancers), pilot requests.
+
+------------------------------------------------------------------------
+
+## FR-10 - Notifications / Reminders (Local)
+
+**Description:**  
+Notifications or reminders for approaching deadlines on a local desktop.
+
+**Acceptance:**  
+While the app is running, notifications reliably fire at predetermined times (and optionally via OS notification system).
+
+**Identified by:**  
+Questionnaires, task observation.
+
+------------------------------------------------------------------------
+
+
+## FR-11 - Logout 
 
 **Description:**  
 Logged-in users can log out from the system at any time.
