@@ -237,7 +237,7 @@ PDF priority (explicit), JAD, risk analysis.
 ## FR-18- Task completion / progress tracking
 
 **Description:**  
-All users can see what tasks are completed and how much progress is done
+All users can see what tasks are completed and how much progress is done.
 
 **Acceptance:**  
 Display of task progress.
