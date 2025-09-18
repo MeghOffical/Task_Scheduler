@@ -89,20 +89,7 @@ Stakeholder analysis, interviews.
 
 ------------------------------------------------------------------------
 
-## FR-07 - Task Completion / Progress Tracking 
-
-**Description:**  
-All users can see what tasks are completed and how much progress is done.
-
-**Acceptance:**  
-Display of task progress.
-
-**Identified by:**  
-Brainstorming, questionnaires.
-
-------------------------------------------------------------------------
-
-## FR-08 - Filtering & Searching Tasks
+## FR-07 - Filtering & Searching Tasks
 
 **Description:**  
 You can search by keywords, tag, priority, or date range.
@@ -115,7 +102,7 @@ Interviews, prototyping, power-user feedback.
 
 ------------------------------------------------------------------------
 
-## FR-09 - Delete Task
+## FR-08 - Delete Task
 
 **Description:**  
 Task removal (with undo option for unintentional deletions).
@@ -128,7 +115,7 @@ Stakeholder analysis, questionnaires.
 
 ------------------------------------------------------------------------
 
-## FR-10 - Logout 
+## FR-09 - Logout 
 
 **Description:**  
 Logged-in users can log out from the system at any time.
