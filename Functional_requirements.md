@@ -155,3 +155,19 @@ User session ends immediately, and the dashboard is no longer accessible without
 Stakeholder analysis and task observation.
 
 ------------------------------------------------------------------------
+
+
+## FR-12- Recurring Tasks
+
+**Description:**  
+ Encourage regular patterns of recurrence (daily, weekly, custom).
+
+**Acceptance:**  
+ Recurrence generates and displays the subsequent instance in accordance with the rule.
+
+**Identified by:**  
+Roadmap in PDF, interviews with students/pros.
+
+------------------------------------------------------------------------
+
+
