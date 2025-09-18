@@ -1,6 +1,6 @@
 
 
-# Non-Functional Requirements 
+# Non-Functional Requirements (NFR)
 
 ## NFR-01 - Reliability / Data integrity 
 
