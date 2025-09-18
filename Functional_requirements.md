@@ -207,7 +207,47 @@ Brainstorming, interviews, prototyping.
 
 ------------------------------------------------------------------------
 
-## FR-16 - Logout 
+## FR-16 - Local data persistence (Local DB)
+
+**Description:**  
+All user data is stored locally (SQLite or equivalent) and survives app restart.  
+
+**Acceptance:**  
+No data loss across restarts or OS sleep/wake; migration path for DB schema changes.  
+
+**Identified by:**  
+PDF priority (explicit), JAD, risk analysis.  
+
+------------------------------------------------------------------------
+
+
+ ##  FR-17 — Keyboard shortcuts & quick-add
+
+ **Description:**  
+ Quick ways to navigate and add tasks (low "time-to-create" e.g., <10s).
+
+ **Acceptance:**  
+ Keyboard navigation covers primary flows, while quick add generates a task with few keystrokes.
+
+ **Identified by:**  
+ Power-user interviews, prototyping.
+ 
+------------------------------------------------------------------------
+
+## FR-18- Task completion / progress tracking
+
+**Description:**  
+All users can see what tasks are completed and how much progress is done
+
+**Acceptance:**  
+Display of task progress.
+
+**Identified by:**  
+Brainstorming, questionnaires.
+
+------------------------------------------------------------------------
+
+## FR-19 - Logout 
 
 **Description:**  
 Logged-in users can log out from the system at any time.
