@@ -181,7 +181,7 @@ Freelancer interviews and focus groups.
 
 ------------------------------------------------------------------------
 
-## FR-14 - Task Priority Assignment)
+## FR-14 - Task Priority Assignment
 
 **Description:**  
 Users can assign a priority level (High / Medium / Low) to each task they create. The priority helps in sorting, filtering, and highlighting tasks on the dashboard.
