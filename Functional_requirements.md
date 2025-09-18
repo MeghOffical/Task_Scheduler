@@ -171,3 +171,27 @@ Roadmap in PDF, interviews with students/pros.
 ------------------------------------------------------------------------
 
 
+## FR-13- Sub-tasks / task hierarchy
+
+**Description:**  
+ For complicated projects, permit parent/child task nesting.
+
+**Acceptance:**  
+ Subtasks report progress to the parent; the user interface manages collapse and expansion.
+
+**Identified by:**  
+Brainstorming, power-user sessions.
+
+------------------------------------------------------------------------
+
+
+## FR-14- Export / Import (CSV) 
+
+**Description:**  
+ To populate tasks, export task lists to CSV and perform a basic import, beneficial to independent contractors.
+
+**Acceptance:**  
+Essential fields are included in the export, and duplicates are verified in the import.
+
+**Identified by:**  
+Interviews (freelancers), pilot requests.
