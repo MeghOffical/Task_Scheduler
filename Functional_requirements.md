@@ -142,22 +142,7 @@ Questionnaires, task observation.
 
 ------------------------------------------------------------------------
 
-
-## FR-11 - Logout 
-
-**Description:**  
-Logged-in users can log out from the system at any time.
-
-**Acceptance:**  
-User session ends immediately, and the dashboard is no longer accessible without login.
-
-**Identified by:**  
-Stakeholder analysis and task observation.
-
-------------------------------------------------------------------------
-
-
-## FR-12- Recurring Tasks
+## FR-11- Recurring Tasks
 
 **Description:**  
  Encourage regular patterns of recurrence (daily, weekly, custom).
@@ -170,8 +155,7 @@ Roadmap in PDF, interviews with students/pros.
 
 ------------------------------------------------------------------------
 
-
-## FR-13- Sub-tasks / task hierarchy
+## FR-12- Sub-tasks / task hierarchy
 
 **Description:**  
  For complicated projects, permit parent/child task nesting.
@@ -184,14 +168,16 @@ Brainstorming, power-user sessions.
 
 ------------------------------------------------------------------------
 
-
-## FR-14- Export / Import (CSV) 
+## FR-13 - Logout 
 
 **Description:**  
- To populate tasks, export task lists to CSV and perform a basic import, beneficial to independent contractors.
+Logged-in users can log out from the system at any time.
 
 **Acceptance:**  
-Essential fields are included in the export, and duplicates are verified in the import.
+User session ends immediately, and the dashboard is no longer accessible without login.
 
 **Identified by:**  
-Interviews (freelancers), pilot requests.
+Stakeholder analysis and task observation.
+
+------------------------------------------------------------------------
+
