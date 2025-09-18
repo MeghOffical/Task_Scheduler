@@ -181,7 +181,20 @@ Freelancer interviews and focus groups.
 
 ------------------------------------------------------------------------
 
-## FR-14 - AI Chatbot Assistant
+## FR-14 - Task Priority Assignment)
+
+**Description:**  
+Users can assign a priority level (High / Medium / Low) to each task they create. The priority helps in sorting, filtering, and highlighting tasks on the dashboard.
+
+**Acceptance:**  
+When a task is created or edited, the selected priority is saved in the local database. Tasks are visually distinguished by priority (e.g., color coding or icons). Users can filter or sort tasks by priority.
+
+**Identified by:**  
+Task observation, stakeholder and user questionnaires.
+
+------------------------------------------------------------------------
+
+## FR-15 - AI Chatbot Assistant
 
 **Description:**  
 An in-app conversational assistant that helps users manage tasks via natural language: create/update/delete tasks, set reminders, query upcoming/overdue tasks, suggest priority or scheduling, and answer simple how-to questions about the app.
@@ -194,7 +207,7 @@ Brainstorming, interviews, prototyping.
 
 ------------------------------------------------------------------------
 
-## FR-15 - Logout 
+## FR-16 - Logout 
 
 **Description:**  
 Logged-in users can log out from the system at any time.
