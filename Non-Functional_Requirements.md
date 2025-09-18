@@ -1,8 +1,8 @@
 
 
-# Non-Functional Requirements (NFR)
+# Non-Functional Requirements 
 
-## NFR-01 - Reliability / Data integrity - MUST
+## NFR-01 - Reliability / Data integrity 
 
 **Requirement:**\
 No silent data loss\
@@ -18,7 +18,7 @@ DB transactions for task create/update/delete.
 Risk analysis and Survey. 
 
 
-## NFR-02 - Performance / Responsiveness - MUST
+## NFR-02 - Performance / Responsiveness 
 **Requirement:**\
 UI interactions (create/update/delete/filter) should respond within ~1s on typical laptop datasets.
 
@@ -26,4 +26,27 @@ UI interactions (create/update/delete/filter) should respond within ~1s on typic
 95% of interactions < 1s in pilot.
 
 **Identified by:**\
-Use cases, prototyping, surveys(expectation of “fast, simple”).
+Use cases, prototyping, surveys(expectation of “fast, simple”). 
+
+
+## NFR-03 - Usability / Learnability 
+**Requirement:**\
+Minimal UI complexity; new users can create a task in under ~10 seconds (goal).
+
+**Measurable:**\
+Time-to-create task metric measured in usability tests.
+
+**Identified by:**\
+ surveys, prototyping.
+
+
+## NFR-04 - Portability / Platform support
+**Requirement:**\
+Deliver installers/packages for Windows and macOS and possibly linux (desktop app).
+
+**Measurable:**\
+Verified install and run on targeted OSes.
+
+**Identified by:**\
+Stakeholder analysis, studying documentation.
+
