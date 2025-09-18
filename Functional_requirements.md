@@ -61,3 +61,29 @@ An email confirmation is sent after successful reset.
 Task observation, interviews, questionnaires, and stakeholder analysis.
 
 ------------------------------------------------------------------------
+
+## FR-05 - Read / View Tasks 
+
+**Description:**  
+Provide a clear, uncluttered dashboard with a progress summary, past-due tasks, and upcoming tasks.
+
+**Acceptance:**  
+Dashboard updates within 1s after any change; shows correct counts (upcoming/overdue).
+
+**Identified by:**  
+Project vision in PDF, prototyping, and interviews.
+
+------------------------------------------------------------------------
+
+## FR-06 - Logout 
+
+**Description:**  
+Logged-in users can log out from the system at any time.
+
+**Acceptance:**  
+User session ends immediately, and the dashboard is no longer accessible without login.
+
+**Identified by:**  
+Stakeholder analysis and task observation.
+
+------------------------------------------------------------------------
