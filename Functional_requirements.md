@@ -75,7 +75,60 @@ Project vision in PDF, prototyping, and interviews.
 
 ------------------------------------------------------------------------
 
-## FR-06 - Logout 
+
+## FR-06 - Update Task 
+
+**Description:**  
+Any task fields (title, description, priority, deadline, tags, and completed status) can be edited.
+
+**Acceptance:**  
+Modifications are instantly reflected in the dashboard and saved to the local database.
+
+**Identified by:**  
+Stakeholder analysis, interviews.
+
+------------------------------------------------------------------------
+
+## FR-07 - Task Completion / Progress Tracking 
+
+**Description:**  
+All users can see what tasks are completed and how much progress is done.
+
+**Acceptance:**  
+Display of task progress.
+
+**Identified by:**  
+Brainstorming, questionnaires.
+
+------------------------------------------------------------------------
+
+## FR-08 - Filtering & Searching Tasks
+
+**Description:**  
+You can search by keywords, tag, priority, or date range.
+
+**Acceptance:**  
+On moderate data sets, filters are applied within 0.5–1 seconds.
+
+**Identified by:**  
+Interviews, prototyping, power-user feedback.
+
+------------------------------------------------------------------------
+
+## FR-09 - Delete Task
+
+**Description:**  
+Task removal (with undo option for unintentional deletions).
+
+**Acceptance:**  
+Deleted tasks are no longer visible or in the database; they can be undone in a brief period of time.
+
+**Identified by:**  
+Stakeholder analysis, questionnaires.
+
+------------------------------------------------------------------------
+
+## FR-10 - Logout 
 
 **Description:**  
 Logged-in users can log out from the system at any time.
