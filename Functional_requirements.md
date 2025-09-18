@@ -168,7 +168,33 @@ Brainstorming, power-user sessions.
 
 ------------------------------------------------------------------------
 
-## FR-13 - Logout 
+## FR-13 - Simple Time-Tracking per Task (Freelancer Use)
+
+**Description:**  
+Set a timer to start and stop a task and record the amount of time that has passed.
+
+**Acceptance:**  
+Timer persists across app restarts; exportable.
+
+**Identified by:**  
+Freelancer interviews and focus groups.
+
+------------------------------------------------------------------------
+
+## FR-14 - AI Chatbot Assistant
+
+**Description:**  
+An in-app conversational assistant that helps users manage tasks via natural language: create/update/delete tasks, set reminders, query upcoming/overdue tasks, suggest priority or scheduling, and answer simple how-to questions about the app.
+
+**Acceptance:**  
+AI helps in managing tasks.
+
+**Identified by:**  
+Brainstorming, interviews, prototyping.
+
+------------------------------------------------------------------------
+
+## FR-15 - Logout 
 
 **Description:**  
 Logged-in users can log out from the system at any time.
