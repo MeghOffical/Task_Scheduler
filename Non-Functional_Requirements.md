@@ -136,6 +136,36 @@ QA can run automated scenarios for core flows and verify outcomes consistently.
 **Identified by:**  
 QA stakeholder analysis and group meetings (brainstorming).  
 
+## NFR-11 – AI Privacy & Data Handling (MUST, for chatbot feature)
+
+**Requirement:**  
+Chatbot interactions must default to privacy-preserving behaviour.  
+Users must explicitly opt in to any cloud-based processing, with local-only processing preferred where possible.  
+All data handling should be transparent and described in a short in-app privacy notice.  
+
+**Measurable:**  
+- Opt-in toggle present.  
+- Telemetry or transcripts are only collected with consent.  
+- No personal data is shared without explicit consent.  
+
+**Elicited by:**  
+Risk analysis, interviews, stakeholder analysis (legal/privacy stakeholders).  
+
+---
+
+## NFR-12 – Chatbot Response Accuracy & Safety (SHOULD)
+
+**Requirement:**  
+Chatbot should provide clear confidence indicators and safe fallbacks.  
+For example: *“I’m not sure – would you like me to create a draft task for you to review?”*  
+The chatbot must avoid making irreversible changes without user confirmation.  
+
+**Measurable:**  
+In pilot testing, fewer than 5% of chatbot-suggested task creations are reverted by users.  
+
+**Elicited by:**  
+Pilot testing, prototyping, competitive analysis. 
+
 
 
 
