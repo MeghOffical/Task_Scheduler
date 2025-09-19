@@ -181,6 +181,16 @@ Prototyping and use-case expectations.
 ---
 
 
+## NFR-14 – Maintainability (Chatbot Models / Rules) (SHOULD)
+
+**Requirement:**  
+The chatbot must be designed as a modular layer so that rules, prompts, or models can be updated without breaking the core app.  
+
+**Measurable:**  
+Integration points are documented, and updates can be applied in a non-disruptive way.  
+
+**Elicited by:**  
+Brainstorming and competitive analysis. 
 
 
 
