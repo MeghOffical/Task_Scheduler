@@ -1,5 +1,3 @@
-
-
 # Non-Functional Requirements (NFR)
 
 ## NFR-01 - Reliability / Data integrity 
@@ -19,6 +17,7 @@ Risk analysis and Survey.
 
 
 ## NFR-02 - Performance / Responsiveness 
+
 **Requirement:**\
 UI interactions (create/update/delete/filter) should respond within ~1s on typical laptop datasets.
 
@@ -30,6 +29,7 @@ Use cases, prototyping, surveys(expectation of “fast, simple”).
 
 
 ## NFR-03 - Usability / Learnability 
+
 **Requirement:**\
 Minimal UI complexity; new users can create a task in under ~10 seconds (goal).
 
@@ -41,6 +41,7 @@ Time-to-create task metric measured in usability tests.
 
 
 ## NFR-04 - Portability / Platform support
+
 **Requirement:**\
 Deliver installers/packages for Windows and macOS and possibly linux (desktop app).
 
@@ -49,4 +50,31 @@ Verified install and run on targeted OSes.
 
 **Identified by:**\
 Stakeholder analysis, studying documentation.
+
+
+## NFR-07 – Maintainability / Modularity
+
+**Requirement:**\ 
+The code should be written in a modular way, with separate parts for UI, data, and storage. 
+Core logic should have unit tests.
+
+**Measurable:**\ 
+Check unit test coverage and whether core logic tests pass.
+
+**Identified by:**\ 
+Risk analysis.
+
+## NFR-08 – Extensibility / Scalability
+
+**Requirement:**\ 
+The system design should make it easy to add future features like cloud sync, calendar integration, 
+or gamification without big changes.
+
+**Measurable:**\ 
+Existence of a service layer and documented points for adding new features.
+
+**Identified by:**\ 
+Roadmap and brainstorming.
+
+
 
