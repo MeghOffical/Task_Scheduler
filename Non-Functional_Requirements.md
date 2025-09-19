@@ -166,6 +166,21 @@ In pilot testing, fewer than 5% of chatbot-suggested task creations are reverted
 **Elicited by:**  
 Pilot testing, prototyping, competitive analysis. 
 
+## NFR-13 – Chatbot Latency & Availability (SHOULD)
+
+**Requirement:**  
+Chat responses should return within a few seconds for a smooth conversational feel.  
+If external services are unavailable, the system should detect this and gracefully fall back to offline help or local parsing.  
+
+**Measurable:**  
+90% of responses return in under 3 seconds during pilot (when cloud services are used).  
+
+**Elicited by:**  
+Prototyping and use-case expectations.  
+
+---
+
+
 
 
 
