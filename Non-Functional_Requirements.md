@@ -83,4 +83,36 @@ Existence of a service layer and documented points for adding new features.
 Roadmap and brainstorming.
 
 
+## NFR-07 – Maintainability / Modularity
+
+**Requirement:**  
+The codebase should be modular with a clear separation of concerns (UI, data, persistence).  
+Core logic should have unit tests to ensure correctness.  
+
+**Measurable:**  
+Unit test coverage & success rate for core logic.  
+*(i.e., how much of the code is tested = coverage, and how many tests pass = success rate).*  
+
+**Identified by:**  
+Risk analysis.  
+
+---
+
+## NFR-08 – Extensibility / Scalability
+
+**Requirement:**  
+The architecture should allow adding future features like cloud sync, calendar API integrations, or gamification without major rewrites.  
+
+**Measurable:**  
+Existence of a clear adapter/service layer *(so base layer talks to the middle layer, not directly to the DB)* and documented integration points.  
+
+**Identified by:**  
+Interviews *(users wanted their tasks synced across devices, i.e., cloud sync)* and brainstorming sessions.  
+
+---
+
+
+
+
+
 
