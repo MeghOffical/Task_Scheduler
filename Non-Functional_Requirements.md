@@ -111,7 +111,30 @@ Interviews *(users wanted their tasks synced across devices, i.e., cloud sync)* 
 
 ---
 
+## NFR-09 – Startup & Resource Footprint
 
+**Requirement:**  
+The app should start quickly and use low memory so that it runs smoothly on laptops.  
+
+**Measurable:**  
+Startup time < 5s on target hardware.  
+Memory usage remains reasonable during idle state.  
+
+**Identified by:**  
+Usability expectations and survey feedback.  
+
+---
+
+## NFR-10 – Testability (for QA)
+
+**Requirement:**  
+The system should provide test hooks (e.g., debug mode, mock API) and proper logging (e.g., “Task created successfully at 12:05 PM”).  
+
+**Measurable:**  
+QA can run automated scenarios for core flows and verify outcomes consistently.  
+
+**Identified by:**  
+QA stakeholder analysis and group meetings (brainstorming).  
 
 
 
