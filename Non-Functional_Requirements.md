@@ -5,7 +5,7 @@
 **Requirement:**\
 No silent data loss\
 Atomic writes to local DB\
-Example: Either the whole task is done or not)\
+Example: Either the whole task is done or not\
 Provide ability to Backup/Export data.
 
 **Measurable:**\
@@ -22,7 +22,7 @@ Risk analysis and Survey.
 UI interactions (create/update/delete/filter) should respond within ~1s on typical laptop datasets.
 
 **Measurable:**\
-95% of interactions < 1s in pilot.
+95% of interactions < 1s.
 
 **Identified by:**\
 Use cases, prototyping, surveys(expectation of “fast, simple”). 
@@ -56,8 +56,7 @@ Stakeholder analysis, studying documentation.
  
 
 **Requirement:**\ 
-The code should be written in a modular way, with separate parts for UI, data, and storage.\
-Core logic should have unit tests.
+The code should be written in a modular way, with separate parts for UI, data, and storage.\Core logic should have unit tests.
 
 **Measurable:**\ 
 Check unit test coverage and whether core logic tests pass.
