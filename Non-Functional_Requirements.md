@@ -55,7 +55,7 @@ Stakeholder analysis, studying documentation.
 ## NFR-05 – Maintainability / Modularity
 
 **Requirement:**\ 
-The code should be written in a modular way, with separate parts for UI, data, and storage. 
+The code should be written in a modular way, with separate parts for UI, data, and storage.\
 Core logic should have unit tests.
 
 **Measurable:**\ 
