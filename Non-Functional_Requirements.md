@@ -52,7 +52,7 @@ Verified install and run on targeted OSes.
 Stakeholder analysis, studying documentation.
 
 
-## NFR-07 – Maintainability / Modularity
+## NFR-05 – Maintainability / Modularity
 
 **Requirement:**\ 
 The code should be written in a modular way, with separate parts for UI, data, and storage. 
@@ -64,7 +64,7 @@ Check unit test coverage and whether core logic tests pass.
 **Identified by:**\ 
 Risk analysis.
 
-## NFR-08 – Extensibility / Scalability
+## NFR-06 – Extensibility / Scalability
 
 **Requirement:**\ 
 The system design should make it easy to add future features like cloud sync, calendar integration, 
