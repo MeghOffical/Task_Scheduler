@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlanIt - Login</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Header Styles */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+    .header .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    .header nav {
+      display: flex;
+      gap: 15px;
+    }
+    .header nav a {
+      padding: 8px 20px;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #2563eb;
+      color: #2563eb;
+      background: transparent;
+    }
+    .header nav a:hover {
+      background: #f1f5f9;
+    }
+    
+    /* Auth Container */
+    .auth-container {
+      width: 100%; 
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+      animation: slideUp 0.6s ease-out;
+      color: #111827;
+      margin: 20px;
+    }
+    .auth-container h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #2563eb;
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+    .auth-container input {
+      width: 100%;
+      padding: 15px 18px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+      font-size: 16px;
+      background: rgba(249, 250, 251, 0.8);
+      color: #111827;
+      transition: all 0.3s ease;
+    }
+    .auth-container input:focus {
+      outline: none;
+      border-color: #2563eb;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .auth-container input::placeholder {
+      color: #9ca3af;
+    }
+    .auth-container button {
+      width: 100%;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .auth-primary-btn {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    }
+    .auth-primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    }
+    .auth-link-btn {
+      background: none;
+      border: none;
+      color: #2563eb;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 5px 0;
+      width: auto;
+      font-weight: 500;
+    }
+    .auth-link-btn:hover {
+      color: #1d4ed8;
+    }
+    .auth-container p {
+      text-align: center;
+      margin: 1.5rem 0;
+      color: #6b7280;
+    }
+    .password-field {
+      position: relative;
+    }
+    .toggle-eye {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      color: #6b7280;
+      user-select: none;
+    }
+    .toggle-eye:hover {
+      color: #2563eb;
+    }
+    .error {
+      color: #ef4444;
+      font-size: 14px;
+      text-align: center;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .success {
+      color: #10b981;
+      font-size: 14px;
+      text-align: center;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .back-btn {
+      background: #f3f4f6;
+      color: #374151;
+      border: 2px solid #e5e7eb;
+    }
+    .back-btn:hover {
+      background: #e5e7eb;
+      transform: translateY(-1px);
+    }
+    
+    @keyframes slideUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+      }
+      .auth-container {
+        padding: 2rem 1.5rem;
+        margin: 10px;
+      }
+      .auth-container h2 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">Plan-it</div>
+    <nav>
+      <a href="intro.html">Home</a>
+      <a href="register.html">Register</a>
+    </nav>
+  </header>
+
+  <!-- Login Form -->
+  <div class="auth-container">
+    <h2>Welcome Back</h2>
+    <input type="text" id="loginUser" placeholder="Username or Email" required>
+    <div class="password-field">
+      <input type="password" id="loginPass" placeholder="Password" required>
+      <span class="toggle-eye" onclick="togglePassword('loginPass', this)">👁</span>
+    </div>
+    <button class="auth-primary-btn" onclick="login()">Login</button>
+    <button class="back-btn" onclick="goHome()">Back to Home</button>
+    <p>Don't have an account? <button class="auth-link-btn" onclick="goToRegister()">Create Account</button></p>
+    <p id="loginMsg" class="error" style="display: none;"></p>
+  </div>
+
+  <script>
+    function togglePassword(fieldId, eyeIcon) {
+      let field = document.getElementById(fieldId);
+      if (field.type === "password") {
+        field.type = "text";
+        eyeIcon.textContent = "🙈";
+      } else {
+        field.type = "password";
+        eyeIcon.textContent = "👁";
+      }
+    }
+
+    function login() {
+      let userInput = document.getElementById("loginUser").value.trim();
+      let pass = document.getElementById("loginPass").value.trim();
+      let msg = document.getElementById("loginMsg");
+
+      // Reset message
+      msg.style.display = "none";
+
+      if (!userInput || !pass) {
+        showMessage("Please fill in all fields", "error");
+        return;
+      }
+
+      // Get users from localStorage (simulating database)
+      let users = JSON.parse(localStorage.getItem('planit_users') || '{}');
+      
+      // Check if user exists by username or email
+      let foundUser = null;
+      let foundUsername = null;
+
+      // First check by username
+      if (users[userInput] && users[userInput].pass === btoa(pass)) {
+        foundUser = users[userInput];
+        foundUsername = userInput;
+      } else {
+        // If not found by username, check by email
+        for (let username in users) {
+          if (users[username].email === userInput && users[username].pass === btoa(pass)) {
+            foundUser = users[username];
+            foundUsername = username;
+            break;
+          }
+        }
+      }
+
+      if (foundUser) {
+        showMessage("Login successful! Welcome back!", "success");
+        
+        // Store current user session
+        localStorage.setItem('planit_current_user', JSON.stringify({
+          username: foundUsername,
+          email: foundUser.email,
+          profession: foundUser.prof
+        }));
+        
+        setTimeout(() => {
+          // You can redirect to dashboard page here
+          alert(`Welcome back, ${foundUsername} (${foundUser.prof})! Dashboard functionality would be implemented here.`);
+          // window.location.href = 'dashboard.html';
+        }, 1500);
+      } else {
+        showMessage("Invalid username/email or password!", "error");
+      }
+    }
+
+    function showMessage(text, type) {
+      let msg = document.getElementById("loginMsg");
+      msg.textContent = (type === "error" ? "❌ " : "✅ ") + text;
+      msg.className = type;
+      msg.style.display = "block";
+    }
+
+    function goToRegister() {
+      window.location.href = 'register.html';
+    }
+
+    function goHome() {
+      window.location.href = 'intro.html';
+    }
+
+    // Check if user is already logged in
+    window.onload = function() {
+      let currentUser = localStorage.getItem('planit_current_user');
+      if (currentUser) {
+        let user = JSON.parse(currentUser);
+        if (confirm(`You're already logged in as ${user.username}. Continue to dashboard?`)) {
+          // Redirect to dashboard
+          alert("Redirecting to dashboard...");
+          // window.location.href = 'dashboard.html';
+        } else {
+          // Clear session
+          localStorage.removeItem('planit_current_user');
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
