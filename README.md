@@ -2,8 +2,6 @@
 </div>
 
 
-A lightweight, easy-to-use, and reliable desktop task manager designed to help you stay organized and motivated without the distractions.
-
 ---
 
 ## 🎯 About The Project
