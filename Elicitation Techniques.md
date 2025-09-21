@@ -23,8 +23,6 @@
 
 10. **Brainstorming** – Generate ideas for maintainability, extensibility, future features, and advanced NFR considerations.
 
-11. **QA / Testing Sessions** – Execute scenarios to define measurable criteria such as response time, data integrity, and error handling.
-
-12. **Competitive Analysis** – Study similar systems to benchmark performance, usability, and features.
+11. **Competitive Analysis** – Study similar systems to benchmark performance, usability, and features.
 
 ---
