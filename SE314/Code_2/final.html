@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlanIt - Task Scheduler</title>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body {
+      background: #f8f9fc;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header Styles */
+    .header {
+      background: #ffffff;
+      padding: 15px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    .header nav {
+      display: flex;
+      gap: 15px;
+    }
+    .header nav button {
+      padding: 8px 20px;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .nav-login {
+      background: transparent;
+      color: #2563eb;
+      border: 1px solid #2563eb;
+    }
+    .nav-login:hover {
+      background: #f1f5f9;
+    }
+    .nav-register {
+      background: #2563eb;
+      color: white;
+    }
+    .nav-register:hover {
+      background: #1d4ed8;
+    }
+    
+    /* Main Content */
+    .intro-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .intro-section h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #2563eb;
+    }
+    .intro-section h2 {
+      font-size: 3rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: #111827;
+    }
+    .intro-section p {
+      max-width: 700px;
+      font-size: 1.1rem;
+      margin-bottom: 60px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+    .features-title {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #2563eb !important;
+    }
+    .features-subtitle {
+      margin-bottom: 40px;
+      color: #6b7280;
+      font-size: 1rem;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: #ffffff;
+      padding: 35px 25px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+    }
+    .feature-card .icon {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 15px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #e0e7ff;
+      color: #2563eb;
+      font-size: 24px;
+    }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .feature-card p {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+    
+    /* Auth Pages */
+    .auth-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .auth-container {
+      width: 100%; max-width: 420px;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      animation: fadeIn 0.5s ease-in-out;
+      position: relative;
+      color: #111827;
+    }
+    .auth-container h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #2563eb;
+      font-size: 1.8rem;
+    }
+    .auth-container input, .auth-container select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      background: #f9fafb;
+      color: #111827;
+    }
+    .auth-container input:focus, .auth-container select:focus {
+      outline: none;
+      border-color: #2563eb;
+      background: #ffffff;
+    }
+    .auth-container input::placeholder {
+      color: #9ca3af;
+    }
+    .auth-container button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .auth-primary-btn {
+      background: #2563eb;
+      color: white;
+    }
+    .auth-primary-btn:hover {
+      background: #1d4ed8;
+    }
+    .auth-link-btn {
+      background: none;
+      border: none;
+      color: #2563eb;
+      cursor: pointer;
+      margin-top: 8px;
+      text-decoration: underline;
+      padding: 0;
+      width: auto;
+    }
+    .auth-container p {
+      text-align: center;
+      margin: 1rem 0;
+      color: #6b7280;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6b7280;
+      width: auto;
+      z-index: 10;
+      line-height: 1;
+    }
+    .close-btn:hover {
+      color: #111827;
+    }
+    .password-field {
+      position: relative;
+    }
+    .toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 16px;
+      color: #6b7280;
+    }
+    .error {
+      color: #ef4444;
+      font-size: 14px;
+      text-align: center;
+    }
+    .success {
+      color: #10b981;
+      font-size: 14px;
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+    .password-requirements {
+      font-size: 12px;
+      color: #6b7280;
+      margin: 5px 0;
+      line-height: 1.4;
+    }
+    
+    /* Footer */
+    .footer {
+      background: #ffffff;
+      padding: 20px;
+      text-align: center;
+      border-top: 1px solid #e5e7eb;
+      margin-top: 40px;
+    }
+    .footer p {
+      color: #6b7280;
+      font-size: 1.2rem;
+    }
+    .footer .brand {
+      color: #2563eb;
+      font-weight: 600;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+      }
+      .intro-section h1 {
+        font-size: 2.5rem;
+      }
+      .intro-section h2 {
+        font-size: 2rem;
+      }
+      .intro-section p {
+        font-size: 1rem;
+      }
+      .auth-container {
+        margin: 20px;
+        max-width: calc(100% - 40px);
+      }
+    }
+    @media (max-width: 640px) {
+      .intro-section h1 {
+        font-size: 2rem;
+      }
+      .intro-section h2 {
+        font-size: 1.5rem;
+      }
+      .intro-section p {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">Plan-it</div>
+    <nav>
+      <button class="nav-login" onclick="showLogin()">Login</button>
+      <button class="nav-register" onclick="showRegister()">Register</button>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <section class="intro-section">
+    <h1>Task Management</h1>
+    <h2>Made Simple</h2>
+    <p>Transform your productivity with Plan-it's comprehensive task management platform. 
+    Our intuitive system helps you organize daily tasks, set priorities, and track your progress seamlessly. 
+    Built with security in mind, featuring robust user authentication and reliable data storage. 
+    Experience effortless task management that adapts to your workflow and keeps you focused on what matters most.</p>
+    
+    <h2 class="features-title">Everything You Need</h2>
+    <p class="features-subtitle">Powerful features designed to help you manage tasks efficiently and securely.</p>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="icon">🔒</div>
+        <h3>Secure Authentication</h3>
+        <p>User registration and login with secure password hashing and session management.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🤖</div>
+        <h3>AI Chatbot</h3>
+        <p>Intelligent AI assistant for managing tasks, providing suggestions and smart automation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔔</div>
+        <h3>Notification Feature</h3>
+        <p>Stay on track with smart reminders and real-time notifications for your tasks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>Export/Import CSV</h3>
+        <p>Seamlessly import and export your task data in CSV format for easy backup and sharing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⏱️</div>
+        <h3>Time Tracking</h3>
+        <p>Track time spent on tasks with built-in timer and detailed analytics for productivity insights.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📝</div>
+        <h3>Task CRUD</h3>
+        <p>Create, read, update, and delete tasks with full control over your task list.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h3>Undo Delete</h3>
+        <p>Accidentally deleted a task? Restore it with our undo functionality.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">👥</div>
+        <h3>Multi-User</h3>
+        <p>Each user has their own secure space with tasks isolated and protected.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Login Modal -->
+  <div class="auth-overlay hidden" id="loginModal">
+    <div class="auth-container">
+      <h2>Login</h2>
+      <input type="text" id="loginUser" placeholder="Username or Email" required>
+      <div class="password-field">
+        <input type="password" id="loginPass" placeholder="Password" required>
+        <span class="toggle-eye" onclick="togglePassword('loginPass', this)">👁</span>
+      </div>
+      <button class="auth-primary-btn" onclick="login()">Login</button>
+      <p>Don't have an account? <button class="auth-link-btn" onclick="switchToRegister()">Register</button></p>
+      <p id="loginMsg" class="error"></p>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="auth-overlay hidden" id="registerModal">
+    <div class="auth-container">
+      <h2>Register</h2>
+      <input type="text" id="regUser" placeholder="Choose Username" required>
+      <input type="email" id="regEmail" placeholder="Enter Email" required>
+      
+      <select id="regProfession" onchange="toggleOtherProfession()" required>
+        <option value="">Select Profession</option>
+        <option>Student</option>
+        <option>Working Professional</option>
+        <option>Freelancer</option>
+        <option>Entrepreneur</option>
+        <option>Designer</option>
+        <option>Developer</option>
+        <option>Manager</option>
+        <option>Teacher</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="otherProfession" class="hidden" placeholder="Enter your profession">
+      
+      <div class="password-field">
+        <input type="password" id="regPass" placeholder="Choose Password" required>
+        <span class="toggle-eye" onclick="togglePassword('regPass', this)">👁</span>
+      </div>
+      <div class="password-requirements">
+      Password must contain: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&)
+    </div>
+      <div class="password-field">
+        <input type="password" id="regConfirmPass" placeholder="Confirm Password" required>
+        <span class="toggle-eye" onclick="togglePassword('regConfirmPass', this)">👁</span>
+      </div>
+      
+      <button class="auth-primary-btn" onclick="register()">Create an Account</button>
+      <p>Already have an account? <button class="auth-link-btn" onclick="switchToLogin()">Login</button></p>
+      <p id="regMsg"></p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Made by <span class="brand">Plan-it</span></p>
+  </footer>
+
+  <script>
+    let users = {};
+
+    function showLogin() {
+      document.getElementById("loginModal").classList.remove("hidden");
+      document.getElementById("registerModal").classList.add("hidden");
+    }
+
+    function showRegister() {
+      document.getElementById("registerModal").classList.remove("hidden");
+      document.getElementById("loginModal").classList.add("hidden");
+    }
+
+    function switchToLogin() {
+      document.getElementById("registerModal").classList.add("hidden");
+      document.getElementById("loginModal").classList.remove("hidden");
+    }
+
+    function switchToRegister() {
+      document.getElementById("loginModal").classList.add("hidden");
+      document.getElementById("registerModal").classList.remove("hidden");
+    }
+
+    function closeAuthModals() {
+      document.getElementById("loginModal").classList.add("hidden");
+      document.getElementById("registerModal").classList.add("hidden");
+    }
+
+    function togglePassword(fieldId, eyeIcon) {
+      let field = document.getElementById(fieldId);
+      if (field.type === "password") {
+        field.type = "text";
+        eyeIcon.textContent = "👁";
+      } else {
+        field.type = "password";
+        eyeIcon.textContent = "👁";
+      }
+    }
+
+    function toggleOtherProfession() {
+      const prof = document.getElementById("regProfession").value;
+      const otherField = document.getElementById("otherProfession");
+      if (prof === "Other") {
+        otherField.classList.remove("hidden");
+      } else {
+        otherField.classList.add("hidden");
+        otherField.value = "";
+      }
+    }
+
+    function validatePassword(password) {
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      return regex.test(password);
+    }
+
+    function validateEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
+    }
+
+    function register() {
+      let user = document.getElementById("regUser").value.trim();
+      let email = document.getElementById("regEmail").value.trim();
+      let prof = document.getElementById("regProfession").value.trim();
+      let otherProf = document.getElementById("otherProfession").value.trim();
+      let pass = document.getElementById("regPass").value.trim();
+      let confirmPass = document.getElementById("regConfirmPass").value.trim();
+      let msg = document.getElementById("regMsg");
+
+      // Check if fields are filled
+      if (!user || !email || !pass || !confirmPass || (prof === "Other" && !otherProf)) {
+        msg.innerHTML = "❌ Please fill all fields correctly";
+        msg.className = "error";
+        return;
+      }
+
+      // Validate email
+      if (!validateEmail(email)) {
+        msg.innerHTML = "❌ Invalid email format";
+        msg.className = "error";
+        return;
+      }
+
+      // Validate password strength
+      if (!validatePassword(pass)) {
+        msg.innerHTML = "❌ Weak password! Must have uppercase, lowercase, number, symbol, and min 8 chars.";
+        msg.className = "error";
+        return;
+      }
+
+      // Confirm password matches
+      if (pass !== confirmPass) {
+        msg.innerHTML = "❌ Passwords do not match";
+        msg.className = "error";
+        return;
+      }
+
+      // Check if username exists
+      if (users[user]) {
+        msg.innerHTML = "❌ Username already exists";
+        msg.className = "error";
+        return;
+      }
+
+      // Check if email is already registered
+      for (let username in users) {
+        if (users[username].email === email) {
+          msg.innerHTML = "❌ Email already registered";
+          msg.className = "error";
+          return;
+        }
+      }
+
+      // Everything valid, register user
+      let professionFinal = prof === "Other" ? otherProf : prof;
+      users[user] = { email, prof: professionFinal, pass: btoa(pass) };
+
+      msg.innerHTML = "✅ Registration successful! Redirecting to login...";
+      msg.className = "success";
+
+      setTimeout(() => {
+        closeAuthModals();
+        showLogin();
+      }, 1500);
+    }
+
+    function login() {
+      let userInput = document.getElementById("loginUser").value.trim();
+      let pass = document.getElementById("loginPass").value.trim();
+      let msg = document.getElementById("loginMsg");
+
+      // Check if user exists by username or email
+      let foundUser = null;
+      let foundUsername = null;
+
+      // First check by username
+      if (users[userInput] && users[userInput].pass === btoa(pass)) {
+        foundUser = users[userInput];
+        foundUsername = userInput;
+      } else {
+        // If not found by username, check by email
+        for (let username in users) {
+          if (users[username].email === userInput && users[username].pass === btoa(pass)) {
+            foundUser = users[username];
+            foundUsername = username;
+            break;
+          }
+        }
+      }
+
+      if (foundUser) {
+        msg.innerHTML = "✅ Login successful! Welcome back!";
+        msg.className = "success";
+        setTimeout(() => {
+          closeAuthModals();
+          alert(`Welcome back, ${foundUsername} (${foundUser.prof})! Dashboard functionality would be implemented here.`);
+        }, 1000);
+      } else {
+        msg.innerHTML = "❌ Invalid credentials!";
+        msg.className = "error";
+      }
+    }
+
+    // Close modals when clicking outside
+    document.addEventListener('click', function(event) {
+      const loginModal = document.getElementById('loginModal');
+      const registerModal = document.getElementById('registerModal');
+      
+      if (event.target === loginModal || event.target === registerModal) {
+        closeAuthModals();
+      }
+    });
+  </script>
+
+</body>
+</html>
