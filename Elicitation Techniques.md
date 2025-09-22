@@ -13,6 +13,8 @@
 
 5. **Questionnaires / Surveys** – Collect structured feedback from a broader audience to quantify needs like usability, performance, or preferences.
 
+   Compilation of questions we asked in our survey form: https://docs.google.com/forms/d/e/1FAIpQLSdUan3yfGgPkLaVB-WV4Bk8K4tPluRIzAjBfF6qirVnlVt0vg/viewform
+
 6. **Prototyping** – Build simple versions of the system to validate functionality, UI, and performance; helps elicit hidden requirements and refine design.
 
 7. **Power-user Feedback** – Gain insights from experienced or frequent users to capture advanced or edge-case requirements.
