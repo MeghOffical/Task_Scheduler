@@ -62,3 +62,15 @@ Our development focuses on meeting key functional and non-functional requirement
     * **Accessibility:** Building an app that is usable by a wide range of users.
 
 ---
+
+## 🤝 Contribution
+
+* **Stakeholders & End Users:** Chaitanya, Harshil, Vansh
+* **Elicitation Techniques:** Bhagya, Aaditya
+* **Functional Requirements:** Bhagya, Chaitanya, Mansi
+* **Non-Functional Requirements:** Mayank, Harshil
+* **User Stories:** Dhruvi, Mansi
+* **Epics:** Megh, Mayank, Dhruvi
+* **Confilicts in Epics:** Sujal, Akash
+* **POC:** Vansh, Akash
+* **Frontend:** Megh, Aaditya, Vansh
