@@ -67,8 +67,8 @@ Our development focuses on meeting key functional and non-functional requirement
 
 * **Stakeholders & End Users:** Chaitanya, Harshil, Vansh
 * **Elicitation Techniques:** Bhagya, Aaditya
-* **Functional Requirements:** Bhagya, Megh
-* **Non-Functional Requirements:** Mayank, Harshil, Chaitanya, Mansi
+* **Functional Requirements:** Bhagya, Megh, Mansi
+* **Non-Functional Requirements:** Mayank, Harshil, Chaitanya
 * **User Stories:** Dhruvi, Mansi
 * **Epics:** Megh, Mayank, Vansh
 * **Confilicts in Epics:** Sujal, Akash
