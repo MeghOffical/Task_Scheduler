@@ -15,18 +15,20 @@
 
    Compilation of questions we asked in our survey form: https://docs.google.com/forms/d/e/1FAIpQLSdUan3yfGgPkLaVB-WV4Bk8K4tPluRIzAjBfF6qirVnlVt0vg/viewform
 
-6. **Prototyping** – Build simple versions of the system to validate functionality, UI, and performance; helps elicit hidden requirements and refine design.
+   And here is the data we collected: https://drive.google.com/drive/folders/1RbNcTtjeH7kVb3-6Y2BbqQDCDKs61xGP?usp=drive_link
 
-7. **Power-user Feedback** – Gain insights from experienced or frequent users to capture advanced or edge-case requirements.
+7. **Prototyping** – Build simple versions of the system to validate functionality, UI, and performance; helps elicit hidden requirements and refine design.
 
-8. **Project Vision / Documentation Review** – Study existing documents, project roadmaps, or PDFs to extract functional and non-functional expectations.
+8. **Power-user Feedback** – Gain insights from experienced or frequent users to capture advanced or edge-case requirements.
 
-9. **Risk Analysis** – Identify potential failures, security issues, or data loss scenarios to define reliability, privacy, and safety requirements.
+9. **Project Vision / Documentation Review** – Study existing documents, project roadmaps, or PDFs to extract functional and non-functional expectations.
 
-10. **Use Cases** – Describe typical system interactions to derive performance, workflow, and usability needs.
+10. **Risk Analysis** – Identify potential failures, security issues, or data loss scenarios to define reliability, privacy, and safety requirements.
 
-11. **Brainstorming** – Generate ideas for maintainability, extensibility, future features, and advanced NFR considerations.
+11. **Use Cases** – Describe typical system interactions to derive performance, workflow, and usability needs.
 
-12. **Competitive Analysis** – Study similar systems to benchmark performance, usability, and features.
+12. **Brainstorming** – Generate ideas for maintainability, extensibility, future features, and advanced NFR considerations.
+
+13. **Competitive Analysis** – Study similar systems to benchmark performance, usability, and features.
 
 ---
