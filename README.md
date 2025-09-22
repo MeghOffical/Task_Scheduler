@@ -1,5 +1,5 @@
 <img src="https://capsule-render.vercel.app/api?type=venom&height=200&color=gradient&text=PlanIt-TaskScheduler&textBg=false&fontColor=FFFFFF&stroke=000000&animation=twinkling">
-</div>
+</div>https://github.com/MeghOffical/Task_Scheduler/blob/main/README.md
 
 
 ---
@@ -67,8 +67,8 @@ Our development focuses on meeting key functional and non-functional requirement
 
 * **Stakeholders & End Users:** Chaitanya, Harshil, Vansh
 * **Elicitation Techniques:** Bhagya, Aaditya
-* **Functional Requirements:** Bhagya, Megh, Mansi
-* **Non-Functional Requirements:** Mayank, Harshil, Chaitanya
+* **Functional Requirements:** Bhagya, Megh, Mayank
+* **Non-Functional Requirements:** Mansi, Harshil, Chaitanya
 * **User Stories:** Dhruvi, Mansi
 * **Epics:** Megh, Mayank, Vansh
 * **Confilicts in Epics:** Sujal, Akash
