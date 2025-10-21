@@ -1,21 +1,53 @@
 let users = {};
 
-function showLogin() {
+function showLogin() 
+{
+  document.getElementById("loginUser").value = "";
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginMsg").innerHTML = "";
+  
   document.getElementById("loginModal").classList.remove("hidden");
   document.getElementById("registerModal").classList.add("hidden");
 }
 
-function showRegister() {
+function showRegister() 
+{
+  document.getElementById("regUser").value = "";
+  document.getElementById("regEmail").value = "";
+  document.getElementById("regProfession").value = "";
+  document.getElementById("otherProfession").value = "";
+  document.getElementById("otherProfession").classList.add("hidden");
+  document.getElementById("regPass").value = "";
+  document.getElementById("regConfirmPass").value = "";
+  document.getElementById("regMsg").innerHTML = "";
+  document.getElementById("passValidationMsg").innerHTML = "";
+  
   document.getElementById("registerModal").classList.remove("hidden");
   document.getElementById("loginModal").classList.add("hidden");
 }
 
-function switchToLogin() {
+function switchToLogin() 
+{
+  document.getElementById("loginUser").value = "";
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginMsg").innerHTML = "";
+  
   document.getElementById("registerModal").classList.add("hidden");
   document.getElementById("loginModal").classList.remove("hidden");
 }
 
-function switchToRegister() {
+function switchToRegister() 
+{
+  document.getElementById("regUser").value = "";
+  document.getElementById("regEmail").value = "";
+  document.getElementById("regProfession").value = "";
+  document.getElementById("otherProfession").value = "";
+  document.getElementById("otherProfession").classList.add("hidden");
+  document.getElementById("regPass").value = "";
+  document.getElementById("regConfirmPass").value = "";
+  document.getElementById("regMsg").innerHTML = "";
+  document.getElementById("passValidationMsg").innerHTML = "";
+  
   document.getElementById("loginModal").classList.add("hidden");
   document.getElementById("registerModal").classList.remove("hidden");
 }
@@ -65,6 +97,14 @@ function register() {
   let pass = document.getElementById("regPass").value.trim();
   let confirmPass = document.getElementById("regConfirmPass").value.trim();
   let msg = document.getElementById("regMsg");
+  let passMsg = document.getElementById("passValidationMsg");
+  let confirmPassMsg = document.getElementById("confirmPassMsg");
+
+  // Clear previous messages
+  msg.innerHTML = "";
+  passMsg.innerHTML = ""; 
+  confirmPassMsg.innerHTML = "";
+  
 
   // Check if fields are filled
   if (!user || !email || !pass || !confirmPass || (prof === "Other" && !otherProf)) {
@@ -80,17 +120,16 @@ function register() {
     return;
   }
 
-  // Validate password strength
-  if (!validatePassword(pass)) {
-    msg.innerHTML = "❌ Weak password! Must have uppercase, lowercase, number, symbol, and min 8 chars.";
-    msg.className = "error";
+  if (!validatePassword(pass)) 
+  {
+    passMsg.innerHTML = "❌ Weak password! Must have uppercase, lowercase,one number,one symbol, and min 8 chars.";
+    passMsg.className = "error"; 
     return;
   }
 
-  // Confirm password matches
-  if (pass !== confirmPass) {
-    msg.innerHTML = "❌ Passwords do not match";
-    msg.className = "error";
+   if (pass !== confirmPass) {
+    confirmPassMsg.innerHTML = "❌ Passwords do not match"; 
+    confirmPassMsg.className = "error";  
     return;
   }
 
