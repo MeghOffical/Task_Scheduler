@@ -113,9 +113,10 @@
       <div class="password-field">
         <input type="password" id="regPass" placeholder="Choose Password" required>
         <span class="toggle-eye" onclick="togglePassword('regPass', this)">👁</span>
-      </div>
-      <div class="password-requirements">
-        Password must contain: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&)
+        </div>
+        <p id="passValidationMsg" class="error" style="margin: 5px 0 10px 0; text-align: left;"></p>
+        <div class="password-requirements">
+        <!-- Password must contain: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&) -->
       </div>
       <div class="password-field">
         <input type="password" id="regConfirmPass" placeholder="Confirm Password" required>
