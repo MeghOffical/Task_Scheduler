@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlanIt - Task Scheduler</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">Plan-it</div>
+    <nav>
+      <button class="nav-login" onclick="showLogin()">Login</button>
+      <button class="nav-register" onclick="showRegister()">Register</button>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <section class="intro-section">
+    <h1>Task Management</h1>
+    <h2>Made Simple</h2>
+    <p>Transform your productivity with Plan-it's comprehensive task management platform. 
+    Our intuitive system helps you organize daily tasks, set priorities, and track your progress seamlessly. 
+    Built with security in mind, featuring robust user authentication and reliable data storage. 
+    Experience effortless task management that adapts to your workflow and keeps you focused on what matters most.</p>
+    
+    <h2 class="features-title">Everything You Need</h2>
+    <p class="features-subtitle">Powerful features designed to help you manage tasks efficiently and securely.</p>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="icon">🔒</div>
+        <h3>Secure Authentication</h3>
+        <p>User registration and login with secure password hashing and session management.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🤖</div>
+        <h3>AI Chatbot</h3>
+        <p>Intelligent AI assistant for managing tasks, providing suggestions and smart automation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔔</div>
+        <h3>Notification Feature</h3>
+        <p>Stay on track with smart reminders and real-time notifications for your tasks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>Export/Import CSV</h3>
+        <p>Seamlessly import and export your task data in CSV format for easy backup and sharing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⏱️</div>
+        <h3>Time Tracking</h3>
+        <p>Track time spent on tasks with built-in timer and detailed analytics for productivity insights.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📝</div>
+        <h3>Task CRUD</h3>
+        <p>Create, read, update, and delete tasks with full control over your task list.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h3>Undo Delete</h3>
+        <p>Accidentally deleted a task? Restore it with our undo functionality.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">👥</div>
+        <h3>Multi-User</h3>
+        <p>Each user has their own secure space with tasks isolated and protected.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Login Modal -->
+  <div class="auth-overlay hidden" id="loginModal">
+    <div class="auth-container">
+      <h2>Login</h2>
+      <input type="text" id="loginUser" placeholder="Username or Email" required>
+      <div class="password-field">
+        <input type="password" id="loginPass" placeholder="Password" required>
+        <span class="toggle-eye" onclick="togglePassword('loginPass', this)">👁</span>
+      </div>
+      <button class="auth-primary-btn" onclick="login()">Login</button>
+      <p>Don't have an account? <button class="auth-link-btn" onclick="switchToRegister()">Register</button></p>
+      <p id="loginMsg" class="error"></p>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="auth-overlay hidden" id="registerModal">
+    <div class="auth-container">
+      <h2>Register</h2>
+      <input type="text" id="regUser" placeholder="Choose Username" required>
+      <input type="email" id="regEmail" placeholder="Enter Email" required>
+      
+      <select id="regProfession" onchange="toggleOtherProfession()" required>
+        <option value="">Select Profession</option>
+        <option>Student</option>
+        <option>Working Professional</option>
+        <option>Freelancer</option>
+        <option>Entrepreneur</option>
+        <option>Designer</option>
+        <option>Developer</option>
+        <option>Manager</option>
+        <option>Teacher</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="otherProfession" class="hidden" placeholder="Enter your profession">
+      
+      <div class="password-field">
+        <input type="password" id="regPass" placeholder="Choose Password" required>
+        <span class="toggle-eye" onclick="togglePassword('regPass', this)">👁</span>
+      </div>
+      <div class="password-requirements">
+        Password must contain: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&)
+      </div>
+      <div class="password-field">
+        <input type="password" id="regConfirmPass" placeholder="Confirm Password" required>
+        <span class="toggle-eye" onclick="togglePassword('regConfirmPass', this)">👁</span>
+      </div>
+      
+      <button class="auth-primary-btn" onclick="register()">Create an Account</button>
+      <p>Already have an account? <button class="auth-link-btn" onclick="switchToLogin()">Login</button></p>
+      <p id="regMsg"></p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Made by <span class="brand">Plan-it</span></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
