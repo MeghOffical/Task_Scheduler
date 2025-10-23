@@ -83,6 +83,7 @@
         <input type="password" id="loginPass" placeholder="Password" required>
         <span class="toggle-eye" onclick="togglePassword('loginPass', this)">👁</span>
       </div>
+      <button class="auth-link-btn" onclick="showForgotPassword()">Forgot Password?</button>
       <button class="auth-primary-btn" onclick="login()">Login</button>
       <p>Don't have an account? <button class="auth-link-btn" onclick="switchToRegister()">Register</button></p>
       <p id="loginMsg" class="error"></p>
@@ -128,6 +129,29 @@
       <p id="regMsg"></p>
     </div>
   </div>
+
+  <!-- Forgot Model  -->
+  <div id="forgotPasswordModal" class="auth-overlay hidden">
+  <div class="auth-container">
+    <button class="close-btn" onclick="closeAuthModals()">×</button>
+    <h2>Reset Password</h2>
+    
+    <p>Enter your registered email to receive a verification code.</p>
+    <input type="email" id="forgotEmail" placeholder="Enter your registered email" />
+    <button class="auth-primary-btn" onclick="sendOTP()">Send OTP</button>
+    <p id="forgotMsg"></p>
+
+    <div id="otpSection" class="hidden">
+      <input type="text" id="otpInput" placeholder="Enter OTP" />
+      <input type="password" id="newPassword" placeholder="Enter new password" />
+      <input type="password" id="confirmNewPassword" placeholder="Confirm new password" />
+      <button class="auth-primary-btn" onclick="resetPassword()">Reset Password</button>
+      <p id="resetMsg"></p>
+    </div>
+  </div>
+</div>
+
+  
 
   <!-- Footer -->
   <footer class="footer">
