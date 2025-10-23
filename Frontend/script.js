@@ -1,4 +1,6 @@
 let users = {};
+let generatedOTP = null;
+let otpEmail = null;
 
 function showLogin() 
 {
@@ -55,6 +57,7 @@ function switchToRegister()
 function closeAuthModals() {
   document.getElementById("loginModal").classList.add("hidden");
   document.getElementById("registerModal").classList.add("hidden");
+  document.getElementById("forgotModal").classList.add("hidden");
 }
 
 function togglePassword(fieldId, eyeIcon) {
@@ -162,21 +165,131 @@ function register() {
   }, 1500);
 }
 
+function showForgotPassword() {
+  document.getElementById("loginModal").classList.add("hidden");
+  document.getElementById("registerModal").classList.add("hidden");
+  document.getElementById("forgotPasswordModal").classList.remove("hidden");
+
+  // reset all fields
+  document.getElementById("forgotEmail").value = "";
+  document.getElementById("otpInput").value = "";
+  document.getElementById("newPassword").value = "";
+  document.getElementById("confirmNewPassword").value = "";
+  document.getElementById("forgotMsg").innerHTML = "";
+  document.getElementById("resetMsg").innerHTML = "";
+  document.getElementById("otpSection").classList.add("hidden");
+}
+
+// simulate OTP sending
+function sendOTP() {
+  let email = document.getElementById("forgotEmail").value.trim();
+  let msg = document.getElementById("forgotMsg");
+
+  if (!email) {
+    msg.innerHTML = "⚠️ Please enter your registered email.";
+    msg.className = "error";
+    return;
+  }
+
+  let foundUser = null;
+  for (let username in users) {
+    if (users[username].email === email) {
+      foundUser = username;
+      break;
+    }
+  }
+
+  if (!foundUser) {
+    msg.innerHTML = "❌ No account found with this email.";
+    msg.className = "error";
+    return;
+  }
+
+  // generate OTP
+  generatedOTP = Math.floor(100000 + Math.random() * 900000);
+  otpEmail = email;
+
+  msg.innerHTML = `✅ OTP sent to ${email} (simulated). Your OTP is <b>${generatedOTP}</b>`;
+  msg.className = "success";
+
+  // show OTP section
+  document.getElementById("otpSection").classList.remove("hidden");
+}
+
+function resetPassword() {
+  let enteredOTP = document.getElementById("otpInput").value.trim();
+  let newPass = document.getElementById("newPassword").value.trim();
+  let confirmPass = document.getElementById("confirmNewPassword").value.trim();
+  let msg = document.getElementById("resetMsg");
+
+  if (!enteredOTP || !newPass || !confirmPass) {
+    msg.innerHTML = "⚠️ Please fill in all fields.";
+    msg.className = "error";
+    return;
+  }
+
+  if (enteredOTP != generatedOTP) {
+    msg.innerHTML = "❌ Invalid OTP. Please try again.";
+    msg.className = "error";
+    return;
+  }
+
+  if (!validatePassword(newPass)) {
+    msg.innerHTML = "❌ Weak password! Must have uppercase, lowercase, number, symbol & 8+ chars.";
+    msg.className = "error";
+    return;
+  }
+
+  if (newPass !== confirmPass) {
+    msg.innerHTML = "❌ Passwords do not match.";
+    msg.className = "error";
+    return;
+  }
+
+  // find user by email and update password
+  for (let username in users) {
+    if (users[username].email === otpEmail) {
+      users[username].pass = btoa(newPass);
+      break;
+    }
+  }
+
+  msg.innerHTML = "✅ Password reset successfully!";
+  msg.className = "success";
+
+  setTimeout(() => {
+    showLogin();
+  }, 1500);
+}
+
+
+
 function login() {
   let userInput = document.getElementById("loginUser").value.trim();
   let pass = document.getElementById("loginPass").value.trim();
   let msg = document.getElementById("loginMsg");
 
+  // Clear previous message
+  msg.innerHTML = "";
+  msg.className = "";
+
+  // Check if any field is empty
+  if (!userInput || !pass) {
+    msg.innerHTML = "⚠️ Please fill in all required details.";
+    msg.className = "error";
+    return;
+  }
+
   // Check if user exists by username or email
   let foundUser = null;
   let foundUsername = null;
 
-  // First check by username
+  // Check by username
   if (users[userInput] && users[userInput].pass === btoa(pass)) {
     foundUser = users[userInput];
     foundUsername = userInput;
   } else {
-    // If not found by username, check by email
+    // Check by email
     for (let username in users) {
       if (users[username].email === userInput && users[username].pass === btoa(pass)) {
         foundUser = users[username];
@@ -186,6 +299,7 @@ function login() {
     }
   }
 
+  // Display appropriate message
   if (foundUser) {
     msg.innerHTML = "✅ Login successful! Welcome back!";
     msg.className = "success";
@@ -194,7 +308,7 @@ function login() {
       alert(`Welcome back, ${foundUsername} (${foundUser.prof})! Dashboard functionality would be implemented here.`);
     }, 1000);
   } else {
-    msg.innerHTML = "❌ Invalid credentials!";
+    msg.innerHTML = "❌ Invalid username/email or password.";
     msg.className = "error";
   }
 }
@@ -203,8 +317,9 @@ function login() {
 document.addEventListener('click', function(event) {
   const loginModal = document.getElementById('loginModal');
   const registerModal = document.getElementById('registerModal');
+  const forgotModal = document.getElementById('forgotModal');
   
-  if (event.target === loginModal || event.target === registerModal) {
+  if (event.target === loginModal || event.target === registerModal || event.target === forgotModal ) {
     closeAuthModals();
   }
 });
