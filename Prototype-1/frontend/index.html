@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlanIt - Task Scheduler</title>
+  
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+  <header class="header" id="mainHeader">
+    <div class="logo">Plan-it</div>
+    <nav>
+      <button class="nav-login" onclick="showLogin()">Login</button>
+      <button class="nav-register" onclick="showRegister()">Register</button>
+    </nav>
+  </header>
+
+  <section class="intro-section" id="introSection">
+    <h1>Task Management</h1>
+    <h2>Made Simple</h2>
+    <p>Transform your productivity with Plan-it's comprehensive task management platform. 
+    Our intuitive system helps you organize daily tasks, set priorities, and track your progress seamlessly. 
+    Built with security in mind, featuring robust user authentication and reliable data storage. 
+    Experience effortless task management that adapts to your workflow and keeps you focused on what matters most.</p>
+    
+    <h2 class="features-title">Everything You Need</h2>
+    <p class="features-subtitle">Powerful features designed to help you manage tasks efficiently and securely.</p>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="icon">🔒</div>
+        <h3>Secure Authentication</h3>
+        <p>User registration and login with secure password hashing and session management.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🤖</div>
+        <h3>AI Chatbot</h3>
+        <p>Intelligent AI assistant for managing tasks, providing suggestions and smart automation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔔</div>
+        <h3>Notification Feature</h3>
+        <p>Stay on track with smart reminders and real-time notifications for your tasks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>Export/Import CSV</h3>
+        <p>Seamlessly import and export your task data in CSV format for easy backup and sharing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⏱</div>
+        <h3>Time Tracking</h3>
+        <p>Track time spent on tasks with built-in timer and detailed analytics for productivity insights.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📝</div>
+        <h3>Task CRUD</h3>
+        <p>Create, read, update, and delete tasks with full control over your task list.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h3>Undo Delete</h3>
+        <p>Accidentally deleted a task? Restore it with our undo functionality.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">👥</div>
+        <h3>Multi-User</h3>
+        <p>Each user has their own secure space with tasks isolated and protected.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard" id="dashboard">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Task Dashboard</h1>
+      <div class="user-info">
+        <span>Welcome, <strong id="dashboardUsername"></strong>!</span>
+        <button class="btn btn-secondary" onclick="logout()">Logout</button>
+      </div>
+    </div>
+    
+    <div class="dashboard-content">
+      <div>
+        <div class="task-form-container">
+          <form class="task-form" id="taskForm">
+            <h3 id="formTitle">Add New Task</h3>
+            <div class="form-group">
+              <label for="taskTitle">Task Title</label>
+              <input type="text" id="taskTitle" class="form-control" placeholder="Enter task title" required>
+            </div>
+            <div class="form-group">
+              <label for="taskDescription">Description</label>
+              <textarea id="taskDescription" class="form-control" rows="3" placeholder="Enter task description"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="taskPriority">Priority</label>
+                <select id="taskPriority" class="form-control" required>
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="taskStatus">Status</label>
+                <select id="taskStatus" class="form-control" required>
+                  <option value="pending" selected>Pending</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="taskDueDate">Due Date</label>
+             <input type="datetime-local" id="taskDueDate" class="form-control">
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary" id="submitBtn">Add Task</button>
+              <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">Cancel</button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="task-list-container">
+          <div class="task-list-header">
+            <h2 class="task-list-title">Your Tasks</h2>
+            <div class="task-actions">
+              <button class="btn btn-secondary" onclick="exportTasks()">Export CSV</button>
+              <button class="btn btn-primary" onclick="importTasks()">Import CSV</button>
+            </div>
+          </div>
+          
+          <div class="search-filter">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search tasks...">
+            <select id="priorityFilter" class="form-control" onchange="filterTasks()">
+              <option value="">All Priorities</option>
+              <option value="high">High Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+            <select id="statusFilter" class="form-control" onchange="filterTasks()">
+              <option value="">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          
+          <div class="task-list" id="taskList">
+            </div>
+        </div>
+      </div>
+      
+      <div class="stats-container">
+        <h2 class="stats-title">Task Statistics</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="totalTasks">0</div>
+            <div class="stat-label">Total Tasks</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="completedTasks">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="pendingTasks">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="highPriorityTasks">0</div>
+            <div class="stat-label">High Priority</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="llm-chatbot" id="llmChatbot">
+    <button class="chatbot-toggle" id="chatbotToggle">🤖</button>
+    <div class="chatbot-container" id="chatbotContainer">
+      <div class="chatbot-header">
+        <div class="chatbot-title">Task Assistant</div>
+        <button class="chatbot-close" id="chatbotClose">✕</button>
+      </div>
+      <div class="chatbot-messages" id="chatbotMessages">
+        <div class="message bot">
+          Hello! I'm your Task Assistant. How can I help you with your tasks today?
+        </div>
+        <div class="message bot">
+          Try asking me things like:
+          <ul style="margin-top: 8px; padding-left: 20px;">
+            <li>How to prioritize my tasks</li>
+            <li>Help me create a new task</li>
+            <li>How to organize my workflow</li>
+          </ul>
+        </div>
+      </div>
+      <div class="suggestion-chips">
+        <button class="suggestion-chip" onclick="sendSuggestion('How do I prioritize my tasks?')">Prioritize tasks</button>
+        <button class="suggestion-chip" onclick="sendSuggestion('Help me create a task for project planning')">Create task</button>
+        <button class="suggestion-chip" onclick="sendSuggestion('How can I be more productive?')">Productivity tips</button>
+      </div>
+      <div class="chatbot-input">
+        <input type="text" id="chatbotInput" placeholder="Ask about your tasks...">
+        <button class="chatbot-send" id="chatbotSend">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-overlay hidden" id="loginModal">
+    <div class="auth-container">
+      <h2>Login</h2>
+      <input type="text" id="loginUser" placeholder="Username" required>
+      <div class="password-field">
+        <input type="password" id="loginPass" placeholder="Password" required>
+        <span class="toggle-eye" onclick="togglePassword('loginPass', this)">👁</span>
+      </div>
+      <button class="auth-primary-btn" onclick="login()">Login</button>
+      <p>Don't have an account? <button class="auth-link-btn" onclick="switchToRegister()">Register</button></p>
+      <p id="loginMsg" class="error"></p>
+    </div>
+  </div>
+
+  
+  <div class="auth-overlay hidden" id="registerModal">
+    <div class="auth-container">
+      <h2>Register</h2>
+      <input type="text" id="regUser" placeholder="Choose Username" required>
+      <input type="email" id="regEmail" placeholder="Enter Email" required>
+      
+      <select id="regProfession" onchange="toggleOtherProfession()" required>
+        <option value="">Select Profession</option>
+        <option>Student</option>
+        <option>Working Professional</option>
+        <option>Freelancer</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="otherProfession" class="hidden" placeholder="Enter your profession">
+      
+      <div class="password-field">
+        <input type="password" id="regPass" placeholder="Choose Password" required>
+        <span class="toggle-eye" onclick="togglePassword('regPass', this)">👁</span>
+      </div>
+      <div class="password-field">
+        <input type="password" id="regConfirmPass" placeholder="Confirm Password" required>
+        <span class="toggle-eye" onclick="togglePassword('regConfirmPass', this)">👁</span>
+      </div>
+      
+      <button class="auth-primary-btn" onclick="register()">Register</button>
+      <p>Already have an account? <button class="auth-link-btn" onclick="switchToLogin()">Login</button></p>
+      <p id="regMsg"></p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Made by <span class="brand">Plan-it</span></p>
+  </footer>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
