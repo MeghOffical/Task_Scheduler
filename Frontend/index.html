@@ -119,18 +119,22 @@
         <div class="password-requirements">
         <!-- Password must contain: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&) -->
       </div>
+      <!-- <div class="password-requirements">
+        Password must contain: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&)
+      </div> -->
       <div class="password-field">
         <input type="password" id="regConfirmPass" placeholder="Confirm Password" required>
         <span class="toggle-eye" onclick="togglePassword('regConfirmPass', this)">👁</span>
       </div>
       
+        <p id="confirmPassMsg" class="error" style="margin: 5px 0 10px 0; text-align: left;"></p>
+    
       <button class="auth-primary-btn" onclick="register()">Create an Account</button>
       <p>Already have an account? <button class="auth-link-btn" onclick="switchToLogin()">Login</button></p>
       <p id="regMsg"></p>
     </div>
   </div>
 
-  <!-- Forgot Model  -->
   <div id="forgotPasswordModal" class="auth-overlay hidden">
   <div class="auth-container">
     <button class="close-btn" onclick="closeAuthModals()">×</button>
@@ -151,7 +155,8 @@
   </div>
 </div>
 
-  
+
+
 
   <!-- Footer -->
   <footer class="footer">
