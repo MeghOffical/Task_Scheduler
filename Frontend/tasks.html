@@ -625,35 +625,37 @@
         let editingTaskId = null;
         let allTasks = [];
 
-        // Load tasks from sessionStorage or use default
-        function loadTasks() {
-            try {
-                const savedTasks = sessionStorage.getItem('tasks');
-                if (savedTasks) {
-                    allTasks = JSON.parse(savedTasks);
-                } else {
-                    // Initial default tasks
-                    allTasks = [
-                        { id: 1, title: 'Design homepage mockup', description: 'Create wireframes and visual design for new homepage', priority: 'high', status: 'overdue', dueDate: '2024-08-15', project: 'website-redesign', assignee: 'john-doe', assigneeName: 'John Doe' },
-                        { id: 2, title: 'Set up development environment', description: 'Configure local development setup for new project', priority: 'medium', status: 'completed', dueDate: '2024-08-14', project: 'mobile-app', assignee: 'admin-user', assigneeName: 'Admin User', completedDate: new Date().toISOString() },
-                        { id: 3, title: 'Content strategy meeting', description: 'Discuss content requirements with marketing team', priority: 'low', status: 'overdue', dueDate: '2024-08-16', project: 'marketing-campaign', assignee: 'jane-smith', assigneeName: 'Jane Smith' },
-                    ];
-                    saveTasks();
-                }
-            } catch (error) {
-                console.error('Error loading tasks:', error);
-                allTasks = [];
-            }
-        }
+// Get the user-specific key for localStorage
+function getUserTasksKey() {
+    const currentUser = sessionStorage.getItem('currentUser') || 'guest';
+    return `tasks_${currentUser}`;
+}
 
-        // Save tasks to sessionStorage
-        function saveTasks() {
-            try {
-                sessionStorage.setItem('tasks', JSON.stringify(allTasks));
-            } catch (error) {
-                console.error('Error saving tasks:', error);
-            }
+// Load tasks from localStorage (user-specific)
+function loadTasks() {
+    try {
+        const userTasksKey = getUserTasksKey();
+        const savedTasks = localStorage.getItem(userTasksKey);
+        if (savedTasks) {
+            allTasks = JSON.parse(savedTasks);
+        } else {
+            allTasks = [];
         }
+    } catch (error) {
+        console.error('Error loading tasks:', error);
+        allTasks = [];
+    }
+}
+
+// Save tasks to localStorage (user-specific)
+function saveTasks() {
+    try {
+        const userTasksKey = getUserTasksKey();
+        localStorage.setItem(userTasksKey, JSON.stringify(allTasks));
+    } catch (error) {
+        console.error('Error saving tasks:', error);
+    }
+}
 
         window.onload = function () {
             loadTasks();
@@ -679,9 +681,10 @@
         </div>
         </div>
         <p class="task-description">${escapeHtml(task.description)}</p>
-        <div class="task-meta">
-        <div class="task-meta-item"><span>📅</span><span>${formatDate(task.dueDate)}</span></div>
-        </div>
+<div class="task-meta">
+    <div class="task-meta-item"><span>📅</span><span>${formatDate(task.dueDate)}</span></div>
+    ${task.dueTime ? `<div class="task-meta-item"><span>🕐</span><span>${task.dueTime}</span></div>` : ''}
+</div>
         <div class="task-footer">
         <div class="task-badges">
             <span class="priority-badge ${task.priority}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
@@ -710,84 +713,95 @@
         }
 
         function openModal() {
-            editingTaskId = null;
-            document.getElementById('modalTitle').textContent = 'Add New Task';
-            document.getElementById('saveBtn').textContent = 'Add Task';
-            document.getElementById('taskTitle').value = '';
-            document.getElementById('taskDescription').value = '';
-            document.getElementById('taskPriority').value = 'medium';
-            document.getElementById('taskStatus').value = 'pending';
-            document.getElementById('taskDueDate').value = '';
-            document.getElementById('taskModal').classList.remove('hidden');
+    editingTaskId = null;
+    document.getElementById('modalTitle').textContent = 'Add New Task';
+    document.getElementById('saveBtn').textContent = 'Add Task';
+    document.getElementById('taskTitle').value = '';
+    document.getElementById('taskDescription').value = '';
+    document.getElementById('taskPriority').value = 'medium';
+    document.getElementById('taskDueDate').value = '';
+    document.getElementById('taskDueTime').value = '';
+    document.getElementById('taskModal').classList.remove('hidden');
+}
+
+
+                // Theme Management
+        function loadTheme() {
+            const theme = sessionStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                document.getElementById('themeIcon').textContent = '☀️';
+            }
         }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+            sessionStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        // Load theme on page load
+        loadTheme();
 
         function closeModal() {
             document.getElementById('taskModal').classList.add('hidden');
         }
 
         function editTask(taskId) {
-            editingTaskId = taskId;
-            const task = allTasks.find(t => t.id === taskId);
-            if (!task) return;
+    editingTaskId = taskId;
+    const task = allTasks.find(t => t.id === taskId);
+    if (!task) return;
 
-            document.getElementById('modalTitle').textContent = 'Edit Task';
-            document.getElementById('saveBtn').textContent = 'Update Task';
-            document.getElementById('taskTitle').value = task.title;
-            document.getElementById('taskDescription').value = task.description;
-            document.getElementById('taskPriority').value = task.priority;
-            document.getElementById('taskStatus').value = task.status;
-            document.getElementById('taskDueDate').value = task.dueDate;
-            document.getElementById('taskModal').classList.remove('hidden');
-        }
+    document.getElementById('modalTitle').textContent = 'Edit Task';
+    document.getElementById('saveBtn').textContent = 'Update Task';
+    document.getElementById('taskTitle').value = task.title;
+    document.getElementById('taskDescription').value = task.description;
+    document.getElementById('taskPriority').value = task.priority;
+    document.getElementById('taskDueDate').value = task.dueDate || '';
+    document.getElementById('taskDueTime').value = task.dueTime || '';
+    document.getElementById('taskModal').classList.remove('hidden');
+}
 
         function saveTask(event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            const basicData = {
-                title: document.getElementById('taskTitle').value.trim(),
-                description: document.getElementById('taskDescription').value.trim(),
-                priority: document.getElementById('taskPriority').value,
-                status: document.getElementById('taskStatus').value,
-                dueDate: document.getElementById('taskDueDate').value
-            };
+    const basicData = {
+        title: document.getElementById('taskTitle').value.trim(),
+        description: document.getElementById('taskDescription').value.trim(),
+        priority: document.getElementById('taskPriority').value,
+        status: 'pending', // Always set new tasks as pending
+        dueDate: document.getElementById('taskDueDate').value,
+        dueTime: document.getElementById('taskDueTime').value
+    };
 
-            if (editingTaskId) {
-                const idx = allTasks.findIndex(t => t.id === editingTaskId);
-                if (idx === -1) { alert('Task not found'); closeModal(); return false; }
-                const existing = allTasks[idx];
+    if (editingTaskId) {
+        const idx = allTasks.findIndex(t => t.id === editingTaskId);
+        if (idx === -1) { alert('Task not found'); closeModal(); return false; }
+        const existing = allTasks[idx];
 
-                // If status changed to completed, add completedDate
-                if (basicData.status === 'completed' && existing.status !== 'completed') {
-                    basicData.completedDate = new Date().toISOString();
-                }
+        // Keep the existing status when updating
+        const updated = { ...existing, ...basicData, status: existing.status };
+        allTasks[idx] = updated;
+        alert('Task updated!');
+    } else {
+        const newTask = {
+            id: Date.now(),
+            ...basicData,
+            project: 'general',
+            assignee: (currentUser || 'Admin User').toLowerCase().replace(/\s+/g, '-'),
+            assigneeName: currentUser || 'Admin User'
+        };
 
-                const updated = { ...existing, ...basicData };
-                allTasks[idx] = updated;
-                alert('Task updated!');
-            } else {
-                const newTask = {
-                    id: Date.now(),
-                    ...basicData,
-                    project: 'general',
-                    assignee: (currentUser || 'Admin User').toLowerCase().replace(/\s+/g, '-'),
-                    assigneeName: currentUser || 'Admin User'
-                };
+        allTasks.unshift(newTask);
+        alert('Task added!');
+    }
 
-                // If new task is already completed, add completedDate
-                if (newTask.status === 'completed') {
-                    newTask.completedDate = new Date().toISOString();
-                }
-
-                allTasks.unshift(newTask);
-                alert('Task added!');
-            }
-
-            saveTasks(); // Save to sessionStorage
-            closeModal();
-            renderTasks();
-            return false;
-        }
-
+    saveTasks(); // Save to sessionStorage
+    closeModal();
+    renderTasks();
+    return false;
+}
         function deleteTask(taskId) {
             if (confirm('Delete this task?')) {
                 allTasks = allTasks.filter(t => t.id !== taskId);
