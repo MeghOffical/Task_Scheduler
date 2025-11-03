@@ -456,19 +456,33 @@
     </div>
 
     <script>
-        // Settings data stored in memory
-        let settings = {
-            name: 'Admin User',
-            email: 'admin@taskmanager.com',
-            focusDuration: 25,
-            shortBreak: 5,
-            longBreak: 15,
-            emailNotifications: true,
-            pushNotifications: true
-        };
+    let currentUser = sessionStorage.getItem('currentUser') || 'Admin User';
+    document.querySelector('.username').textContent = currentUser;
 
-        // Load settings on page load
-        function loadSettings() {
+    // Get user-specific settings key
+    function getUserSettingsKey() {
+        const user = sessionStorage.getItem('currentUser') || 'guest';
+        return `settings_${user}`;
+    }
+
+    // Default settings
+    const defaultSettings = {
+        name: 'Admin User',
+        email: 'admin@taskmanager.com',
+        focusDuration: 25,
+        shortBreak: 5,
+        longBreak: 15,
+        emailNotifications: true,
+        pushNotifications: true
+    };
+
+    // Load settings from localStorage
+    function loadSettings() {
+        try {
+            const settingsKey = getUserSettingsKey();
+            const savedSettings = localStorage.getItem(settingsKey);
+            const settings = savedSettings ? JSON.parse(savedSettings) : defaultSettings;
+
             document.getElementById('name').value = settings.name;
             document.getElementById('email').value = settings.email;
             document.getElementById('focusDuration').value = settings.focusDuration;
@@ -476,59 +490,65 @@
             document.getElementById('longBreak').value = settings.longBreak;
             document.getElementById('emailNotifications').checked = settings.emailNotifications;
             document.getElementById('pushNotifications').checked = settings.pushNotifications;
+        } catch (error) {
+            console.error('Error loading settings:', error);
         }
+    }
 
-        // Theme Management
-        function loadTheme() {
-            const theme = sessionStorage.getItem('theme') || 'light';
-            if (theme === 'dark') {
-                document.body.classList.add('dark-theme');
-                document.getElementById('themeIcon').textContent = '☀️';
-            }
-        }
+    // Save settings to localStorage
+    function saveSettings() {
+        try {
+            const settings = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                focusDuration: parseInt(document.getElementById('focusDuration').value),
+                shortBreak: parseInt(document.getElementById('shortBreak').value),
+                longBreak: parseInt(document.getElementById('longBreak').value),
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                pushNotifications: document.getElementById('pushNotifications').checked
+            };
 
-        function toggleTheme() {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
-            sessionStorage.setItem('theme', isDark ? 'dark' : 'light');
-        }
+            const settingsKey = getUserSettingsKey();
+            localStorage.setItem(settingsKey, JSON.stringify(settings));
 
-        // Load theme on page load
-        loadTheme();
-
-        // Save settings
-        function saveSettings() {
-            settings.name = document.getElementById('name').value;
-            settings.email = document.getElementById('email').value;
-            settings.focusDuration = parseInt(document.getElementById('focusDuration').value);
-            settings.shortBreak = parseInt(document.getElementById('shortBreak').value);
-            settings.longBreak = parseInt(document.getElementById('longBreak').value);
-            settings.emailNotifications = document.getElementById('emailNotifications').checked;
-            settings.pushNotifications = document.getElementById('pushNotifications').checked;
-
-            // Show success message
             const successMessage = document.getElementById('successMessage');
             successMessage.classList.add('show');
-
-            // Hide success message after 3 seconds
             setTimeout(() => {
                 successMessage.classList.remove('show');
             }, 3000);
-
-            console.log('Settings saved:', settings);
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            alert('Error saving settings. Please try again.');
         }
+    }
 
-        function logout() {
-            if (confirm('Logout?')) {
-                sessionStorage.clear();
-                window.location.href = 'index.html';
-            }
+    function loadTheme() {
+        const theme = sessionStorage.getItem('theme') || 'light';
+        if (theme === 'dark') {
+            document.body.classList.add('dark-theme');
+            document.getElementById('themeIcon').textContent = '☀️';
         }
+    }
 
-        // Initialize settings on page load
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+        sessionStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+    }
+
+    window.onload = function() {
+        loadTheme();
         loadSettings();
-    </script>
+    };
+</script>
 </body>
 
 </html>
