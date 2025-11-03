@@ -136,6 +136,131 @@
       margin-bottom: 25px;
     }
 
+    /* Dark Theme Styles */
+    body.dark-theme {
+        background: #1a1a1a;
+        color: #e5e5e5;
+    }
+    
+    body.dark-theme .dashboard-header {
+        background: #2d2d2d;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    body.dark-theme .dashboard-header .logo {
+        color: #22d3ee;
+    }
+    
+    body.dark-theme .username {
+        color: #e5e5e5;
+    }
+    
+    body.dark-theme .sidebar {
+        background: #2d2d2d;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    body.dark-theme .nav-item {
+        color: #9ca3af;
+    }
+    
+    body.dark-theme .nav-item:hover {
+        background: #1e3a4d;
+        color: #22d3ee;
+    }
+    
+    body.dark-theme .nav-item.active {
+        background: #1e3a4d;
+        color: #22d3ee;
+        border-left-color: #22d3ee;
+    }
+    
+    body.dark-theme .timer-section,
+    body.dark-theme .history-section {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    body.dark-theme .timer-section h1,
+    body.dark-theme .history-section h2 {
+        color: #e5e5e5;
+    }
+    
+    body.dark-theme .session-label {
+        color: #9ca3af;
+    }
+    
+    body.dark-theme .timer-circle {
+        background: #1a1a1a;
+        border-color: #22d3ee;
+    }
+    
+    body.dark-theme .timer-circle.break-mode {
+        border-color: #10b981;
+    }
+    
+    body.dark-theme .timer-display {
+        color: #22d3ee;
+    }
+    
+    body.dark-theme .timer-display.break-mode {
+        color: #10b981;
+    }
+    
+    body.dark-theme .task-link-section label {
+        color: #9ca3af;
+    }
+    
+    body.dark-theme .task-link-section select {
+        background: #1a1a1a;
+        border-color: #404040;
+        color: #e5e5e5;
+    }
+    
+    body.dark-theme .history-item {
+        background: #1a1a1a;
+        border-left-color: #22d3ee;
+    }
+    
+    body.dark-theme .history-item.break-session {
+        border-left-color: #10b981;
+    }
+    
+    body.dark-theme .history-task {
+        color: #e5e5e5;
+    }
+    
+    body.dark-theme .history-date {
+        color: #22d3ee;
+    }
+    
+    body.dark-theme .no-history {
+        color: #9ca3af;
+    }
+    
+    body.dark-theme .btn-reset {
+        background: #404040;
+        color: #e5e5e5;
+    }
+    
+    body.dark-theme .btn-reset:hover {
+        background: #525252;
+    }
+    
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        transition: transform 0.3s;
+    }
+    
+    .theme-toggle:hover {
+        transform: scale(1.1);
+    }
     /* Timer */
     .timer-container {
       text-align: center;
@@ -598,5 +723,6 @@
     };
   </script>
 </body>
+
 
 </html>
