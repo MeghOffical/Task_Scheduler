@@ -1,0 +1,13 @@
+.DS_Store
+node_modules
+.env
+.env.local
+.next/
+build/
+dist/
+coverage/
+.idea/
+*.log
+yarn-debug.log*
+yarn-error.log*
+.vercel
