@@ -513,18 +513,37 @@
     </main>
   </div>
 
-  <script>
+    <script>
     let currentUser = sessionStorage.getItem('currentUser') || 'Admin User';
     document.getElementById('displayUsername').textContent = currentUser;
 
     // Timer variables
-    let timeLeft = 25 * 60; // 25 minutes in seconds
     let timerInterval = null;
     let isRunning = false;
     let isBreak = false;
     let selectedTaskId = null;
-    const FOCUS_TIME = 25 * 60;
-    const BREAK_TIME = 5 * 60;
+
+    // Load settings from localStorage
+function getUserSettings() {
+    const user = sessionStorage.getItem('currentUser') || 'guest';
+    const settingsKey = `settings_${user}`;
+    const savedSettings = localStorage.getItem(settingsKey);
+    
+    if (savedSettings) {
+        return JSON.parse(savedSettings);
+    }
+    // Default settings
+    return {
+        focusDuration: 25,
+        shortBreak: 5,
+        longBreak: 15
+    };
+}
+
+const userSettings = getUserSettings();
+const FOCUS_TIME = userSettings.focusDuration * 60;
+const BREAK_TIME = userSettings.shortBreak * 60;
+let timeLeft = FOCUS_TIME;
 
     // Audio notification
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -541,22 +560,51 @@
       oscillator.stop(audioContext.currentTime + 0.3);
     }
 
-    // Get tasks from localStorage
-    function getTasks() {
-      const tasksData = localStorage.getItem('allTasks');
-      return tasksData ? JSON.parse(tasksData) : [];
-    }
+// Get user-specific tasks key
+function getUserTasksKey() {
+    const currentUser = sessionStorage.getItem('currentUser') || 'guest';
+    return `tasks_${currentUser}`;
+}
 
-    // Get history from localStorage
-    function getHistory() {
-      const historyData = localStorage.getItem('pomodoroHistory');
-      return historyData ? JSON.parse(historyData) : [];
+// Get tasks from localStorage (user-specific)
+function getTasks() {
+    try {
+        const userTasksKey = getUserTasksKey();
+        const tasksData = localStorage.getItem(userTasksKey);
+        return tasksData ? JSON.parse(tasksData) : [];
+    } catch (error) {
+        console.error('Error loading tasks:', error);
+        return [];
     }
+}
 
-    // Save history to localStorage
-    function saveHistory(history) {
-      localStorage.setItem('pomodoroHistory', JSON.stringify(history));
+    // Get user-specific history key
+function getUserHistoryKey() {
+    const currentUser = sessionStorage.getItem('currentUser') || 'guest';
+    return `pomodoroHistory_${currentUser}`;
+}
+
+// Get history from localStorage (user-specific)
+function getHistory() {
+    try {
+        const userHistoryKey = getUserHistoryKey();
+        const historyData = localStorage.getItem(userHistoryKey);
+        return historyData ? JSON.parse(historyData) : [];
+    } catch (error) {
+        console.error('Error loading history:', error);
+        return [];
     }
+}
+
+// Save history to localStorage (user-specific)
+function saveHistory(history) {
+    try {
+        const userHistoryKey = getUserHistoryKey();
+        localStorage.setItem(userHistoryKey, JSON.stringify(history));
+    } catch (error) {
+        console.error('Error saving history:', error);
+    }
+}
 
     // Load tasks into dropdown
     function loadTasks() {
@@ -598,19 +646,43 @@
     }
 
     // Start timer
-    function startTimer() {
-      isRunning = true;
-      document.getElementById('startBtn').textContent = 'Pause';
+function startTimer() {
+  isRunning = true;
+  document.getElementById('startBtn').textContent = 'Pause';
+  
+  // Store session start time
+  if (!sessionStorage.getItem('sessionStartTime')) {
+    sessionStorage.setItem('sessionStartTime', Date.now().toString());
+  }
 
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        updateDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateDisplay();
 
-        if (timeLeft <= 0) {
-          completeSession();
-        }
-      }, 1000);
+    if (timeLeft <= 0) {
+      completeSession();
     }
+  }, 1000);
+}
+
+    // Theme Management
+function loadTheme() {
+    const theme = sessionStorage.getItem('theme') || 'light';
+    if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+        document.getElementById('themeIcon').textContent = '☀️';
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+    sessionStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Load theme on page load
+loadTheme();
 
     // Pause timer
     function pauseTimer() {
@@ -623,44 +695,55 @@
     function resetTimer() {
       pauseTimer();
       timeLeft = isBreak ? BREAK_TIME : FOCUS_TIME;
+      sessionStorage.removeItem('sessionStartTime');
       updateDisplay();
     }
 
     // Skip to next session
-    function skipSession() {
-      if (confirm('Skip this session?')) {
-        pauseTimer();
-        switchSession();
-      }
-    }
+function skipSession() {
+  if (confirm('Skip this session?')) {
+    pauseTimer();
+    sessionStorage.removeItem('sessionStartTime');
+    switchSession();
+  }
+}
 
     // Complete session and save to history
-    function completeSession() {
-      pauseTimer();
-      playNotificationSound();
+function completeSession() {
+  pauseTimer();
+  playNotificationSound();
 
-      // Save to history
-      const tasks = getTasks();
-      const selectedTask = tasks.find(t => t.id == selectedTaskId);
+  // Calculate actual duration
+  const sessionStart = sessionStorage.getItem('sessionStartTime');
+  const actualDuration = sessionStart 
+    ? Math.round((Date.now() - parseInt(sessionStart)) / 60000) 
+    : (isBreak ? BREAK_TIME / 60 : FOCUS_TIME / 60);
+  
+  // Clear session start time
+  sessionStorage.removeItem('sessionStartTime');
 
-      const history = getHistory();
-      const newSession = {
-        id: Date.now(),
-        date: new Date().toISOString(),
-        type: isBreak ? 'break' : 'focus',
-        duration: isBreak ? BREAK_TIME / 60 : FOCUS_TIME / 60,
-        taskId: selectedTaskId,
-        taskTitle: selectedTask ? selectedTask.title : 'No task linked'
-      };
+  // Save to history
+  const tasks = getTasks();
+  const selectedTask = tasks.find(t => t.id == selectedTaskId);
 
-      history.unshift(newSession);
-      saveHistory(history);
-      renderHistory();
+  const history = getHistory();
+  const newSession = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    type: isBreak ? 'break' : 'focus',
+    duration: actualDuration,
+    taskId: selectedTaskId,
+    taskTitle: selectedTask ? selectedTask.title : 'No task linked'
+  };
 
-      // Switch session
-      alert(isBreak ? 'Break complete! Time to focus.' : 'Focus session complete! Take a break.');
-      switchSession();
-    }
+  history.unshift(newSession);
+  saveHistory(history);
+  renderHistory();
+
+  // Switch session
+  alert(isBreak ? 'Break complete! Time to focus.' : 'Focus session complete! Take a break.');
+  switchSession();
+}
 
     // Switch between focus and break
     function switchSession() {
@@ -729,4 +812,3 @@
 
 
 </html>
-
