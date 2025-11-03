@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply m-0 p-0 box-border font-['Segoe_UI'];
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 min-h-screen flex flex-col;
+  }
+}
+
+@layer components {
+  /* Header Components */
+  .header {
+    @apply bg-white py-4 px-5 shadow-sm flex justify-between items-center;
+  }
+
+  .logo {
+    @apply text-2xl font-bold text-primary-600;
+  }
+
+  .nav-button {
+    @apply px-5 py-2 text-base rounded-lg border-none cursor-pointer transition-all;
+  }
+
+  .nav-login {
+    @apply bg-transparent text-primary-600 border border-primary-600 hover:bg-gray-100;
+  }
+
+  .nav-register {
+    @apply bg-primary-600 text-white hover:bg-primary-700;
+  }
+
+  /* Auth Components */
+  .auth-overlay {
+    @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+  }
+
+  .auth-container {
+    @apply w-full max-w-md bg-white p-8 rounded-2xl shadow-xl relative text-gray-900;
+    animation: fade-in 0.5s ease-in-out;
+  }
+
+  .auth-heading {
+    @apply text-center mb-6 text-2xl text-primary-600 font-bold;
+  }
+
+  .auth-input {
+    @apply w-full px-4 py-3 my-2 rounded-lg border border-gray-300 text-base bg-gray-50 text-gray-900 
+           focus:outline-none focus:border-primary-600 focus:bg-white;
+  }
+
+  .auth-button {
+    @apply w-full px-4 py-3 my-2 rounded-lg border-none text-base cursor-pointer font-bold transition-colors;
+  }
+
+  .auth-primary-btn {
+    @apply bg-primary-600 text-white hover:bg-primary-700;
+  }
+
+  .auth-link {
+    @apply bg-transparent border-none text-primary-600 cursor-pointer mt-2 underline p-0;
+  }
+
+  /* Feature Cards */
+  .feature-card {
+    @apply bg-white p-8 rounded-xl text-center shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
+  }
+
+  .feature-icon {
+    @apply w-12 h-12 mx-auto mb-4 flex items-center justify-center rounded-full bg-indigo-100 text-primary-600 text-2xl;
+  }
+
+  .feature-title {
+    @apply text-lg font-semibold mb-2;
+  }
+
+  .feature-description {
+    @apply text-sm text-gray-500;
+  }
+
+  /* Form Elements */
+  .form-group {
+    @apply relative;
+  }
+
+  .password-toggle {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 text-base;
+  }
+
+  .error-message {
+    @apply text-red-500 text-sm text-center;
+  }
+
+  .success-message {
+    @apply text-green-500 text-sm text-center;
+  }
+
+  /* Footer */
+  .footer {
+    @apply bg-white py-5 text-center border-t border-gray-200 mt-10;
+  }
+
+  .footer-text {
+    @apply text-gray-500 text-lg;
+  }
+
+  .footer-brand {
+    @apply text-primary-600 font-semibold;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .header {
+    @apply flex-col gap-4 p-5;
+  }
+
+  .intro-section h1 {
+    @apply text-4xl;
+  }
+  .intro-section h2 {
+    @apply text-3xl;
+  }
+  .intro-section p {
+    @apply text-base;
+  }
+  .auth-container {
+    @apply mx-5 max-w-[calc(100%-40px)];
+  }
+}
+
+@media (max-width: 640px) {
+  .intro-section h1 {
+    @apply text-3xl;
+  }
+  .intro-section h2 {
+    @apply text-2xl;
+  }
+  .intro-section p {
+    @apply text-sm;
+  }
+}
