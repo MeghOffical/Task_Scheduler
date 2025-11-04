@@ -4,11 +4,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
+interface Task {
+  id: string;
+  title: string;
+  status: string;
+  dueDate: string;
+}
+
 const Header = () => {
-  const [notificationCount] = useState(1);
+  const [notificationCount, setNotificationCount] = useState(0);
   const [isDark, setIsDark] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [userInfo, setUserInfo] = useState<{ username: string; email: string } | null>(null);
+  const [pendingTasks, setPendingTasks] = useState<Task[]>([]);
+  const [missedTasks, setMissedTasks] = useState<Task[]>([]);
   const pathname = usePathname();
 
   const fetchUserInfo = async () => {
@@ -20,6 +30,45 @@ const Header = () => {
       }
     } catch (error) {
       console.error('Error fetching user info:', error);
+    }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch('/api/tasks');
+      if (response.ok) {
+        const tasks = await response.json();
+        
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+        const pending: Task[] = [];
+        const missed: Task[] = [];
+
+        tasks.forEach((task: Task) => {
+          // Check if task is missed/overdue (dueDate < today AND status !== 'completed')
+          let isMissed = false;
+          if (task.dueDate && task.status !== 'completed') {
+            const dueDate = new Date(task.dueDate);
+            dueDate.setHours(0, 0, 0, 0);
+            if (dueDate < now) {
+              missed.push(task);
+              isMissed = true;
+            }
+          }
+
+          // Check if task is pending (status is 'pending' AND not already in missed)
+          if (task.status === 'pending' && !isMissed) {
+            pending.push(task);
+          }
+        });
+
+        setPendingTasks(pending);
+        setMissedTasks(missed);
+        setNotificationCount(pending.length + missed.length);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
     }
   };
 
@@ -36,22 +85,46 @@ const Header = () => {
       document.documentElement.classList.remove('dark');
     }
 
-    // Fetch user info
+    // Fetch user info and notifications
     fetchUserInfo();
+    fetchNotifications();
   }, []);
 
-  // Close profile menu when clicking outside
+  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (showProfileMenu && !target.closest('.profile-menu-container')) {
         setShowProfileMenu(false);
       }
+      if (showNotifications && !target.closest('.notification-menu-container')) {
+        setShowNotifications(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showProfileMenu]);
+  }, [showProfileMenu, showNotifications]);
+
+  // Listen for task updates to refresh notifications
+  useEffect(() => {
+    const handleTaskUpdate = () => {
+      fetchNotifications();
+    };
+
+    window.addEventListener('task-updated', handleTaskUpdate);
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'task-updated') {
+        handleTaskUpdate();
+      }
+    };
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('task-updated', handleTaskUpdate);
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   const toggleDarkMode = () => {
     const newDarkMode = !isDark;
@@ -79,12 +152,95 @@ const Header = () => {
         Plan-it
       </Link>
       <div className="flex items-center gap-4">
-        <div className="relative">
-          <span className="text-xl cursor-pointer">🔔</span>
-          {notificationCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-              {notificationCount}
-            </span>
+        {/* Notifications Menu */}
+        <div className="relative notification-menu-container">
+          <button
+            onClick={() => {
+              setShowNotifications(!showNotifications);
+              if (!showNotifications) {
+                fetchNotifications(); // Refresh notifications when opening
+              }
+            }}
+            className="text-xl cursor-pointer hover:opacity-80 transition-opacity relative"
+            title="Notifications"
+          >
+            🔔
+            {notificationCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                {notificationCount}
+              </span>
+            )}
+          </button>
+          
+          {showNotifications && (
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 max-h-96 overflow-y-auto">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Notifications</h3>
+              </div>
+              
+              <div className="max-h-80 overflow-y-auto">
+                {/* Missed/Overdue Tasks */}
+                {missedTasks.length > 0 && (
+                  <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <h4 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2 flex items-center gap-2">
+                      <span>⚠️</span> Missed Tasks ({missedTasks.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {missedTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border-l-4 border-red-500 dark:border-red-400"
+                        >
+                          <p className="text-sm font-medium text-red-900 dark:text-red-100">
+                            {task.title}
+                          </p>
+                          {task.dueDate && (
+                            <p className="text-xs text-red-700 dark:text-red-300 mt-1">
+                              Due: {new Date(task.dueDate).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Pending Tasks */}
+                {pendingTasks.length > 0 && (
+                  <div className="p-4">
+                    <h4 className="text-sm font-semibold text-yellow-600 dark:text-yellow-400 mb-2 flex items-center gap-2">
+                      <span>⏳</span> Pending Tasks ({pendingTasks.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {pendingTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-l-4 border-yellow-500 dark:border-yellow-400"
+                        >
+                          <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+                            {task.title}
+                          </p>
+                          {task.dueDate && (
+                            <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+                              Due: {new Date(task.dueDate).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* No notifications */}
+                {pendingTasks.length === 0 && missedTasks.length === 0 && (
+                  <div className="p-8 text-center">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                      No notifications
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
         <button
