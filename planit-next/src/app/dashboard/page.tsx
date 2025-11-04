@@ -42,9 +42,11 @@ export default function DashboardPage() {
 
   const fetchDashboardData = useCallback(async () => {
     try {
+      // Add timestamp to prevent caching
+      const timestamp = Date.now();
       const [tasksResponse, statsResponse] = await Promise.all([
-        fetch('/api/tasks'),
-        fetch('/api/tasks/stats')
+        fetch(`/api/tasks?t=${timestamp}`, { cache: 'no-store' }),
+        fetch(`/api/tasks/stats?t=${timestamp}`, { cache: 'no-store' })
       ]);
 
       if (!tasksResponse.ok) {
@@ -79,6 +81,23 @@ export default function DashboardPage() {
     console.log('Setting up dashboard data fetch');
     fetchDashboardData();
 
+    // Listen for task update events from other pages/components
+    const handleTaskUpdate = () => {
+      console.log('Task update event received, refreshing dashboard');
+      fetchDashboardData();
+    };
+
+    // Listen to custom event
+    window.addEventListener('task-updated', handleTaskUpdate);
+    
+    // Listen to postMessage (for cross-page communication)
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'task-updated') {
+        handleTaskUpdate();
+      }
+    };
+    window.addEventListener('message', handleMessage);
+
     // Polling for updates every 10 seconds as a fallback
     const pollInterval = setInterval(() => {
       console.log('Polling for updates');
@@ -86,7 +105,9 @@ export default function DashboardPage() {
     }, 10000);
 
     return () => {
-      console.log('Cleaning up dashboard polling');
+      console.log('Cleaning up dashboard polling and event listeners');
+      window.removeEventListener('task-updated', handleTaskUpdate);
+      window.removeEventListener('message', handleMessage);
       clearInterval(pollInterval);
     };
   }, [fetchDashboardData]);
