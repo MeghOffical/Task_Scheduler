@@ -29,26 +29,26 @@ interface TaskFormData {
 const getPriorityClass = (priority: Task['priority']): string => {
   switch (priority) {
     case 'high':
-      return 'bg-red-100 text-red-700';
+      return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
     case 'medium':
-      return 'bg-yellow-100 text-yellow-700';
+      return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
     case 'low':
-      return 'bg-blue-100 text-blue-700';
+      return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
     default:
-      return 'bg-gray-100 text-gray-700';
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300';
   }
 };
 
 const getStatusClass = (status: Task['status']): string => {
   switch (status) {
     case 'completed':
-      return 'bg-green-100 text-green-700';
+      return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
     case 'in-progress':
-      return 'bg-blue-100 text-blue-700';
+      return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
     case 'pending':
-      return 'bg-yellow-100 text-yellow-700';
+      return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
     default:
-      return 'bg-gray-100 text-gray-700';
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300';
   }
 };
 
@@ -158,7 +158,7 @@ export default function TasksPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Tasks</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
           <button
             onClick={() => {
               resetForm();
@@ -171,37 +171,37 @@ export default function TasksPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg">{error}</div>
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg">{error}</div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tasks.map((task: Task) => (
             <div
               key={task.id}
-              className="bg-white rounded-xl shadow-sm p-6 space-y-4"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
             >
               <div className="flex justify-between items-start">
-                <h3 className="font-semibold text-lg">{task.title}</h3>
+                <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{task.title}</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEditModal(task)}
-                    className="text-gray-500 hover:text-primary-600"
+                    className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(task.id)}
-                    className="text-gray-500 hover:text-red-600"
+                    className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                   >
                     🗑️
                   </button>
                 </div>
               </div>
 
-              <p className="text-gray-600 text-sm">{task.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">{task.description}</p>
 
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500">
+                <span className="text-gray-500 dark:text-gray-400">
                   Due: {new Date(task.dueDate || '').toLocaleDateString()}
                 </span>
                 <div className="space-x-2">
@@ -224,15 +224,15 @@ export default function TasksPage() {
 
       {/* Task Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-semibold mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-xl p-6 w-full max-w-md transition-colors">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
               {editingTask ? 'Edit Task' : 'Add New Task'}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Title
                 </label>
                 <input
@@ -242,13 +242,13 @@ export default function TasksPage() {
                   onChange={(e: { target: { value: string } }) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Description
                 </label>
                 <textarea
@@ -257,14 +257,14 @@ export default function TasksPage() {
                   onChange={(e: { target: { value: string } }) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                   rows={3}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="priority" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="priority" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Priority
                   </label>
                   <select
@@ -276,7 +276,7 @@ export default function TasksPage() {
                         priority: e.target.value as 'low' | 'medium' | 'high',
                       })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -285,7 +285,7 @@ export default function TasksPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Status
                   </label>
                   <select
@@ -297,7 +297,7 @@ export default function TasksPage() {
                         status: e.target.value as 'pending' | 'in-progress' | 'completed',
                       })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                   >
                     <option value="pending">Pending</option>
                     <option value="in-progress">In Progress</option>
@@ -307,7 +307,7 @@ export default function TasksPage() {
               </div>
 
               <div>
-                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Due Date
                 </label>
                 <input
@@ -317,7 +317,7 @@ export default function TasksPage() {
                   onChange={(e: { target: { value: string } }) =>
                     setFormData({ ...formData, dueDate: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                   required
                 />
               </div>
@@ -329,7 +329,7 @@ export default function TasksPage() {
                     setShowModal(false);
                     resetForm();
                   }}
-                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 >
                   Cancel
                 </button>
