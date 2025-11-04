@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import DashboardLayout from '@/components/dashboard-layout';
 import { Task } from '@/types';
+import { StatCard, TaskCard, PriorityItem } from './components';
 
 interface DashboardStats {
   totalTasks: number;
@@ -13,6 +14,15 @@ interface DashboardStats {
   highPriority: number;
   mediumPriority: number;
   lowPriority: number;
+}
+
+// Define the LoadingSpinner component outside the DashboardPage component
+function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center py-4">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+    </div>
+  );
 }
 
 export default function DashboardPage() {
@@ -30,23 +40,58 @@ export default function DashboardPage() {
   });
   const [recentTasks, setRecentTasks] = useState<Task[]>([]);
 
-  useEffect(() => {
-    Promise.all([
-      fetch('/api/tasks').then((res) => res.json()),
-      fetch('/api/tasks/stats').then((res) => res.json()),
-    ])
-      .then(([tasksData, statsData]) => {
-        setRecentTasks(tasksData.slice(0, 5));
-        setStats(statsData);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError('Failed to load dashboard data');
-        setLoading(false);
-      });
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const [tasksResponse, statsResponse] = await Promise.all([
+        fetch('/api/tasks'),
+        fetch('/api/tasks/stats')
+      ]);
+
+      if (!tasksResponse.ok) {
+        throw new Error(`Tasks fetch failed: ${tasksResponse.statusText}`);
+      }
+      if (!statsResponse.ok) {
+        throw new Error(`Stats fetch failed: ${statsResponse.statusText}`);
+      }
+
+      const [tasksData, statsData] = await Promise.all([
+        tasksResponse.json(),
+        statsResponse.json()
+      ]);
+
+      console.log('Fetched tasks:', tasksData);
+      console.log('Fetched stats:', statsData);
+
+      setRecentTasks(tasksData.slice(0, 5));
+      setStats(statsData);
+      setError(null);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load dashboard data';
+      setError(errorMessage);
+      console.error('Dashboard data fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  if (loading) {
+  // Initial load and listen for task updates
+  useEffect(() => {
+    console.log('Setting up dashboard data fetch');
+    fetchDashboardData();
+
+    // Polling for updates every 10 seconds as a fallback
+    const pollInterval = setInterval(() => {
+      console.log('Polling for updates');
+      fetchDashboardData();
+    }, 10000);
+
+    return () => {
+      console.log('Cleaning up dashboard polling');
+      clearInterval(pollInterval);
+    };
+  }, [fetchDashboardData]);
+
+  if (loading && !stats.totalTasks) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-full">
@@ -144,96 +189,3 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({
-  icon,
-  label,
-  value,
-  color,
-}: {
-  icon: string;
-  label: string;
-  value: number;
-  color: string;
-}) {
-  const colorMap = {
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    yellow: 'bg-yellow-50 text-yellow-600',
-    red: 'bg-red-50 text-red-600',
-    indigo: 'bg-indigo-50 text-indigo-600',
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4">
-      <div className={`text-2xl p-3 rounded-lg ${colorMap[color as keyof typeof colorMap]}`}>
-        {icon}
-      </div>
-      <div>
-        <div className="text-2xl font-bold">{value}</div>
-        <div className="text-sm text-gray-500">{label}</div>
-      </div>
-    </div>
-  );
-}
-
-function TaskCard({ task }: { task: Task }) {
-  return (
-    <div className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="font-medium mb-1">{task.title}</h3>
-          <p className="text-sm text-gray-500">
-            Due: {new Date(task.dueDate || '').toLocaleDateString()}
-          </p>
-        </div>
-        <div className="space-x-2">
-          <span className={`px-2 py-1 text-xs rounded-full ${
-            task.priority === 'high'
-              ? 'bg-red-100 text-red-700'
-              : task.priority === 'medium'
-              ? 'bg-yellow-100 text-yellow-700'
-              : 'bg-blue-100 text-blue-700'
-          }`}>
-            {task.priority}
-          </span>
-          <span className={`px-2 py-1 text-xs rounded-full ${
-            task.status === 'completed'
-              ? 'bg-green-100 text-green-700'
-              : task.status === 'in-progress'
-              ? 'bg-blue-100 text-blue-700'
-              : task.status === 'overdue'
-              ? 'bg-red-100 text-red-700'
-              : 'bg-yellow-100 text-yellow-700'
-          }`}>
-            {task.status}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PriorityItem({
-  label,
-  count,
-  color,
-}: {
-  label: string;
-  count: number;
-  color: string;
-}) {
-  const colorMap = {
-    red: 'text-red-600',
-    yellow: 'text-yellow-600',
-    blue: 'text-blue-600',
-  };
-
-  return (
-    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-      <span className="text-gray-600">{label}</span>
-      <span className={`text-lg font-semibold ${colorMap[color as keyof typeof colorMap]}`}>
-        {count}
-      </span>
-    </div>
-  );
-}
