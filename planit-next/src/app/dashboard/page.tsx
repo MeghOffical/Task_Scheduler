@@ -125,7 +125,7 @@ export default function DashboardPage() {
   if (error) {
     return (
       <DashboardLayout>
-        <div className="text-center text-red-600">{error}</div>
+        <div className="text-center text-red-600 dark:text-red-400">{error}</div>
       </DashboardLayout>
     );
   }
@@ -134,7 +134,7 @@ export default function DashboardPage() {
     <DashboardLayout>
       <div className="space-y-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -171,11 +171,11 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4">Recent Tasks</h2>
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 transition-colors">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Recent Tasks</h2>
             <div className="space-y-4">
               {recentTasks.length === 0 ? (
-                <p className="text-center text-gray-500 py-4">No tasks available</p>
+                <p className="text-center text-gray-500 dark:text-gray-400 py-4">No tasks available</p>
               ) : (
                 recentTasks.map((task) => (
                   <TaskCard key={task.id} task={task} />
@@ -184,8 +184,8 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4">Task Priority Breakdown</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 transition-colors">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Task Priority Breakdown</h2>
             <div className="space-y-4">
               <PriorityItem
                 label="High Priority"
