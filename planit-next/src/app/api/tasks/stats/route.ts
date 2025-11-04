@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import mongoose from 'mongoose';
 import { Task } from '@/models';
 import { verifyToken } from '@/lib/auth';
 import dbConnect from '@/lib/db';
@@ -12,45 +13,24 @@ export async function GET(request: Request) {
     }
 
     const verified = await verifyToken(token);
-    if ('error' in verified) {
+    if ('error' in verified || !verified.id) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     await dbConnect();
 
-    const stats = await Task.aggregate([
-      { $match: { userId: verified.id } },
-      {
-        $group: {
-          _id: null,
-          totalTasks: { $sum: 1 },
-          pendingTasks: {
-            $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] },
-          },
-          inProgressTasks: {
-            $sum: { $cond: [{ $eq: ['$status', 'in-progress'] }, 1, 0] },
-          },
-          completedTasks: {
-            $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] },
-          },
-          overdueTasks: {
-            $sum: { $cond: [{ $eq: ['$status', 'overdue'] }, 1, 0] },
-          },
-          highPriority: {
-            $sum: { $cond: [{ $eq: ['$priority', 'high'] }, 1, 0] },
-          },
-          mediumPriority: {
-            $sum: { $cond: [{ $eq: ['$priority', 'medium'] }, 1, 0] },
-          },
-          lowPriority: {
-            $sum: { $cond: [{ $eq: ['$priority', 'low'] }, 1, 0] },
-          },
-        },
-      },
-    ]);
+    // Convert userId string to ObjectId for proper matching
+    const userId = new mongoose.Types.ObjectId(verified.id);
+    
+    // Fetch all tasks for the user
+    const tasks = await Task.find({ userId }).lean();
 
-    const defaultStats = {
-      totalTasks: 0,
+    // Calculate statistics
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const stats = {
+      totalTasks: tasks.length,
       pendingTasks: 0,
       inProgressTasks: 0,
       completedTasks: 0,
@@ -60,7 +40,29 @@ export async function GET(request: Request) {
       lowPriority: 0,
     };
 
-    return NextResponse.json(stats[0] || defaultStats);
+    tasks.forEach((task) => {
+      // Count by status
+      if (task.status === 'pending') stats.pendingTasks++;
+      else if (task.status === 'in-progress') stats.inProgressTasks++;
+      else if (task.status === 'completed') stats.completedTasks++;
+
+      // Count overdue tasks (dueDate < today AND status !== 'completed')
+      if (task.dueDate && task.status !== 'completed') {
+        const dueDate = new Date(task.dueDate);
+        dueDate.setHours(0, 0, 0, 0);
+        if (dueDate < now) {
+          stats.overdueTasks++;
+        }
+      }
+
+      // Count by priority
+      if (task.priority === 'high') stats.highPriority++;
+      else if (task.priority === 'medium') stats.mediumPriority++;
+      else if (task.priority === 'low') stats.lowPriority++;
+    });
+
+    console.log('Stats calculated:', stats);
+    return NextResponse.json(stats);
   } catch (error) {
     console.error('Error fetching task stats:', error);
     return NextResponse.json(
