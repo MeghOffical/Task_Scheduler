@@ -19,8 +19,20 @@ export async function GET(request: Request) {
     await dbConnect();
 
     const tasks = await Task.find({ userId: verified.id }).sort({ createdAt: -1 });
+    
+    // Transform the MongoDB _id to id before sending
+    const transformedTasks = tasks.map(task => ({
+      id: task._id.toString(),
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      status: task.status,
+      dueDate: task.dueDate,
+      createdAt: task.createdAt,
+      userId: task.userId
+    }));
 
-    return NextResponse.json(tasks);
+    return NextResponse.json(transformedTasks);
   } catch (error) {
     console.error('Error fetching tasks:', error);
     return NextResponse.json(
@@ -38,7 +50,9 @@ export async function POST(request: Request) {
     }
 
     const verified = await verifyToken(token);
+
     if ('error' in verified || !verified.id) {
+      console.log('POST /api/tasks: Token verification failed:', verified.error);
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 

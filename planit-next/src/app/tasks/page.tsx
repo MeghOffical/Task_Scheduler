@@ -3,6 +3,7 @@
 import React from 'react';
 const { useState, useEffect } = React;
 import DashboardLayout from '@/components/dashboard-layout';
+import { createTask, updateTask, deleteTask } from '@/lib/tasks';
 
 interface Task {
   id: string;
@@ -92,24 +93,11 @@ export default function TasksPage() {
     setError(null);
 
     try {
-      const url = editingTask
-        ? `/api/tasks/${editingTask.id}`
-        : '/api/tasks';
-      const method = editingTask ? 'PUT' : 'POST';
-
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        const error = await res.text();
-        throw new Error(error || 'Failed to save task');
+      if (editingTask) {
+        await updateTask(editingTask.id, formData);
+      } else {
+        await createTask(formData);
       }
-
       await loadTasks();
       setShowModal(false);
       resetForm();
@@ -124,15 +112,7 @@ export default function TasksPage() {
     if (!confirm('Are you sure you want to delete this task?')) return;
 
     try {
-      const res = await fetch(`/api/tasks/${taskId}`, {
-        method: 'DELETE',
-      });
-
-      if (!res.ok) {
-        const error = await res.text();
-        throw new Error(error || 'Failed to delete task');
-      }
-
+      await deleteTask(taskId);
       await loadTasks();
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete task';
@@ -284,10 +264,11 @@ export default function TasksPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="priority" className="block text-sm font-medium text-gray-700">
                     Priority
                   </label>
                   <select
+                    id="priority"
                     value={formData.priority}
                     onChange={(e: { target: { value: string } }) =>
                       setFormData({
@@ -304,10 +285,11 @@ export default function TasksPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="status" className="block text-sm font-medium text-gray-700">
                     Status
                   </label>
                   <select
+                    id="status"
                     value={formData.status}
                     onChange={(e: { target: { value: string } }) =>
                       setFormData({
@@ -325,10 +307,11 @@ export default function TasksPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
                   Due Date
                 </label>
                 <input
+                  id="dueDate"
                   type="date"
                   value={formData.dueDate}
                   onChange={(e: { target: { value: string } }) =>
