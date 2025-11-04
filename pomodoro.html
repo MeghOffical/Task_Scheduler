@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow - Pomodoro Timer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    /* Header */
+    .dashboard-header {
+      background: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-header .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0891b2;
+    }
+
+    .user-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .notification-icon {
+      position: relative;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .notification-icon .badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      padding: 2px 5px;
+      border-radius: 50%;
+      font-weight: bold;
+    }
+
+    .username {
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      padding: 8px 20px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Layout */
+    .dashboard-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    .sidebar {
+      width: 250px;
+      background: white;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+      padding: 20px 0;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 25px;
+      color: #666;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item.active {
+      background: #f0f9ff;
+      color: #0891b2;
+      border-left-color: #0891b2;
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 25px;
+      display: flex;
+      gap: 25px;
+      overflow: hidden;
+    }
+
+    .timer-section {
+      flex: 1;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .timer-section h1 {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+    }
+
+/* Dark Theme Styles */
+body.dark-theme {
+    background: #1a1a1a;
+    color: #e5e5e5;
+}
+
+body.dark-theme .dashboard-header {
+    background: #2d2d2d;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .dashboard-header .logo {
+    color: #22d3ee;
+}
+
+body.dark-theme .username {
+    color: #e5e5e5;
+}
+
+body.dark-theme .sidebar {
+    background: #2d2d2d;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .nav-item {
+    color: #9ca3af;
+}
+
+body.dark-theme .nav-item:hover {
+    background: #1e3a4d;
+    color: #22d3ee;
+}
+
+body.dark-theme .nav-item.active {
+    background: #1e3a4d;
+    color: #22d3ee;
+    border-left-color: #22d3ee;
+}
+
+body.dark-theme .timer-section,
+body.dark-theme .history-section {
+    background: #2d2d2d;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .timer-section h1,
+body.dark-theme .history-section h2 {
+    color: #e5e5e5;
+}
+
+body.dark-theme .session-label {
+    color: #9ca3af;
+}
+
+body.dark-theme .timer-circle {
+    background: #1a1a1a;
+    border-color: #22d3ee;
+}
+
+body.dark-theme .timer-circle.break-mode {
+    border-color: #10b981;
+}
+
+body.dark-theme .timer-display {
+    color: #22d3ee;
+}
+
+body.dark-theme .timer-display.break-mode {
+    color: #10b981;
+}
+
+body.dark-theme .task-link-section label {
+    color: #9ca3af;
+}
+
+body.dark-theme .task-link-section select {
+    background: #1a1a1a;
+    border-color: #404040;
+    color: #e5e5e5;
+}
+
+body.dark-theme .history-item {
+    background: #1a1a1a;
+    border-left-color: #22d3ee;
+}
+
+body.dark-theme .history-item.break-session {
+    border-left-color: #10b981;
+}
+
+body.dark-theme .history-task {
+    color: #e5e5e5;
+}
+
+body.dark-theme .history-date {
+    color: #22d3ee;
+}
+
+body.dark-theme .no-history {
+    color: #9ca3af;
+}
+
+body.dark-theme .btn-reset {
+    background: #404040;
+    color: #e5e5e5;
+}
+
+body.dark-theme .btn-reset:hover {
+    background: #525252;
+}
+
+.theme-toggle {
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+    /* Timer */
+    .timer-container {
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .session-label {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .timer-circle {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 25px;
+      border: 10px solid #0891b2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: white;
+    }
+
+    .timer-circle.break-mode {
+      border-color: #10b981;
+    }
+
+    .timer-display {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #0891b2;
+    }
+
+    .timer-display.break-mode {
+      color: #10b981;
+    }
+
+    /* Buttons */
+    .timer-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .timer-btn {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-start {
+      background: #0891b2;
+      color: white;
+    }
+
+    .btn-start:hover {
+      background: #0e7490;
+    }
+
+    .btn-start:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+
+    .btn-reset {
+      background: #e5e7eb;
+      color: #333;
+    }
+
+    .btn-reset:hover {
+      background: #d1d5db;
+    }
+
+    .btn-skip {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .btn-skip:hover {
+      background: #fde68a;
+    }
+
+    /* Task Selection */
+    .task-link-section {
+      margin-top: auto;
+    }
+
+    .task-link-section label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .task-link-section select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: white;
+    }
+
+    /* Session History */
+    .history-section {
+      width: 320px;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+    }
+
+    .history-section h2 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .history-item {
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 4px solid #0891b2;
+    }
+
+    .history-item.break-session {
+      border-left-color: #10b981;
+    }
+
+    .history-date {
+      font-size: 0.8rem;
+      color: #0891b2;
+      margin-bottom: 6px;
+    }
+
+    .history-task {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+
+    .history-duration {
+      font-size: 0.85rem;
+      color: #10b981;
+    }
+
+    .history-duration.break {
+      color: #f59e0b;
+    }
+
+    .no-history {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1024px) {
+      .main-content {
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .history-section {
+        width: 100%;
+        max-height: 300px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="dashboard-header">
+    <div class="logo">Plan it</div>
+    <div class="user-section">
+      <span class="notification-icon">🔔<span class="badge">1</span></span>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+        <span id="themeIcon">🌙</span>
+    </button>
+      <span class="user-icon">👤</span>
+      <span class="username" id="displayUsername">Admin User</span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span><span>Dashboard</span></a>
+        <a href="tasks.html" class="nav-item"><span class="nav-icon">📋</span><span>Tasks</span></a>
+        <a href="pomodoro.html" class="nav-item active"><span class="nav-icon">🍅</span><span>Pomodoro</span></a>
+        <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span>Analytics</span></a>
+        <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span><span>Settings</span></a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <section class="timer-section">
+        <h1>Pomodoro Timer</h1>
+
+        <div class="timer-container">
+          <div class="session-label" id="sessionLabel">Focus Session</div>
+          <div class="timer-circle" id="timerCircle">
+            <div class="timer-display" id="timerDisplay">25:00</div>
+          </div>
+
+          <div class="timer-controls">
+            <button class="timer-btn btn-start" id="startBtn" onclick="toggleTimer()">Start</button>
+            <button class="timer-btn btn-reset" onclick="resetTimer()">Reset</button>
+            <button class="timer-btn btn-skip" onclick="skipSession()">Skip</button>
+          </div>
+        </div>
+
+        <div class="task-link-section">
+          <label for="taskSelect">Link to Task (optional)</label>
+          <select id="taskSelect">
+            <option value="">No task selected</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="history-section">
+        <h2>Session History</h2>
+        <div class="history-list" id="historyList">
+          <div class="no-history">No sessions completed yet</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let currentUser = sessionStorage.getItem('currentUser') || 'Admin User';
+    document.getElementById('displayUsername').textContent = currentUser;
+
+    // Timer variables
+    let timerInterval = null;
+    let isRunning = false;
+    let isBreak = false;
+    let selectedTaskId = null;
+
+    // Load settings from localStorage
+function getUserSettings() {
+    const user = sessionStorage.getItem('currentUser') || 'guest';
+    const settingsKey = `settings_${user}`;
+    const savedSettings = localStorage.getItem(settingsKey);
+    
+    if (savedSettings) {
+        return JSON.parse(savedSettings);
+    }
+    // Default settings
+    return {
+        focusDuration: 25,
+        shortBreak: 5,
+        longBreak: 15
+    };
+}
+
+const userSettings = getUserSettings();
+const FOCUS_TIME = userSettings.focusDuration * 60;
+const BREAK_TIME = userSettings.shortBreak * 60;
+let timeLeft = FOCUS_TIME;
+
+    // Audio notification
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playNotificationSound() {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    }
+
+// Get user-specific tasks key
+function getUserTasksKey() {
+    const currentUser = sessionStorage.getItem('currentUser') || 'guest';
+    return `tasks_${currentUser}`;
+}
+
+// Get tasks from localStorage (user-specific)
+function getTasks() {
+    try {
+        const userTasksKey = getUserTasksKey();
+        const tasksData = localStorage.getItem(userTasksKey);
+        return tasksData ? JSON.parse(tasksData) : [];
+    } catch (error) {
+        console.error('Error loading tasks:', error);
+        return [];
+    }
+}
+
+    // Get user-specific history key
+function getUserHistoryKey() {
+    const currentUser = sessionStorage.getItem('currentUser') || 'guest';
+    return `pomodoroHistory_${currentUser}`;
+}
+
+// Get history from localStorage (user-specific)
+function getHistory() {
+    try {
+        const userHistoryKey = getUserHistoryKey();
+        const historyData = localStorage.getItem(userHistoryKey);
+        return historyData ? JSON.parse(historyData) : [];
+    } catch (error) {
+        console.error('Error loading history:', error);
+        return [];
+    }
+}
+
+// Save history to localStorage (user-specific)
+function saveHistory(history) {
+    try {
+        const userHistoryKey = getUserHistoryKey();
+        localStorage.setItem(userHistoryKey, JSON.stringify(history));
+    } catch (error) {
+        console.error('Error saving history:', error);
+    }
+}
+
+    // Load tasks into dropdown
+    function loadTasks() {
+      const tasks = getTasks();
+      const taskSelect = document.getElementById('taskSelect');
+      taskSelect.innerHTML = '<option value="">No task selected</option>';
+
+      tasks.forEach(task => {
+        const option = document.createElement('option');
+        option.value = task.id;
+        option.textContent = task.title;
+        taskSelect.appendChild(option);
+      });
+
+      taskSelect.addEventListener('change', (e) => {
+        selectedTaskId = e.target.value || null;
+      });
+    }
+
+    // Format time display
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Update timer display
+    function updateDisplay() {
+      document.getElementById('timerDisplay').textContent = formatTime(timeLeft);
+    }
+
+    // Toggle timer start/pause
+    function toggleTimer() {
+      if (isRunning) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
+    }
+
+    // Start timer
+function startTimer() {
+  isRunning = true;
+  document.getElementById('startBtn').textContent = 'Pause';
+  
+  // Store session start time
+  if (!sessionStorage.getItem('sessionStartTime')) {
+    sessionStorage.setItem('sessionStartTime', Date.now().toString());
+  }
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateDisplay();
+
+    if (timeLeft <= 0) {
+      completeSession();
+    }
+  }, 1000);
+}
+
+    // Theme Management
+function loadTheme() {
+    const theme = sessionStorage.getItem('theme') || 'light';
+    if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+        document.getElementById('themeIcon').textContent = '☀️';
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+    sessionStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Load theme on page load
+loadTheme();
+
+    // Pause timer
+    function pauseTimer() {
+      isRunning = false;
+      document.getElementById('startBtn').textContent = 'Start';
+      clearInterval(timerInterval);
+    }
+
+    // Reset timer
+    function resetTimer() {
+      pauseTimer();
+      timeLeft = isBreak ? BREAK_TIME : FOCUS_TIME;
+      sessionStorage.removeItem('sessionStartTime');
+      updateDisplay();
+    }
+
+    // Skip to next session
+function skipSession() {
+  if (confirm('Skip this session?')) {
+    pauseTimer();
+    sessionStorage.removeItem('sessionStartTime');
+    switchSession();
+  }
+}
+
+    // Complete session and save to history
+function completeSession() {
+  pauseTimer();
+  playNotificationSound();
+
+  // Calculate actual duration
+  const sessionStart = sessionStorage.getItem('sessionStartTime');
+  const actualDuration = sessionStart 
+    ? Math.round((Date.now() - parseInt(sessionStart)) / 60000) 
+    : (isBreak ? BREAK_TIME / 60 : FOCUS_TIME / 60);
+  
+  // Clear session start time
+  sessionStorage.removeItem('sessionStartTime');
+
+  // Save to history
+  const tasks = getTasks();
+  const selectedTask = tasks.find(t => t.id == selectedTaskId);
+
+  const history = getHistory();
+  const newSession = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    type: isBreak ? 'break' : 'focus',
+    duration: actualDuration,
+    taskId: selectedTaskId,
+    taskTitle: selectedTask ? selectedTask.title : 'No task linked'
+  };
+
+  history.unshift(newSession);
+  saveHistory(history);
+  renderHistory();
+
+  // Switch session
+  alert(isBreak ? 'Break complete! Time to focus.' : 'Focus session complete! Take a break.');
+  switchSession();
+}
+
+    // Switch between focus and break
+    function switchSession() {
+      isBreak = !isBreak;
+      timeLeft = isBreak ? BREAK_TIME : FOCUS_TIME;
+
+      const circle = document.getElementById('timerCircle');
+      const display = document.getElementById('timerDisplay');
+      const label = document.getElementById('sessionLabel');
+
+      if (isBreak) {
+        circle.classList.add('break-mode');
+        display.classList.add('break-mode');
+        label.textContent = 'Break Time';
+      } else {
+        circle.classList.remove('break-mode');
+        display.classList.remove('break-mode');
+        label.textContent = 'Focus Session';
+      }
+
+      updateDisplay();
+    }
+
+    // Render session history
+    function renderHistory() {
+      const history = getHistory();
+      const historyList = document.getElementById('historyList');
+
+      if (history.length === 0) {
+        historyList.innerHTML = '<div class="no-history">No sessions completed yet</div>';
+        return;
+      }
+
+      historyList.innerHTML = history.map(session => {
+        const date = new Date(session.date);
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const sessionClass = session.type === 'break' ? 'break-session' : '';
+        const durationClass = session.type === 'break' ? 'break' : '';
+
+        return `
+          <div class="history-item ${sessionClass}">
+            <div class="history-date">${dateStr}</div>
+            <div class="history-task">${session.taskTitle}</div>
+            <div class="history-duration ${durationClass}">${session.duration} min ${session.type}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        sessionStorage.clear();
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Initialize
+    window.onload = function () {
+      loadTasks();
+      renderHistory();
+      updateDisplay();
+    };
+  </script>
+</body>
+
+</html>
