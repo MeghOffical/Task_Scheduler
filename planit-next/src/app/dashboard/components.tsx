@@ -15,21 +15,21 @@ type StatCardProps = Readonly<{
 
 export function StatCard({ icon, label, value, color }: StatCardProps) {
   const colorMap = {
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    yellow: 'bg-yellow-50 text-yellow-600',
-    red: 'bg-red-50 text-red-600',
-    indigo: 'bg-indigo-50 text-indigo-600',
+    blue: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+    green: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+    yellow: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
+    red: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400',
+    indigo: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 flex items-center gap-4 transition-colors">
       <div className={`text-2xl p-3 rounded-lg ${colorMap[color as keyof typeof colorMap]}`}>
         {icon}
       </div>
       <div>
-        <div className="text-2xl font-bold">{value}</div>
-        <div className="text-sm text-gray-500">{label}</div>
+        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">{label}</div>
       </div>
     </div>
   );
@@ -43,33 +43,33 @@ export function TaskCard({ task }: TaskCardProps) {
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-100 text-red-700';
+        return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-700';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
       default:
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
     }
   };
 
   const getStatusStyles = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-700';
+        return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
       case 'in-progress':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
       case 'overdue':
-        return 'bg-red-100 text-red-700';
+        return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
       default:
-        return 'bg-yellow-100 text-yellow-700';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
     }
   };
 
   return (
-    <div className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
       <div className="flex justify-between items-start">
         <div>
-          <h3 className="font-medium mb-1">{task.title}</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="font-medium mb-1 text-gray-900 dark:text-gray-100">{task.title}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Due: {new Date(task.dueDate || '').toLocaleDateString()}
           </p>
         </div>
@@ -94,14 +94,14 @@ type PriorityItemProps = Readonly<{
 
 export function PriorityItem({ label, count, color }: PriorityItemProps) {
   const colorMap = {
-    red: 'text-red-600',
-    yellow: 'text-yellow-600',
-    blue: 'text-blue-600',
+    red: 'text-red-600 dark:text-red-400',
+    yellow: 'text-yellow-600 dark:text-yellow-400',
+    blue: 'text-blue-600 dark:text-blue-400',
   };
 
   return (
-    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-      <span className="text-gray-600">{label}</span>
+    <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg transition-colors">
+      <span className="text-gray-600 dark:text-gray-300">{label}</span>
       <span className={`text-lg font-semibold ${colorMap[color as keyof typeof colorMap]}`}>
         {count}
       </span>
