@@ -20,7 +20,7 @@ Our goal is to create a distraction-free tool that helps you focus on what truly
 
 ## ✨ Features
 
-PlanIt is packed with features to enhance your productivity.
+PlanIt is packed with features to enhance your productivity...
 
 ### Core Functionality
 * **CRUD Operations:** Easily **C**reate, **R**ead, **U**pdate, and **D**elete tasks.
