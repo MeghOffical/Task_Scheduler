@@ -12,7 +12,7 @@ Our goal is to create a distraction-free tool that helps you focus on what truly
 
 ### Why PlanIt?
 * **Simple & Intuitive:** A clean interface that's easy to navigate...
-* **Privacy-Focused:** All your tasks are stored locally on your device.
+* **Privacy-Focused:** All your tasks are stored locally on your device...
 * **Lightweight & Fast:** Built to be responsive and not hog your system's resources.
 * **Smart & Efficient:** An optional AI assistant to make task management faster than ever.
 
