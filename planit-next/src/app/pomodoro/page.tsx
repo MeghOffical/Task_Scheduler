@@ -155,19 +155,52 @@ export default function PomodoroPage() {
         <h1 className="text-2xl font-bold mb-6">Pomodoro Timer</h1>
 
         <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="text-lg text-gray-600 mb-5">
+          <div className="text-lg text-white mb-5">
             {isBreak ? 'Break Time' : 'Focus Session'}
           </div>
           
-          <div className={`w-56 h-56 rounded-full border-8 ${
-            isBreak ? 'border-emerald-500' : 'border-cyan-600'
-          } flex items-center justify-center mb-6`}>
-            <div className={`text-4xl font-bold ${
-              isBreak ? 'text-emerald-500' : 'text-cyan-600'
-            }`}>
-              {formatTime(timeLeft)}
-            </div>
-          </div>
+          {(() => {
+            const totalSeconds = isBreak ? BREAK_TIME : FOCUS_TIME;
+            const progress = Math.max(0, Math.min(1, timeLeft / totalSeconds));
+            const radius = 88; // visual radius
+            const circumference = 2 * Math.PI * radius;
+            const strokeDashoffset = circumference * (1 - progress);
+            const ringColor = isBreak ? '#10B981' /* emerald-500 */ : '#0891B2' /* cyan-600 */;
+            const trackColor = '#1F2937'; /* gray-800 to match dark card */
+            return (
+              <div className="mb-6">
+                <svg width="224" height="224" viewBox="0 0 224 224" className="block">
+                  <circle
+                    cx="112"
+                    cy="112"
+                    r={radius}
+                    fill="none"
+                    stroke={trackColor}
+                    strokeWidth={12}
+                  />
+                  <circle
+                    cx="112"
+                    cy="112"
+                    r={radius}
+                    fill="none"
+                    stroke={ringColor}
+                    strokeWidth={12}
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    transform="rotate(-90 112 112)" /* start from top */
+                  />
+                  <foreignObject x="0" y="0" width="224" height="224">
+                    <div className="w-[224px] h-[224px] flex items-center justify-center">
+                      <div className={`text-4xl font-bold ${isBreak ? 'text-emerald-500' : 'text-cyan-600'}`}>
+                        {formatTime(timeLeft)}
+                      </div>
+                    </div>
+                  </foreignObject>
+                </svg>
+              </div>
+            );
+          })()}
 
           <div className="flex gap-3 mb-6">
             <button
@@ -192,7 +225,7 @@ export default function PomodoroPage() {
         </div>
 
         <div>
-          <label htmlFor="taskSelect" className="block text-sm font-semibold text-gray-600 mb-2">
+          <label htmlFor="taskSelect" className="block text-sm font-semibold text-white mb-2">
             Link to Task (optional)
           </label>
           <select
@@ -215,7 +248,7 @@ export default function PomodoroPage() {
         <h2 className="text-xl font-bold mb-4 text-white">Session History</h2>
         <div className="flex-1 overflow-y-auto">
           {history.length === 0 ? (
-            <div className="text-center text-gray-500 py-8">
+            <div className="text-center text-white py-8">
               No sessions completed yet
             </div>
           ) : (
