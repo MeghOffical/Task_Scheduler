@@ -4,7 +4,7 @@
 
 ---
 
-## 🎯 About The Project ---->
+## 🎯 About The Project --->
 
 In today's fast-paced world, managing daily tasks can be overwhelming. **PlanIt** is a desktop task scheduler app designed for **students, working professionals, and freelancers** who need a simple yet powerful tool to manage their to-do lists.
 
