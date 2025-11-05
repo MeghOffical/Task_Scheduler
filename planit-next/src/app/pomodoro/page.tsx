@@ -1,8 +1,14 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { Task } from '@/types';
-import DashboardLayout from '@/components/dashboard-layout';
+
+interface PomodoroSettings {
+  workDuration: number;
+  shortBreakDuration: number;
+  longBreakDuration: number;
+  longBreakInterval: number;
+}
 
 interface PomodoroSession {
   id: number;
@@ -14,37 +20,48 @@ interface PomodoroSession {
 }
 
 export default function PomodoroPage() {
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
+  const [isLongBreak, setIsLongBreak] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [history, setHistory] = useState<PomodoroSession[]>([]);
+  const [sessionCount, setSessionCount] = useState(0);
+  const [settings, setSettings] = useState<PomodoroSettings>({
+    workDuration: 25,
+    shortBreakDuration: 5,
+    longBreakDuration: 15,
+    longBreakInterval: 4
+  });
   
-  const FOCUS_TIME = 25 * 60;
-  const BREAK_TIME = 5 * 60;
   const timerRef = useRef<NodeJS.Timeout>();
-
-  // Audio Context
   const audioContextRef = useRef<AudioContext>();
 
   useEffect(() => {
-    // Initialize Audio Context
-    audioContextRef.current = new (globalThis.AudioContext || (globalThis as any).webkitAudioContext)();
-    
-    // Fetch tasks
+    audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     fetchTasks();
+    fetchSettings();
     
-    // Load history from localStorage
     const savedHistory = localStorage.getItem('pomodoroHistory');
     if (savedHistory) {
       setHistory(JSON.parse(savedHistory));
     }
 
+    const handleSettingsChange = (event: CustomEvent<PomodoroSettings>) => {
+      setSettings(event.detail);
+      if (!isRunning) {
+        setTimeLeft(event.detail.workDuration * 60);
+      }
+    };
+
+    window.addEventListener('pomodoroSettingsChanged', handleSettingsChange as EventListener);
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
+      window.removeEventListener('pomodoroSettingsChanged', handleSettingsChange as EventListener);
     };
   }, []);
 
@@ -57,6 +74,23 @@ export default function PomodoroPage() {
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.pomodoroSettings) {
+          setSettings(data.pomodoroSettings);
+          if (!isRunning) {
+            setTimeLeft(data.pomodoroSettings.workDuration * 60);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
     }
   };
 
@@ -110,7 +144,10 @@ export default function PomodoroPage() {
 
   const resetTimer = () => {
     pauseTimer();
-    setTimeLeft(isBreak ? BREAK_TIME : FOCUS_TIME);
+    const newTime = isBreak
+      ? (isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration) * 60
+      : settings.workDuration * 60;
+    setTimeLeft(newTime);
   };
 
   const skipSession = () => {
@@ -126,11 +163,15 @@ export default function PomodoroPage() {
 
     // Save to history
     const selectedTask = tasks.find(t => t.id === selectedTaskId);
+    const sessionDuration = isBreak
+      ? (isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration)
+      : settings.workDuration;
+
     const newSession: PomodoroSession = {
       id: Date.now(),
       date: new Date().toISOString(),
       type: isBreak ? 'break' : 'focus',
-      duration: isBreak ? BREAK_TIME / 60 : FOCUS_TIME / 60,
+      duration: sessionDuration,
       taskId: selectedTaskId || undefined,
       taskTitle: selectedTask ? selectedTask.title : 'No task linked'
     };
@@ -139,34 +180,62 @@ export default function PomodoroPage() {
     setHistory(updatedHistory);
     localStorage.setItem('pomodoroHistory', JSON.stringify(updatedHistory));
 
+    if (!isBreak) {
+      // Only increment session count after focus sessions
+      const newSessionCount = sessionCount + 1;
+      setSessionCount(newSessionCount);
+      // Check if it's time for a long break
+      if (newSessionCount % settings.longBreakInterval === 0) {
+        setIsLongBreak(true);
+      }
+    }
+
     alert(isBreak ? 'Break complete! Time to focus.' : 'Focus session complete! Take a break.');
     switchSession();
   };
 
   const switchSession = () => {
-    setIsBreak(!isBreak);
-    setTimeLeft(isBreak ? FOCUS_TIME : BREAK_TIME);
+    const wasBreak = isBreak;
+    setIsBreak(!wasBreak);
+    
+    if (wasBreak) {
+      // Switching to focus mode
+      setIsLongBreak(false);
+      setTimeLeft(settings.workDuration * 60);
+    } else {
+      // Switching to break mode
+      const breakDuration = isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration;
+      setTimeLeft(breakDuration * 60);
+    }
+  };
+
+  const getTimerColor = () => {
+    if (isBreak) {
+      return isLongBreak ? '#059669' /* emerald-600 */ : '#10B981' /* emerald-500 */;
+    }
+    return '#0891B2' /* cyan-600 */;
   };
 
   return (
-    <DashboardLayout>
-      <div className="flex flex-1 gap-6 p-6 overflow-hidden">
-        <section className="flex-1 bg-[#1B2537] rounded-lg shadow-md p-8 flex flex-col text-white">
+    <div className="flex flex-1 gap-6 p-6 overflow-hidden">
+      <section className="flex-1 bg-[#1B2537] rounded-lg shadow-md p-8 flex flex-col text-white">
         <h1 className="text-2xl font-bold mb-6">Pomodoro Timer</h1>
 
         <div className="flex-1 flex flex-col items-center justify-center">
           <div className="text-lg text-white mb-5">
-            {isBreak ? 'Break Time' : 'Focus Session'}
+            {isBreak ? (isLongBreak ? 'Long Break' : 'Short Break') : 'Focus Session'}
           </div>
           
           {(() => {
-            const totalSeconds = isBreak ? BREAK_TIME : FOCUS_TIME;
+            const totalSeconds = isBreak
+              ? (isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration) * 60
+              : settings.workDuration * 60;
             const progress = Math.max(0, Math.min(1, timeLeft / totalSeconds));
-            const radius = 88; // visual radius
+            const radius = 88;
             const circumference = 2 * Math.PI * radius;
             const strokeDashoffset = circumference * (1 - progress);
-            const ringColor = isBreak ? '#10B981' /* emerald-500 */ : '#0891B2' /* cyan-600 */;
-            const trackColor = '#1F2937'; /* gray-800 to match dark card */
+            const ringColor = getTimerColor();
+            const trackColor = '#1F2937';
             return (
               <div className="mb-6">
                 <svg width="224" height="224" viewBox="0 0 224 224" className="block">
@@ -188,7 +257,7 @@ export default function PomodoroPage() {
                     strokeDasharray={circumference}
                     strokeDashoffset={strokeDashoffset}
                     strokeLinecap="round"
-                    transform="rotate(-90 112 112)" /* start from top */
+                    transform="rotate(-90 112 112)"
                   />
                   <foreignObject x="0" y="0" width="224" height="224">
                     <div className="w-[224px] h-[224px] flex items-center justify-center">
@@ -221,6 +290,10 @@ export default function PomodoroPage() {
             >
               Skip
             </button>
+          </div>
+          
+          <div className="text-sm text-gray-400 mb-6">
+            Session {sessionCount % settings.longBreakInterval || settings.longBreakInterval} of {settings.longBreakInterval}
           </div>
         </div>
 
@@ -278,7 +351,6 @@ export default function PomodoroPage() {
           )}
         </div>
       </section>
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }
