@@ -144,6 +144,41 @@ export default function TasksPage() {
     setShowModal(true);
   };
 
+  const exportToCSV = () => {
+    // Header row
+    const csvHeader = ['Title,Description,Due Date,Status,Priority'];
+    
+    // Convert tasks to CSV format
+    const csvRows = tasks.map(task => {
+      const formattedDate = new Date(task.dueDate).toLocaleDateString();
+      // Escape commas and quotes in text fields to handle CSV properly
+      const escapedTitle = task.title.replace(/"/g, '""');
+      const escapedDescription = (task.description || '').replace(/"/g, '""');
+      
+      return [
+        `"${escapedTitle}"`,
+        `"${escapedDescription}"`,
+        `"${formattedDate}"`,
+        `"${task.status}"`,
+        `"${task.priority}"`
+      ].join(',');
+    });
+
+    // Combine header and rows
+    const csvContent = [...csvHeader, ...csvRows].join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `tasks_${new Date().toLocaleDateString()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -159,15 +194,23 @@ export default function TasksPage() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
-          <button
-            onClick={() => {
-              resetForm();
-              setShowModal(true);
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            Add Task
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={exportToCSV}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+            >
+              <span>📊</span> Export CSV
+            </button>
+            <button
+              onClick={() => {
+                resetForm();
+                setShowModal(true);
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              Add Task
+            </button>
+          </div>
         </div>
 
         {error && (

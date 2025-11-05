@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Task } from '@/types';
+import DashboardLayout from '@/components/dashboard-layout';
 
 interface PomodoroSession {
   id: number;
@@ -148,8 +149,9 @@ export default function PomodoroPage() {
   };
 
   return (
-    <div className="flex flex-1 gap-6 p-6 overflow-hidden">
-      <section className="flex-1 bg-white rounded-lg shadow-md p-8 flex flex-col">
+    <DashboardLayout>
+      <div className="flex flex-1 gap-6 p-6 overflow-hidden">
+        <section className="flex-1 bg-[#1B2537] rounded-lg shadow-md p-8 flex flex-col text-white">
         <h1 className="text-2xl font-bold mb-6">Pomodoro Timer</h1>
 
         <div className="flex-1 flex flex-col items-center justify-center">
@@ -197,7 +199,7 @@ export default function PomodoroPage() {
             id="taskSelect"
             value={selectedTaskId || ''}
             onChange={(e) => setSelectedTaskId(e.target.value || null)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
+            className="w-full p-2 border border-gray-600 rounded-lg bg-[#111827] text-white"
           >
             <option value="">No task selected</option>
             {tasks.map((task) => (
@@ -209,8 +211,8 @@ export default function PomodoroPage() {
         </div>
       </section>
 
-      <section className="w-80 bg-white rounded-lg shadow-md p-6 flex flex-col">
-        <h2 className="text-xl font-bold mb-4">Session History</h2>
+      <section className="w-80 bg-[#1B2537] rounded-lg shadow-md p-6 flex flex-col text-white">
+        <h2 className="text-xl font-bold mb-4 text-white">Session History</h2>
         <div className="flex-1 overflow-y-auto">
           {history.length === 0 ? (
             <div className="text-center text-gray-500 py-8">
@@ -221,7 +223,7 @@ export default function PomodoroPage() {
               {history.map((session) => (
                 <div
                   key={session.id}
-                  className={`p-3 rounded-lg bg-gray-50 border-l-4 ${
+                  className={`p-3 rounded-lg bg-[#111827] border-l-4 ${
                     session.type === 'break' ? 'border-emerald-500' : 'border-cyan-600'
                   }`}
                 >
@@ -243,6 +245,7 @@ export default function PomodoroPage() {
           )}
         </div>
       </section>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
