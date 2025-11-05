@@ -18,6 +18,12 @@ const UserSchema = new mongoose.Schema({
   profession: { 
     type: String 
   },
+  pomodoroSettings: {
+    workDuration: { type: Number, default: 25 }, // minutes
+    shortBreakDuration: { type: Number, default: 5 }, // minutes
+    longBreakDuration: { type: Number, default: 15 }, // minutes
+    longBreakInterval: { type: Number, default: 4 } // sessions before long break
+  },
   createdAt: { 
     type: Date, 
     default: Date.now 
