@@ -28,6 +28,8 @@ export async function GET(request: Request) {
       priority: task.priority,
       status: task.status,
       dueDate: task.dueDate,
+      startTime: task.startTime || null,
+      endTime: task.endTime || null,
       createdAt: task.createdAt,
       userId: task.userId
     }));
@@ -57,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { title, description, priority, status, dueDate } = body;
+    const { title, description, priority, status, dueDate, startTime, endTime } = body;
 
     if (!title) {
       return NextResponse.json(
@@ -75,6 +77,8 @@ export async function POST(request: Request) {
       priority,
       status,
       dueDate: dueDate ? new Date(dueDate) : null,
+      startTime: startTime || null,
+      endTime: endTime || null,
     });
 
     return NextResponse.json(task, { status: 201 });

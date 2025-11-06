@@ -57,6 +57,14 @@ const TaskSchema = new mongoose.Schema({
   dueDate: { 
     type: Date 
   },
+  startTime: {
+    type: String, // Format: "HH:mm" (24-hour format, e.g., "14:30")
+    default: null
+  },
+  endTime: {
+    type: String, // Format: "HH:mm" (24-hour format, e.g., "16:00")
+    default: null
+  },
   createdAt: { 
     type: Date, 
     default: Date.now 

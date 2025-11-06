@@ -12,6 +12,8 @@ interface Task {
   priority: 'low' | 'medium' | 'high';
   status: 'pending' | 'in-progress' | 'completed';
   dueDate: string;
+  startTime?: string;
+  endTime?: string;
   userId: string;
   createdAt: string;
   updatedAt: string;
@@ -24,6 +26,8 @@ interface TaskFormData {
   priority: 'low' | 'medium' | 'high';
   status: 'pending' | 'in-progress' | 'completed';
   dueDate: string;
+  startTime?: string;
+  endTime?: string;
 }
 
 const getPriorityClass = (priority: Task['priority']): string => {
@@ -64,6 +68,8 @@ export default function TasksPage() {
     priority: 'medium',
     status: 'pending',
     dueDate: new Date().toISOString().split('T')[0],
+    startTime: '',
+    endTime: '',
   });
 
   useEffect(() => {
@@ -128,6 +134,8 @@ export default function TasksPage() {
       priority: 'medium',
       status: 'pending',
       dueDate: new Date().toISOString().split('T')[0],
+      startTime: '',
+      endTime: '',
     });
     setEditingTask(null);
   };
@@ -140,13 +148,15 @@ export default function TasksPage() {
       priority: task.priority,
       status: task.status,
       dueDate: task.dueDate?.split('T')[0] || new Date().toISOString().split('T')[0],
+      startTime: task.startTime || '',
+      endTime: task.endTime || '',
     });
     setShowModal(true);
   };
 
   const exportToCSV = () => {
     // Header row
-    const csvHeader = ['Title,Description,Due Date,Status,Priority'];
+    const csvHeader = ['Title,Description,Due Date,Time (24h),Status,Priority'];
     
     // Convert tasks to CSV format
     const csvRows = tasks.map(task => {
@@ -154,11 +164,15 @@ export default function TasksPage() {
       // Escape commas and quotes in text fields to handle CSV properly
       const escapedTitle = task.title.replace(/"/g, '""');
       const escapedDescription = (task.description || '').replace(/"/g, '""');
+      const timeRange = task.startTime && task.endTime 
+        ? `${task.startTime} - ${task.endTime}`
+        : task.startTime || task.endTime || '';
       
       return [
         `"${escapedTitle}"`,
         `"${escapedDescription}"`,
         `"${formattedDate}"`,
+        `"${timeRange}"`,
         `"${task.status}"`,
         `"${task.priority}"`
       ].join(',');
@@ -244,9 +258,18 @@ export default function TasksPage() {
               <p className="text-gray-600 dark:text-gray-300 text-sm">{task.description}</p>
 
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500 dark:text-gray-400">
-                  Due: {new Date(task.dueDate || '').toLocaleDateString()}
-                </span>
+                <div className="flex flex-col gap-1">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Due: {new Date(task.dueDate || '').toLocaleDateString()}
+                  </span>
+                  {(task.startTime || task.endTime) && (
+                    <span className="text-gray-500 dark:text-gray-400 text-xs">
+                      {task.startTime && `Start: ${task.startTime}`}
+                      {task.startTime && task.endTime && ' | '}
+                      {task.endTime && `End: ${task.endTime}`}
+                    </span>
+                  )}
+                </div>
                 <div className="space-x-2">
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${getPriorityClass(task.priority)}`}
@@ -363,6 +386,40 @@ export default function TasksPage() {
                   className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                   required
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Start Time (24h)
+                  </label>
+                  <input
+                    id="startTime"
+                    type="time"
+                    value={formData.startTime || ''}
+                    onChange={(e: { target: { value: string } }) =>
+                      setFormData({ ...formData, startTime: e.target.value })
+                    }
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    step="60"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    End Time (24h)
+                  </label>
+                  <input
+                    id="endTime"
+                    type="time"
+                    value={formData.endTime || ''}
+                    onChange={(e: { target: { value: string } }) =>
+                      setFormData({ ...formData, endTime: e.target.value })
+                    }
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    step="60"
+                  />
+                </div>
               </div>
 
               <div className="flex gap-4 mt-6">
