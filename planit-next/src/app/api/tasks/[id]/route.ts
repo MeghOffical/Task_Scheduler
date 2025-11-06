@@ -64,7 +64,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, description, priority, status, dueDate } = body;
+    const { title, description, priority, status, dueDate, startTime, endTime } = body;
 
     await dbConnect();
 
@@ -90,6 +90,8 @@ export async function PUT(
         priority,
         status,
         dueDate: dueDate ? new Date(dueDate) : null,
+        startTime: startTime || null,
+        endTime: endTime || null,
       },
       { new: true }
     );

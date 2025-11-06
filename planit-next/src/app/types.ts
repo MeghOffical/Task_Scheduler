@@ -17,6 +17,8 @@ export interface TaskFormData {
   priority: 'low' | 'medium' | 'high';
   status: 'pending' | 'in-progress' | 'completed';
   dueDate: string;
+  startTime?: string; // Format: "HH:mm" (24-hour format)
+  endTime?: string; // Format: "HH:mm" (24-hour format)
 }
 
 export const getPriorityClass = (priority: 'low' | 'medium' | 'high'): string => {
@@ -53,6 +55,8 @@ declare module '@/types' {
     priority: 'low' | 'medium' | 'high';
     status: 'pending' | 'in-progress' | 'completed';
     dueDate: string;
+    startTime?: string; // Format: "HH:mm" (24-hour format)
+    endTime?: string; // Format: "HH:mm" (24-hour format)
     userId: string;
     createdAt: string;
     updatedAt: string;
