@@ -178,7 +178,26 @@ export default function DashboardPage() {
                 <p className="text-center text-gray-500 dark:text-gray-400 py-4">No tasks available</p>
               ) : (
                 recentTasks.map((task) => (
-                  <TaskCard key={task.id} task={task} />
+                  <TaskCard 
+                    key={task.id} 
+                    task={task} 
+                    onComplete={async (taskId) => {
+                      try {
+                        await fetch(`/api/tasks/${taskId}`, {
+                          method: 'PUT',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ status: 'completed' }),
+                        });
+                        // Trigger a refresh of the dashboard data
+                        fetchDashboardData();
+                      } catch (error) {
+                        console.error('Failed to complete task:', error);
+                        throw error;
+                      }
+                    }}
+                  />
                 ))
               )}
             </div>
