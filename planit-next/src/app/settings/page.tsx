@@ -19,6 +19,7 @@ interface User {
 export default function SettingsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
   
   const [settings, setSettings] = useState<PomodoroSettings>({
     workDuration: 25,
@@ -123,21 +124,31 @@ export default function SettingsPage() {
         <div className='space-y-4'>
           <div>
             <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>Name</label>
-            <input
-              type='text'
-              value={user.username}
-              disabled
-              className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
-            />
+            <div className="relative group">
+              <input
+                type='text'
+                value={user.username}
+                readOnly
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 cursor-not-allowed group-hover:border-red-500"
+              />
+              <p className="mt-1 text-sm text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                Username cannot be changed
+              </p>
+            </div>
           </div>
           <div>
             <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>Email</label>
-            <input
-              type='email'
-              value={user.email}
-              disabled
-              className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
-            />
+            <div className="relative group">
+              <input
+                type='email'
+                value={user.email}
+                readOnly
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 cursor-not-allowed group-hover:border-red-500"
+              />
+              <p className="mt-1 text-sm text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                Email cannot be changed
+              </p>
+            </div>
           </div>
         </div>
       </section>
