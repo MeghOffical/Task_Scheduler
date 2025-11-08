@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Task } from '@/types';
 
 export const LoadingSpinner = () => (
@@ -37,9 +38,12 @@ export function StatCard({ icon, label, value, color }: StatCardProps) {
 
 type TaskCardProps = Readonly<{
   task: Task;
+  onComplete?: (taskId: string) => Promise<void>;
 }>;
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, onComplete }: TaskCardProps) {
+  const [isUpdating, setIsUpdating] = useState(false);
+
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
       case 'high':
@@ -64,6 +68,19 @@ export function TaskCard({ task }: TaskCardProps) {
     }
   };
 
+  const handleComplete = async () => {
+    if (!onComplete || task.status === 'completed' || isUpdating) return;
+    
+    setIsUpdating(true);
+    try {
+      await onComplete(task.id);
+    } catch (error) {
+      console.error('Failed to complete task:', error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
       <div className="flex justify-between items-start">
@@ -73,13 +90,36 @@ export function TaskCard({ task }: TaskCardProps) {
             Due: {new Date(task.dueDate || '').toLocaleDateString()}
           </p>
         </div>
-        <div className="space-x-2">
+        <div className="flex items-center space-x-2">
           <span className={`px-2 py-1 text-xs rounded-full ${getPriorityStyles(task.priority)}`}>
             {task.priority}
           </span>
           <span className={`px-2 py-1 text-xs rounded-full ${getStatusStyles(task.status)}`}>
             {task.status}
           </span>
+          {task.status !== 'completed' && onComplete && (
+            <button
+              onClick={handleComplete}
+              disabled={isUpdating}
+              className={`ml-2 p-1 rounded-full transition-colors ${
+                isUpdating 
+                  ? 'bg-gray-200 dark:bg-gray-600 cursor-wait' 
+                  : 'bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-800/50'
+              }`}
+              title="Mark as completed"
+            >
+              {isUpdating ? (
+                <svg className="w-5 h-5 animate-spin text-gray-500 dark:text-gray-400" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>
