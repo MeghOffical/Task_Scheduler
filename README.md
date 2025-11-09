@@ -11,8 +11,8 @@ In today's fast-paced world, managing daily tasks can be overwhelming. **PlanIt*
 Our goal is to create a distraction-free tool that helps you focus on what truly matters. With PlanIt, your tasks are stored securely on your local machine, ensuring your data remains private and accessible anytime.
 
 ### Why PlanIt?
-* **Simple & Intuitive:** A clean interface that's easy to navigate...
-* **Privacy-Focused:** All your tasks are stored locally on your device...
+* **Simple & Intuitive:** A clean interface that's easy to navigate.
+* **Privacy-Focused:** All your tasks are stored locally on your device.
 * **Lightweight & Fast:** Built to be responsive and not hog your system's resources.
 * **Smart & Efficient:** An optional AI assistant to make task management faster than ever.
 
