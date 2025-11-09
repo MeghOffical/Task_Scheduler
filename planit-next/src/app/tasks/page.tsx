@@ -235,35 +235,35 @@ export default function TasksPage() {
           {tasks.map((task: Task) => (
             <div
               key={task.id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
+              className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
             >
               <div className="flex justify-between items-start">
-                <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{task.title}</h3>
+                <h3 className="font-semibold text-lg text-white dark:text-gray-100">{task.title}</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEditModal(task)}
-                    className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                    className="text-gray-300 dark:text-gray-400 hover:text-yellow-400 dark:hover:text-primary-400 transition-colors"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(task.id)}
-                    className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                    className="text-gray-300 dark:text-gray-400 hover:text-red-400 dark:hover:text-red-400 transition-colors"
                   >
                     🗑️
                   </button>
                 </div>
               </div>
 
-              <p className="text-gray-600 dark:text-gray-300 text-sm">{task.description}</p>
+              <p className="text-gray-300 dark:text-gray-300 text-sm">{task.description}</p>
 
               <div className="flex justify-between items-center text-sm">
                 <div className="flex flex-col gap-1">
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="text-gray-300 dark:text-gray-400">
                     Due: {new Date(task.dueDate || '').toLocaleDateString()}
                   </span>
                   {(task.startTime || task.endTime) && (
-                    <span className="text-gray-500 dark:text-gray-400 text-xs">
+                    <span className="text-gray-400 dark:text-gray-400 text-xs">
                       {task.startTime && `Start: ${task.startTime}`}
                       {task.startTime && task.endTime && ' | '}
                       {task.endTime && `End: ${task.endTime}`}
