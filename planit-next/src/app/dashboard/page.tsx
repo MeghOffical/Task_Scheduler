@@ -132,95 +132,136 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard
-            icon="📋"
-            label="Total Tasks"
-            value={stats.totalTasks}
-            color="blue"
-          />
-          <StatCard
-            icon="⏳"
-            label="Pending"
-            value={stats.pendingTasks}
-            color="yellow"
-          />
-          <StatCard
-            icon="🔄"
-            label="In Progress"
-            value={stats.inProgressTasks}
-            color="indigo"
-          />
-          <StatCard
-            icon="✅"
-            label="Completed"
-            value={stats.completedTasks}
-            color="green"
-          />
-          <StatCard
-            icon="⚠️"
-            label="Overdue"
-            value={stats.overdueTasks}
-            color="red"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 transition-colors">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Recent Tasks</h2>
-            <div className="space-y-4">
-              {recentTasks.length === 0 ? (
-                <p className="text-center text-gray-500 dark:text-gray-400 py-4">No tasks available</p>
-              ) : (
-                recentTasks.map((task) => (
-                  <TaskCard 
-                    key={task.id} 
-                    task={task} 
-                    onComplete={async (taskId) => {
-                      try {
-                        await fetch(`/api/tasks/${taskId}`, {
-                          method: 'PUT',
-                          headers: {
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({ status: 'completed' }),
-                        });
-                        // Trigger a refresh of the dashboard data
-                        fetchDashboardData();
-                      } catch (error) {
-                        console.error('Failed to complete task:', error);
-                        throw error;
-                      }
-                    }}
-                  />
-                ))
-              )}
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          <div className="flex justify-between items-center">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">Dashboard</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Welcome back! Here's your task overview.</p>
+            </div>
+            <div className="hidden sm:block">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Last updated: {new Date().toLocaleTimeString()}
+              </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 transition-colors">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Task Priority Breakdown</h2>
-            <div className="space-y-4">
-              <PriorityItem
-                label="High Priority"
-                count={stats.highPriority}
-                color="red"
-              />
-              <PriorityItem
-                label="Medium Priority"
-                count={stats.mediumPriority}
-                color="yellow"
-              />
-              <PriorityItem
-                label="Low Priority"
-                count={stats.lowPriority}
-                color="blue"
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <StatCard
+              icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>}
+              label="Total Tasks"
+              value={stats.totalTasks}
+              color="blue"
+            />
+            <StatCard
+              icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+              label="Pending"
+              value={stats.pendingTasks}
+              color="yellow"
+            />
+            <StatCard
+              icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
+              label="In Progress"
+              value={stats.inProgressTasks}
+              color="indigo"
+            />
+            <StatCard
+              icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+              label="Completed"
+              value={stats.completedTasks}
+              color="green"
+            />
+            <StatCard
+              icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>}
+              label="Overdue"
+              value={stats.overdueTasks}
+              color="red"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Tasks</h2>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Showing {Math.min(recentTasks.length, 5)} of {stats.totalTasks} tasks
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {recentTasks.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-8 text-gray-500 dark:text-gray-400">
+                      <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                      <p>No tasks available</p>
+                      <p className="text-sm mt-1">Start by creating your first task!</p>
+                    </div>
+                  ) : (
+                    recentTasks.map((task) => (
+                      <TaskCard 
+                        key={task.id} 
+                        task={task} 
+                        onComplete={async (taskId) => {
+                          try {
+                            await fetch(`/api/tasks/${taskId}`, {
+                              method: 'PUT',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({ status: 'completed' }),
+                            });
+                            fetchDashboardData();
+                          } catch (error) {
+                            console.error('Failed to complete task:', error);
+                            throw error;
+                          }
+                        }}
+                        onDelete={async (taskId) => {
+                          try {
+                            await fetch(`/api/tasks/${taskId}`, {
+                              method: 'DELETE',
+                            });
+                            fetchDashboardData();
+                          } catch (error) {
+                            console.error('Failed to delete task:', error);
+                            throw error;
+                          }
+                        }}
+                      />
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="sticky top-6 space-y-6">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg p-6">
+                    <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-gray-100">Task Priority Breakdown</h2>
+                    <div className="space-y-4">
+                      <PriorityItem
+                        label="High Priority"
+                        count={stats.highPriority}
+                        color="red"
+                      />
+                      <PriorityItem
+                        label="Medium Priority"
+                        count={stats.mediumPriority}
+                        color="yellow"
+                      />
+                      <PriorityItem
+                        label="Low Priority"
+                        count={stats.lowPriority}
+                        color="blue"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
