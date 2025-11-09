@@ -2,7 +2,7 @@
 
 import React from 'react';
 const { useState, useEffect } = React;
-import DashboardLayout from '@/components/dashboard-layout';
+import PageWrapper from '@/components/page-wrapper';
 import { createTask, updateTask, deleteTask } from '@/lib/tasks';
 
 interface Task {
@@ -195,16 +195,16 @@ export default function TasksPage() {
 
   if (loading) {
     return (
-      <DashboardLayout>
+      <PageWrapper>
         <div className="flex items-center justify-center h-full">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
         </div>
-      </DashboardLayout>
+      </PageWrapper>
     );
   }
 
   return (
-    <DashboardLayout>
+    <PageWrapper>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
@@ -444,6 +444,6 @@ export default function TasksPage() {
           </div>
         </div>
       )}
-    </DashboardLayout>
+    </PageWrapper>
   );
 }

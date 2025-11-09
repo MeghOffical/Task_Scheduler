@@ -1,9 +1,9 @@
-import DashboardLayout from '@/components/dashboard-layout';
+import PageWrapper from '@/components/page-wrapper';
 
 export default function PomodoroLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+  return <PageWrapper>{children}</PageWrapper>;
 }
