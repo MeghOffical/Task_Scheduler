@@ -84,8 +84,9 @@ export default function AnalyticsPage() {
     const isDark = document.documentElement.classList.contains('dark');
     const Chart = (window as any).Chart;
     if (!Chart) return;
-    Chart.defaults.color = isDark ? '#9ca3af' : '#666';
-    Chart.defaults.borderColor = isDark ? '#404040' : '#e5e7eb';
+    Chart.defaults.color = isDark ? '#9ca3af' : '#e5e7eb';
+    Chart.defaults.borderColor = isDark ? '#404040' : '#4b5563';
+    // Grid colors are set per chart in the options, not as a global default
   };
 
   const renderCharts = () => {
@@ -122,7 +123,15 @@ export default function AnalyticsPage() {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { position: 'bottom' } },
+          plugins: { 
+            legend: { 
+              position: 'bottom',
+              labels: {
+                color: '#e5e7eb',
+                font: { size: 12 }
+              }
+            } 
+          },
         },
       });
     }
@@ -148,7 +157,26 @@ export default function AnalyticsPage() {
           responsive: true,
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+          scales: { 
+            y: { 
+              beginAtZero: true, 
+              ticks: { 
+                stepSize: 1,
+                color: '#e5e7eb'
+              },
+              grid: {
+                color: '#4b5563'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#e5e7eb'
+              },
+              grid: {
+                color: '#4b5563'
+              }
+            }
+          },
         },
       });
     }
@@ -189,7 +217,26 @@ export default function AnalyticsPage() {
           responsive: true,
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+          scales: { 
+            y: { 
+              beginAtZero: true, 
+              ticks: { 
+                stepSize: 1,
+                color: '#e5e7eb'
+              },
+              grid: {
+                color: '#4b5563'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#e5e7eb'
+              },
+              grid: {
+                color: '#4b5563'
+              }
+            }
+          },
         },
       });
     }
@@ -213,7 +260,26 @@ export default function AnalyticsPage() {
           responsive: true,
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+          scales: { 
+            y: { 
+              beginAtZero: true, 
+              ticks: { 
+                stepSize: 1,
+                color: '#e5e7eb'
+              },
+              grid: {
+                color: '#4b5563'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#e5e7eb'
+              },
+              grid: {
+                color: '#4b5563'
+              }
+            }
+          },
         },
       });
     }
@@ -226,29 +292,29 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tasks by Status</h2>
+        <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white dark:text-gray-100">Tasks by Status</h2>
           <div className="relative h-72">
             <canvas ref={statusChartRef} />
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tasks by Priority</h2>
+        <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white dark:text-gray-100">Tasks by Priority</h2>
           <div className="relative h-72">
             <canvas ref={priorityChartRef} />
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Pomodoro Sessions This Week</h2>
+        <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white dark:text-gray-100">Pomodoro Sessions This Week</h2>
           <div className="relative h-72">
             <canvas ref={pomodoroChartRef} />
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Productivity Trend</h2>
+        <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white dark:text-gray-100">Productivity Trend</h2>
           <div className="relative h-72">
             <canvas ref={productivityChartRef} />
           </div>

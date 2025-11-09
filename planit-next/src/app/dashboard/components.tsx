@@ -24,15 +24,15 @@ export function StatCard({ icon, label, value, color }: StatCardProps) {
   };
 
   return (
-    <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg dark:shadow-md p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <div className="relative bg-[#1B2537] dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg dark:shadow-md p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-30`} />
       <div className="relative flex items-center gap-4">
-        <div className={`text-2xl p-3 rounded-xl bg-white dark:bg-gray-800 shadow-md ${colorMap[color as keyof typeof colorMap]}`}>
+        <div className={`text-2xl p-3 rounded-xl bg-[#111827] dark:bg-gray-800 shadow-md ${colorMap[color as keyof typeof colorMap]}`}>
           {icon}
         </div>
         <div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</div>
-          <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</div>
+          <div className="text-2xl font-bold text-white dark:text-gray-100">{value}</div>
+          <div className="text-sm font-medium text-gray-300 dark:text-gray-400">{label}</div>
         </div>
       </div>
     </div>
@@ -86,10 +86,10 @@ export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
   };
 
   return (
-    <div className="group p-4 bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-xl shadow-md hover:shadow-xl dark:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <div className="group p-4 bg-[#1B2537] dark:bg-gray-800/50 backdrop-blur-xl rounded-xl shadow-md hover:shadow-xl dark:shadow-lg transition-all duration-300 hover:-translate-y-1">
       <div className="flex justify-between items-start gap-4">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 truncate">{task.title}</h3>
+          <h3 className="font-semibold mb-2 text-white dark:text-gray-100 truncate">{task.title}</h3>
           <div className="flex flex-wrap gap-2 mb-2">
             <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getPriorityStyles(task.priority)}`}>
               <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +105,7 @@ export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
             </span>
           </div>
           <div className="space-y-1">
-            <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+            <p className="text-sm text-gray-300 dark:text-gray-400 flex items-center">
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -184,9 +184,9 @@ export function PriorityItem({ label, count, color }: PriorityItemProps) {
   return (
     <div className="relative group">
       <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-      <div className="relative flex justify-between items-center p-4 bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-xl shadow-md transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+      <div className="relative flex justify-between items-center p-4 bg-[#1B2537] dark:bg-gray-800/50 backdrop-blur-xl rounded-xl shadow-md transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
         <div className="flex items-center space-x-3">
-          <div className={`p-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm ${colorMap[color as keyof typeof colorMap]}`}>
+          <div className={`p-2 rounded-lg bg-[#111827] dark:bg-gray-800 shadow-sm ${colorMap[color as keyof typeof colorMap]}`}>
             {color === 'red' && (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -203,7 +203,7 @@ export function PriorityItem({ label, count, color }: PriorityItemProps) {
               </svg>
             )}
           </div>
-          <span className="font-medium text-gray-700 dark:text-gray-300">{label}</span>
+          <span className="font-medium text-white dark:text-gray-300">{label}</span>
         </div>
         <span className={`text-xl font-bold ${colorMap[color as keyof typeof colorMap]}`}>
           {count}
