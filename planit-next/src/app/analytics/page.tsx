@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import DashboardLayout from '@/components/dashboard-layout';
 
 type Task = {
   id: string;
@@ -221,43 +220,41 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Analytics</h1>
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Analytics</h1>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tasks by Status</h2>
+          <div className="relative h-72">
+            <canvas ref={statusChartRef} />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tasks by Status</h2>
-            <div className="relative h-72">
-              <canvas ref={statusChartRef} />
-            </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tasks by Priority</h2>
+          <div className="relative h-72">
+            <canvas ref={priorityChartRef} />
           </div>
+        </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tasks by Priority</h2>
-            <div className="relative h-72">
-              <canvas ref={priorityChartRef} />
-            </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Pomodoro Sessions This Week</h2>
+          <div className="relative h-72">
+            <canvas ref={pomodoroChartRef} />
           </div>
+        </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Pomodoro Sessions This Week</h2>
-            <div className="relative h-72">
-              <canvas ref={pomodoroChartRef} />
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Productivity Trend</h2>
-            <div className="relative h-72">
-              <canvas ref={productivityChartRef} />
-            </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Productivity Trend</h2>
+          <div className="relative h-72">
+            <canvas ref={productivityChartRef} />
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 import PageWrapper from '@/components/page-wrapper';
 
-export default function SettingsLayout({
+export default function AnalyticsLayout({
   children,
 }: {
   children: React.ReactNode;

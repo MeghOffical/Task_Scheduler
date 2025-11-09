@@ -117,7 +117,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className='space-y-8'>
+      <div className='space-y-8'>
       {/* User Profile Section */}
       <section className='bg-white dark:bg-gray-800 shadow rounded-lg p-6'>
         <h2 className='text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6'>Profile Information</h2>

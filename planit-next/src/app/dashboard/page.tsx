@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import DashboardLayout from '@/components/dashboard-layout';
+import PageWrapper from '@/components/page-wrapper';
 import { Task } from '@/types';
 import { StatCard, TaskCard, PriorityItem } from './components';
 
@@ -114,26 +114,25 @@ export default function DashboardPage() {
 
   if (loading && !stats.totalTasks) {
     return (
-      <DashboardLayout>
+      <PageWrapper>
         <div className="flex items-center justify-center h-full">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
         </div>
-      </DashboardLayout>
+      </PageWrapper>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout>
+      <PageWrapper>
         <div className="text-center text-red-600 dark:text-red-400">{error}</div>
-      </DashboardLayout>
+      </PageWrapper>
     );
   }
 
   return (
-    <DashboardLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <PageWrapper>
+        <div className="space-y-8">
           <div className="flex justify-between items-center">
             <div className="space-y-1">
               <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">Dashboard</h1>
@@ -265,8 +264,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-      </div>
-    </DashboardLayout>
+      </PageWrapper>
   );
 }
 
