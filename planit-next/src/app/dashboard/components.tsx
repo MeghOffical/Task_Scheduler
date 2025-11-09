@@ -104,12 +104,24 @@ export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
               {task.status}
             </span>
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            Due: {new Date(task.dueDate || '').toLocaleDateString()}
-          </p>
+          <div className="space-y-1">
+            <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
+            </p>
+            {(task.startTime || task.endTime) && (
+              <p className="text-xs text-gray-400 dark:text-gray-500 flex items-center">
+                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {task.startTime && `Start: ${task.startTime}`}
+                {task.startTime && task.endTime && ' | '}
+                {task.endTime && `End: ${task.endTime}`}
+              </p>
+            )}
+          </div>
         </div>
         <div className="flex items-center space-x-2">
           {task.status !== 'completed' && onComplete && (

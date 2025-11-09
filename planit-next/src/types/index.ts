@@ -21,6 +21,8 @@ interface Task {
   priority: 'low' | 'medium' | 'high';
   status: 'pending' | 'in-progress' | 'completed' | 'overdue';
   dueDate: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
   createdAt: string;
   userId: string;
 }
