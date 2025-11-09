@@ -8,7 +8,7 @@ export const LoadingSpinner = () => (
 );
 
 type StatCardProps = Readonly<{
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   value: number;
   color: string;
@@ -16,21 +16,24 @@ type StatCardProps = Readonly<{
 
 export function StatCard({ icon, label, value, color }: StatCardProps) {
   const colorMap = {
-    blue: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
-    green: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400',
-    yellow: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
-    red: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400',
-    indigo: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
+    blue: 'from-blue-500/10 to-blue-600/10 dark:from-blue-400/10 dark:to-blue-600/10 text-blue-600 dark:text-blue-400',
+    green: 'from-green-500/10 to-green-600/10 dark:from-green-400/10 dark:to-green-600/10 text-green-600 dark:text-green-400',
+    yellow: 'from-yellow-500/10 to-yellow-600/10 dark:from-yellow-400/10 dark:to-yellow-600/10 text-yellow-600 dark:text-yellow-400',
+    red: 'from-red-500/10 to-red-600/10 dark:from-red-400/10 dark:to-red-600/10 text-red-600 dark:text-red-400',
+    indigo: 'from-indigo-500/10 to-indigo-600/10 dark:from-indigo-400/10 dark:to-indigo-600/10 text-indigo-600 dark:text-indigo-400',
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 flex items-center gap-4 transition-colors">
-      <div className={`text-2xl p-3 rounded-lg ${colorMap[color as keyof typeof colorMap]}`}>
-        {icon}
-      </div>
-      <div>
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">{label}</div>
+    <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg dark:shadow-md p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-30`} />
+      <div className="relative flex items-center gap-4">
+        <div className={`text-2xl p-3 rounded-xl bg-white dark:bg-gray-800 shadow-md ${colorMap[color as keyof typeof colorMap]}`}>
+          {icon}
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</div>
+          <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</div>
+        </div>
       </div>
     </div>
   );
@@ -39,9 +42,10 @@ export function StatCard({ icon, label, value, color }: StatCardProps) {
 type TaskCardProps = Readonly<{
   task: Task;
   onComplete?: (taskId: string) => Promise<void>;
+  onDelete?: (taskId: string) => Promise<void>;
 }>;
 
-export function TaskCard({ task, onComplete }: TaskCardProps) {
+export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const getPriorityStyles = (priority: string) => {
@@ -82,29 +86,40 @@ export function TaskCard({ task, onComplete }: TaskCardProps) {
   };
 
   return (
-    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="font-medium mb-1 text-gray-900 dark:text-gray-100">{task.title}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+    <div className="group p-4 bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-xl shadow-md hover:shadow-xl dark:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 truncate">{task.title}</h3>
+          <div className="flex flex-wrap gap-2 mb-2">
+            <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getPriorityStyles(task.priority)}`}>
+              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+              {task.priority}
+            </span>
+            <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getStatusStyles(task.status)}`}>
+              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {task.status}
+            </span>
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
             Due: {new Date(task.dueDate || '').toLocaleDateString()}
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <span className={`px-2 py-1 text-xs rounded-full ${getPriorityStyles(task.priority)}`}>
-            {task.priority}
-          </span>
-          <span className={`px-2 py-1 text-xs rounded-full ${getStatusStyles(task.status)}`}>
-            {task.status}
-          </span>
           {task.status !== 'completed' && onComplete && (
             <button
               onClick={handleComplete}
               disabled={isUpdating}
-              className={`ml-2 p-1 rounded-full transition-colors ${
+              className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
                 isUpdating 
-                  ? 'bg-gray-200 dark:bg-gray-600 cursor-wait' 
-                  : 'bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-800/50'
+                  ? 'bg-gray-100 dark:bg-gray-700 cursor-wait' 
+                  : 'bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50 hover:shadow-md'
               }`}
               title="Mark as completed"
             >
@@ -118,6 +133,21 @@ export function TaskCard({ task, onComplete }: TaskCardProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               )}
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={() => {
+                if (window.confirm('Are you sure you want to delete this task?')) {
+                  onDelete(task.id);
+                }
+              }}
+              className="flex-shrink-0 p-2 rounded-lg transition-all duration-300 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-800/50 hover:shadow-md text-red-600 dark:text-red-400"
+              title="Delete task"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
             </button>
           )}
         </div>
@@ -134,17 +164,39 @@ type PriorityItemProps = Readonly<{
 
 export function PriorityItem({ label, count, color }: PriorityItemProps) {
   const colorMap = {
-    red: 'text-red-600 dark:text-red-400',
-    yellow: 'text-yellow-600 dark:text-yellow-400',
-    blue: 'text-blue-600 dark:text-blue-400',
+    red: 'from-red-500/10 to-red-600/10 dark:from-red-400/10 dark:to-red-600/10 text-red-600 dark:text-red-400',
+    yellow: 'from-yellow-500/10 to-yellow-600/10 dark:from-yellow-400/10 dark:to-yellow-600/10 text-yellow-600 dark:text-yellow-400',
+    blue: 'from-blue-500/10 to-blue-600/10 dark:from-blue-400/10 dark:to-blue-600/10 text-blue-600 dark:text-blue-400',
   };
 
   return (
-    <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg transition-colors">
-      <span className="text-gray-600 dark:text-gray-300">{label}</span>
-      <span className={`text-lg font-semibold ${colorMap[color as keyof typeof colorMap]}`}>
-        {count}
-      </span>
+    <div className="relative group">
+      <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+      <div className="relative flex justify-between items-center p-4 bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-xl shadow-md transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+        <div className="flex items-center space-x-3">
+          <div className={`p-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm ${colorMap[color as keyof typeof colorMap]}`}>
+            {color === 'red' && (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            )}
+            {color === 'yellow' && (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+            {color === 'blue' && (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            )}
+          </div>
+          <span className="font-medium text-gray-700 dark:text-gray-300">{label}</span>
+        </div>
+        <span className={`text-xl font-bold ${colorMap[color as keyof typeof colorMap]}`}>
+          {count}
+        </span>
+      </div>
     </div>
   );
 }
