@@ -58,6 +58,12 @@ const getStatusClass = (status: Task['status']): string => {
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | Task['status']>('all');
+  const [priorityFilter, setPriorityFilter] = useState<'all' | Task['priority']>('all');
+  const [dueFrom, setDueFrom] = useState<string>('');
+  const [dueTo, setDueTo] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -206,24 +212,100 @@ export default function TasksPage() {
   return (
     <PageWrapper>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
-          <div className="flex gap-3">
-            <button
-              onClick={exportToCSV}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
-            >
-              <span>📊</span> Export CSV
-            </button>
-            <button
-              onClick={() => {
-                resetForm();
-                setShowModal(true);
-              }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-            >
-              Add Task
-            </button>
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
+            <div className="flex gap-3">
+              <button
+                onClick={exportToCSV}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+              >
+                <span>📊</span> Export CSV
+              </button>
+              <button
+                onClick={() => {
+                  resetForm();
+                  setShowModal(true);
+                }}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Add Task
+              </button>
+            </div>
+          </div>
+          {/* Search and Filters */}
+          <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div>
+              <label htmlFor="search" className="block text-xs font-medium text-gray-300 mb-1">
+                Search
+              </label>
+              <input
+                id="search"
+                type="text"
+                placeholder="Search by title or description…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              />
+            </div>
+            <div>
+              <label htmlFor="statusFilter" className="block text-xs font-medium text-gray-300 mb-1">
+                Status
+              </label>
+              <select
+                id="statusFilter"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              >
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="priorityFilter" className="block text-xs font-medium text-gray-300 mb-1">
+                Priority
+              </label>
+              <select
+                id="priorityFilter"
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value as any)}
+                className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              >
+                <option value="all">All</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="dueFrom" className="block text-xs font-medium text-gray-300 mb-1">
+                  From
+                </label>
+                <input
+                  id="dueFrom"
+                  type="date"
+                  value={dueFrom}
+                  onChange={(e) => setDueFrom(e.target.value)}
+                  className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+                />
+              </div>
+              <div>
+                <label htmlFor="dueTo" className="block text-xs font-medium text-gray-300 mb-1">
+                  To
+                </label>
+                <input
+                  id="dueTo"
+                  type="date"
+                  value={dueTo}
+                  onChange={(e) => setDueTo(e.target.value)}
+                  className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -231,8 +313,40 @@ export default function TasksPage() {
           <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg">{error}</div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tasks.map((task: Task) => (
+        {/* Derived filtered tasks */}
+        {(() => {
+          const normalizedQuery = searchQuery.trim().toLowerCase();
+          const filtered = tasks.filter((t) => {
+            // Search
+            const matchesQuery =
+              !normalizedQuery ||
+              t.title.toLowerCase().includes(normalizedQuery) ||
+              (t.description || '').toLowerCase().includes(normalizedQuery);
+            if (!matchesQuery) return false;
+            // Status
+            if (statusFilter !== 'all' && t.status !== statusFilter) return false;
+            // Priority
+            if (priorityFilter !== 'all' && t.priority !== priorityFilter) return false;
+            // Due date range
+            if (dueFrom) {
+              const fromTs = new Date(dueFrom).setHours(0, 0, 0, 0);
+              const dueTs = new Date(t.dueDate || '').setHours(0, 0, 0, 0);
+              if (isFinite(fromTs) && isFinite(dueTs) && dueTs < fromTs) return false;
+            }
+            if (dueTo) {
+              const toTs = new Date(dueTo).setHours(23, 59, 59, 999);
+              const dueTs = new Date(t.dueDate || '').getTime();
+              if (isFinite(toTs) && isFinite(dueTs) && dueTs > toTs) return false;
+            }
+            return true;
+          });
+          return (
+            <>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Showing {filtered.length} of {tasks.length} tasks
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filtered.map((task: Task) => (
             <div
               key={task.id}
               className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
@@ -284,8 +398,11 @@ export default function TasksPage() {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+                ))}
+              </div>
+            </>
+          );
+        })()}
       </div>
 
       {/* Task Modal */}
