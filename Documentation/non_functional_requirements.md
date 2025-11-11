@@ -43,7 +43,7 @@ Time-to-create task metric measured in usability tests.
 
 ---
 
-## NFR-04 - Portability / Platform support 
+## NFR-04 - OS and Installation Support
 
 **Requirement:**
 Deliver installers/packages for Windows and macOS and possibly linux (desktop app).
