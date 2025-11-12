@@ -37,4 +37,4 @@ Thumbs.db
 
 # Optional: Temporary files
 *.tmp
-*.temp
+*.temp*.bak
