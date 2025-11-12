@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 
 export default async function Home() {
   // If user is logged in, redirect to dashboard
-  const token = cookies().get('auth_token')
+  const token = (await cookies()).get('auth_token')
   if (token) {
     redirect('/dashboard')
   }

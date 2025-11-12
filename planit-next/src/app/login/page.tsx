@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import AuthNavbar from '@/components/auth-navbar';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -41,7 +42,9 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <>
+      <AuthNavbar />
+      <main className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Login to Plan-it</h2>
@@ -115,5 +118,6 @@ export default function LoginPage() {
         </form>
       </div>
     </main>
+    </>
   );
 }
