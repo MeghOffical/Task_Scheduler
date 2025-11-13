@@ -3,6 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Task } from '@/types';
 
+declare global {
+  interface Window {
+    postMessage(message: any, targetOrigin?: string): void;
+  }
+}
+
 interface PomodoroSettings {
   workDuration: number;
   shortBreakDuration: number;
@@ -65,6 +71,20 @@ export default function PomodoroPage() {
     };
   }, []);
 
+  useEffect(() => {
+    try {
+      window.postMessage(
+        {
+          source: 'planit-pomodoro',
+          state: isBreak ? 'break' : (isRunning ? 'focus' : 'paused')
+        },
+        '*'
+      );
+    } catch (e) {
+      console.warn('postMessage failed', e);
+    }
+  }, [isBreak, isRunning]);
+  
   const fetchTasks = async () => {
     try {
       const response = await fetch('/api/tasks');
