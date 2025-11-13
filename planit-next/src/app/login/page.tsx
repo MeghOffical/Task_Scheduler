@@ -30,7 +30,7 @@ export default function LoginPage() {
       }
 
       if (result?.ok) {
-        router.replace('/dashboard');
+        router.replace('/home');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to login');
@@ -43,7 +43,7 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/dashboard' });
+      await signIn('google', { callbackUrl: '/home' });
     } catch (err) {
       setError('Failed to sign in with Google');
       setLoading(false);

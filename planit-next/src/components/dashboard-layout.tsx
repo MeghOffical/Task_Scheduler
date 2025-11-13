@@ -298,6 +298,7 @@ export const Sidebar = () => {
   const pathname = usePathname();
 
   const navItems = [
+    { href: '/home', icon: '🏠', label: 'Home' },
     { href: '/dashboard', icon: '📊', label: 'Dashboard' },
     { href: '/tasks', icon: '📋', label: 'Tasks' },
     { href: '/pomodoro', icon: '🍅', label: 'Pomodoro' },

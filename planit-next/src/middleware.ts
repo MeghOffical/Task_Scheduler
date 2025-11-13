@@ -7,9 +7,20 @@ const jwtSecret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secre
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // Redirect root to home if authenticated
+  if (pathname === '/') {
+    const authToken = request.cookies.get('auth_token')?.value
+    const sessionTokenNames = ['__Secure-next-auth.session-token', 'next-auth.session-token']
+    const hasSession = sessionTokenNames.some(name => request.cookies.get(name)?.value)
+    
+    if (authToken || hasSession) {
+      return NextResponse.redirect(new URL('/home', request.url))
+    }
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
   // Public routes that don't require authentication
   if (pathname.startsWith('/_next') || 
-      pathname === '/' || 
       pathname === '/login' || 
       pathname === '/register' || 
       pathname.startsWith('/api/auth')) {

@@ -94,3 +94,47 @@ export async function PUT(
     );
   }
 }
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const userId = await getAuthenticatedUserId();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+
+    await dbConnect();
+
+    // Ensure the task exists and belongs to the user
+    const task = await Task.findOne({
+      _id: new ObjectId(params.id),
+      userId
+    });
+
+    if (!task) {
+      return NextResponse.json(
+        { message: 'Task not found or unauthorized' },
+        { status: 404 }
+      );
+    }
+
+    // Update only the provided fields
+    const updatedTask = await Task.findByIdAndUpdate(
+      params.id,
+      { $set: body },
+      { new: true }
+    );
+
+    return NextResponse.json(updatedTask);
+  } catch (error) {
+    console.error('Error updating task:', error);
+    return NextResponse.json(
+      { message: 'Error updating task' },
+      { status: 500 }
+    );
+  }
+}
