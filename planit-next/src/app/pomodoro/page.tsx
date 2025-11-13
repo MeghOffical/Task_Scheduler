@@ -238,11 +238,11 @@ export default function PomodoroPage() {
 
   return (
     <div className="flex flex-1 gap-6 p-6 overflow-hidden">
-      <section className="flex-1 bg-[#1B2537] rounded-lg shadow-md p-8 flex flex-col text-white">
-        <h1 className="text-2xl font-bold mb-6">Pomodoro Timer</h1>
+      <section className="flex-1 bg-[#E8F4F8] rounded-lg shadow-md p-8 flex flex-col text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Pomodoro Timer</h1>
 
         <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="text-lg text-white mb-5">
+          <div className="text-lg text-gray-700 dark:text-white mb-5">
             {isBreak ? (isLongBreak ? 'Long Break' : 'Short Break') : 'Focus Session'}
           </div>
           
@@ -318,14 +318,14 @@ export default function PomodoroPage() {
         </div>
 
         <div>
-          <label htmlFor="taskSelect" className="block text-sm font-semibold text-white mb-2">
+          <label htmlFor="taskSelect" className="block text-sm font-semibold text-gray-700 dark:text-gray-100 mb-2">
             Link to Task (optional)
           </label>
           <select
             id="taskSelect"
             value={selectedTaskId || ''}
             onChange={(e) => setSelectedTaskId(e.target.value || null)}
-            className="w-full p-2 border border-gray-600 rounded-lg bg-[#111827] text-white"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#111827] text-gray-900 dark:text-white"
           >
             <option value="">No task selected</option>
             {tasks.map((task) => (
@@ -337,11 +337,11 @@ export default function PomodoroPage() {
         </div>
       </section>
 
-      <section className="w-80 bg-[#1B2537] rounded-lg shadow-md p-6 flex flex-col text-white">
-        <h2 className="text-xl font-bold mb-4 text-white">Session History</h2>
+      <section className="w-80 bg-[#E8F4F8] rounded-lg shadow-md p-6 flex flex-col text-gray-900 dark:text-white">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Session History</h2>
         <div className="flex-1 overflow-y-auto">
           {history.length === 0 ? (
-            <div className="text-center text-white py-8">
+            <div className="text-center text-gray-600 dark:text-white py-8">
               No sessions completed yet
             </div>
           ) : (
@@ -349,11 +349,11 @@ export default function PomodoroPage() {
               {history.map((session) => (
                 <div
                   key={session.id}
-                  className={`p-3 rounded-lg bg-[#111827] border-l-4 ${
+                  className={`p-3 rounded-lg bg-gray-100 dark:bg-[#111827] border-l-4 ${
                     session.type === 'break' ? 'border-emerald-500' : 'border-cyan-600'
                   }`}
                 >
-                  <div className="text-xs text-cyan-600 mb-1">
+                  <div className="text-xs text-cyan-600 dark:text-cyan-400 mb-1">
                     {new Date(session.date).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric'
