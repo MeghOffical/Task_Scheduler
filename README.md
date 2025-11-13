@@ -43,7 +43,7 @@ PlanIt is packed with features to enhance your productivity..
 PlanIt is designed for anyone who needs to manage their daily tasks effectively, including:
 * **🎓 Students:** Keep track of assignments, deadlines, and study sessions.
 * **💼 Working Professionals:** Manage project tasks, meetings, and daily to-dos.
-* **Freelancers:** Organize client work, deadlines, and personal projects in one place.
+* **Freelancers:** Organize client work, deadlines, and personal projects in one place
 
 ---
 
