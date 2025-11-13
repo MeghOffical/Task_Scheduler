@@ -55,19 +55,34 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { pomodoroSettings } = body;
+    const { pomodoroSettings, username } = body;
 
-    if (!pomodoroSettings) {
-      return new Response(JSON.stringify({ error: 'Missing pomodoroSettings in request body' }), {
+    if (!pomodoroSettings && !username) {
+      return new Response(JSON.stringify({ error: 'No valid settings provided for update' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
+    // If username is being updated, check if it's already taken
+    if (username) {
+      const existingUser = await User.findOne({ username });
+      if (existingUser && existingUser.email !== session.user?.email) {
+        return new Response(JSON.stringify({ error: 'Username already taken' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     await dbConnect();
+    const updateData: any = {};
+    if (pomodoroSettings) updateData.pomodoroSettings = pomodoroSettings;
+    if (username) updateData.username = username;
+
     const user = await User.findOneAndUpdate(
       { email: session.user?.email },
-      { $set: { pomodoroSettings } },
+      { $set: updateData },
       { new: true }
     );
 
@@ -78,7 +93,10 @@ export async function PUT(request: NextRequest) {
       });
     }
 
-    return new Response(JSON.stringify({ pomodoroSettings: user.pomodoroSettings }), {
+    return new Response(JSON.stringify({ 
+      pomodoroSettings: user.pomodoroSettings,
+      username: user.username
+    }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import Button from '@/components/button';
@@ -27,6 +27,10 @@ export default function SettingsPage() {
     longBreakDuration: 15,
     longBreakInterval: 4
   });
+  
+  const [editUsername, setEditUsername] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -80,15 +84,37 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setIsSaving(true);
     setSaveStatus('idle');
+    setUsernameError('');
 
     try {
+      const updateData: any = { pomodoroSettings: settings };
+      
+      // If we're editing the username and it's not empty, include it in the update
+      if (editUsername && newUsername.trim() !== '') {
+        updateData.username = newUsername.trim();
+      }
+      
       const response = await fetch('/api/settings', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ pomodoroSettings: settings }),
+        body: JSON.stringify(updateData),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.error === 'Username already taken') {
+          setUsernameError('This username is already taken');
+        }
+        throw new Error('Failed to save settings');
+      }
+      
+      // If we updated the username, update the user state and reset the edit mode
+      if (editUsername && newUsername.trim() !== '') {
+        setUser(prev => prev ? { ...prev, username: newUsername.trim() } : null);
+        setEditUsername(false);
+      }
 
       if (!response.ok) throw new Error('Failed to save settings');
       setSaveStatus('success');
@@ -115,6 +141,22 @@ export default function SettingsPage() {
       [field]: numValue
     }));
   };
+  
+  const handleUsernameEdit = () => {
+    setNewUsername(user?.username || '');
+    setEditUsername(true);
+    setUsernameError('');
+  };
+  
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewUsername(e.target.value);
+    if (usernameError) setUsernameError('');
+  };
+  
+  const cancelUsernameEdit = () => {
+    setEditUsername(false);
+    setUsernameError('');
+  };
 
   return (
       <div className='space-y-8'>
@@ -125,15 +167,50 @@ export default function SettingsPage() {
           <div>
             <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>Name</label>
             <div className="relative group">
-              <input
-                type='text'
-                value={user.username}
-                readOnly
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 cursor-not-allowed group-hover:border-red-500"
-              />
-              <p className="mt-1 text-sm text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                Username cannot be changed
-              </p>
+              <div className="flex items-center gap-2">
+                {editUsername ? (
+                  <>
+                    <input
+                      type="text"
+                      value={newUsername}
+                      onChange={handleUsernameChange}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    />
+                    <button
+                      onClick={handleSave}
+                      className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-sm"
+                      disabled={isSaving}
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={cancelUsernameEdit}
+                      className="px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 text-sm"
+                      disabled={isSaving}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span className="flex-1 px-3 py-2">
+                      {user.username}
+                    </span>
+                    <button
+                      onClick={handleUsernameEdit}
+                      className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm"
+                      type="button"
+                    >
+                      Edit
+                    </button>
+                  </>
+                )}
+              </div>
+              {usernameError && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {usernameError}
+                </p>
+              )}
             </div>
           </div>
           <div>
