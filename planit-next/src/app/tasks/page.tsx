@@ -408,14 +408,14 @@ export default function TasksPage() {
       {/* Task Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-xl p-6 w-full max-w-md transition-colors">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-xl p-7 w-full max-w-md transition-colors">
+            <h2 className="text-lg font-semibold mb-6 text-gray-900 dark:text-gray-100">
               {editingTask ? 'Edit Task' : 'Add New Task'}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="title" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                   Title
                 </label>
                 <input
@@ -425,13 +425,14 @@ export default function TasksPage() {
                   onChange={(e: { target: { value: string } }) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
+                  placeholder="Enter task title"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="description" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                   Description
                 </label>
                 <textarea
@@ -440,14 +441,15 @@ export default function TasksPage() {
                   onChange={(e: { target: { value: string } }) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all resize-none"
+                  placeholder="Enter task description"
                   rows={3}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="priority" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="priority" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                     Priority
                   </label>
                   <select
@@ -459,7 +461,7 @@ export default function TasksPage() {
                         priority: e.target.value as 'low' | 'medium' | 'high',
                       })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -468,7 +470,7 @@ export default function TasksPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="status" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                     Status
                   </label>
                   <select
@@ -480,7 +482,7 @@ export default function TasksPage() {
                         status: e.target.value as 'pending' | 'in-progress' | 'completed',
                       })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
                   >
                     <option value="pending">Pending</option>
                     <option value="in-progress">In Progress</option>
@@ -490,7 +492,7 @@ export default function TasksPage() {
               </div>
 
               <div>
-                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="dueDate" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                   Due Date
                 </label>
                 <input
@@ -500,14 +502,14 @@ export default function TasksPage() {
                   onChange={(e: { target: { value: string } }) =>
                     setFormData({ ...formData, dueDate: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="startTime" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                     Start Time (24h)
                   </label>
                   <input
@@ -517,13 +519,13 @@ export default function TasksPage() {
                     onChange={(e: { target: { value: string } }) =>
                       setFormData({ ...formData, startTime: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
                     step="60"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="endTime" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                     End Time (24h)
                   </label>
                   <input
@@ -533,26 +535,26 @@ export default function TasksPage() {
                     onChange={(e: { target: { value: string } }) =>
                       setFormData({ ...formData, endTime: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
                     step="60"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-4 mt-6">
+              <div className="flex gap-3 mt-7 pt-2 border-t border-gray-200 dark:border-gray-600">
                 <button
                   type="button"
                   onClick={() => {
                     setShowModal(false);
                     resetForm();
                   }}
-                  className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  className="flex-1 px-4 py-2.5 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                  className="flex-1 px-4 py-2.5 text-sm font-medium bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 shadow-sm"
                 >
                   {editingTask ? 'Update Task' : 'Add Task'}
                 </button>
