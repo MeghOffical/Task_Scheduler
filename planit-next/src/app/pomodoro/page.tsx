@@ -306,19 +306,19 @@ export default function PomodoroPage() {
           <div className="flex gap-4 justify-center">
             <button
               onClick={toggleTimer}
-              className="px-10 py-3 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold transition-all duration-300 border-2 border-cyan-400 shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/80 hover:border-cyan-300 uppercase text-sm tracking-wide"
+              className="px-10 py-3 rounded-lg bg-gray-800 hover:bg-gray-900 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
             >
               {isRunning ? 'Pause' : 'Start'}
             </button>
             <button
               onClick={resetTimer}
-              className="px-10 py-3 rounded-lg bg-gray-600 hover:bg-gray-700 text-white font-semibold transition-all duration-300 border-2 border-gray-400 shadow-lg shadow-gray-500/50 hover:shadow-gray-500/80 hover:border-gray-300 uppercase text-sm tracking-wide"
+              className="px-10 py-3 rounded-lg bg-gray-600 hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
             >
               Reset
             </button>
             <button
               onClick={skipSession}
-              className="px-10 py-3 rounded-lg bg-pink-500 hover:bg-pink-600 text-white font-semibold transition-all duration-300 border-2 border-pink-400 shadow-lg shadow-pink-500/50 hover:shadow-pink-500/80 hover:border-pink-300 uppercase text-sm tracking-wide"
+              className="px-10 py-3 rounded-lg bg-gray-700 hover:bg-gray-800 dark:bg-pink-500 dark:hover:bg-pink-600 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
             >
               Skip
             </button>
@@ -375,7 +375,7 @@ export default function PomodoroPage() {
                         {breaks.slice(0, 3).map((session) => (
                           <div key={session.id} className="flex items-center justify-between mb-2 text-sm">
                             <div className="flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-cyan-500"></span>
+                              <span className="w-2 h-2 rounded-full bg-gray-800 dark:bg-cyan-500"></span>
                               <span className="text-gray-700 dark:text-gray-300">{session.taskTitle || 'Break'}</span>
                             </div>
                             <span className="text-xs text-gray-500 dark:text-gray-500">

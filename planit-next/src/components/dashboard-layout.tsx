@@ -19,6 +19,7 @@ const Header = () => {
   const [userInfo, setUserInfo] = useState<{ username: string; email: string } | null>(null);
   const [pendingTasks, setPendingTasks] = useState<Task[]>([]);
   const [missedTasks, setMissedTasks] = useState<Task[]>([]);
+  const [dismissedNotifications, setDismissedNotifications] = useState<Set<string>>(new Set());
   const fetchUserInfo = async () => {
     try {
       const response = await fetch('/api/user/me');
@@ -44,6 +45,11 @@ const Header = () => {
         const missed: Task[] = [];
 
         tasks.forEach((task: Task) => {
+          // Skip dismissed notifications
+          if (dismissedNotifications.has(task.id)) {
+            return;
+          }
+          
           // Check if task is missed/overdue (dueDate < today AND status !== 'completed')
           let isMissed = false;
           if (task.dueDate && task.status !== 'completed') {
@@ -122,7 +128,7 @@ const Header = () => {
       window.removeEventListener('task-updated', handleTaskUpdate);
       window.removeEventListener('message', handleMessage);
     };
-  }, []);
+  }, [dismissedNotifications]);
 
   const toggleDarkMode = () => {
     const newDarkMode = !isDark;
@@ -144,12 +150,36 @@ const Header = () => {
     }
   };
 
+  const dismissNotification = (taskId: string) => {
+    setDismissedNotifications(prev => {
+      const newSet = new Set(Array.from(prev));
+      newSet.add(taskId);
+      return newSet;
+    });
+    setPendingTasks(prev => prev.filter(t => t.id !== taskId));
+    setMissedTasks(prev => prev.filter(t => t.id !== taskId));
+    setNotificationCount(prev => Math.max(0, prev - 1));
+  };
+
+  const clearAllNotifications = () => {
+    const allTaskIds = [...pendingTasks, ...missedTasks].map(t => t.id);
+    setDismissedNotifications(prev => {
+      const newSet = new Set(Array.from(prev));
+      allTaskIds.forEach(id => newSet.add(id));
+      return newSet;
+    });
+    setPendingTasks([]);
+    setMissedTasks([]);
+    setNotificationCount(0);
+  };
+
   return (
-    <header className="w-full bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center transition-colors sticky top-0 z-40">
-      <Link href="/dashboard" className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+    <header className="w-full bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-between items-center transition-all sticky top-0 z-40 backdrop-blur-sm bg-white/95 dark:bg-gray-800/95">
+      <Link href="/dashboard" className="text-2xl font-bold text-gray-800 dark:text-white hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center gap-2">
+        <span className="text-2xl">📋</span>
         Plan-it
       </Link>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {/* Notifications Menu */}
         <div className="relative notification-menu-container">
           <button
@@ -159,21 +189,34 @@ const Header = () => {
                 fetchNotifications(); // Refresh notifications when opening
               }
             }}
-            className="text-xl cursor-pointer hover:opacity-80 transition-opacity relative"
+            className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 relative group"
             title="Notifications"
           >
-            🔔
+            <span className="text-xl group-hover:scale-110 transition-transform inline-block">🔔</span>
             {notificationCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+              <span className="absolute top-1 right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold shadow-lg animate-pulse">
                 {notificationCount}
               </span>
             )}
           </button>
           
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 max-h-96 overflow-y-auto">
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Notifications</h3>
+            <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 max-h-96 overflow-y-auto">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    <span className="text-xl">🔔</span>
+                    Notifications
+                  </h3>
+                  {(pendingTasks.length > 0 || missedTasks.length > 0) && (
+                    <button
+                      onClick={clearAllNotifications}
+                      className="text-xs text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 font-medium transition-colors px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      Clear All
+                    </button>
+                  )}
+                </div>
               </div>
               
               <div className="max-h-80 overflow-y-auto">
@@ -187,9 +230,16 @@ const Header = () => {
                       {missedTasks.map((task) => (
                         <div
                           key={task.id}
-                          className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border-l-4 border-red-500 dark:border-red-400"
+                          className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border-l-4 border-red-500 dark:border-red-400 relative group"
                         >
-                          <p className="text-sm font-medium text-red-900 dark:text-red-100">
+                          <button
+                            onClick={() => dismissNotification(task.id)}
+                            className="absolute top-2 right-2 text-red-400 hover:text-red-600 dark:text-red-500 dark:hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-100 dark:hover:bg-red-800/30 rounded"
+                            title="Dismiss"
+                          >
+                            ✕
+                          </button>
+                          <p className="text-sm font-medium text-red-900 dark:text-red-100 pr-6">
                             {task.title}
                           </p>
                           {task.dueDate && (
@@ -213,9 +263,16 @@ const Header = () => {
                       {pendingTasks.map((task) => (
                         <div
                           key={task.id}
-                          className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-l-4 border-yellow-500 dark:border-yellow-400"
+                          className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-l-4 border-yellow-500 dark:border-yellow-400 relative group"
                         >
-                          <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+                          <button
+                            onClick={() => dismissNotification(task.id)}
+                            className="absolute top-2 right-2 text-yellow-600 hover:text-yellow-800 dark:text-yellow-500 dark:hover:text-yellow-300 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-yellow-100 dark:hover:bg-yellow-800/30 rounded"
+                            title="Dismiss"
+                          >
+                            ✕
+                          </button>
+                          <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100 pr-6">
                             {task.title}
                           </p>
                           {task.dueDate && (
@@ -242,28 +299,30 @@ const Header = () => {
           )}
         </div>
         <button
-          className="text-xl cursor-pointer hover:opacity-80 transition-opacity"
+          className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 group"
           onClick={toggleDarkMode}
           title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
-          {isDark ? '☀️' : '🌙'}
+          <span className="text-xl group-hover:scale-110 group-hover:rotate-12 transition-all inline-block">
+            {isDark ? '☀️' : '🌙'}
+          </span>
         </button>
         
         {/* Profile Menu */}
         <div className="relative profile-menu-container">
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="text-xl cursor-pointer hover:opacity-80 transition-opacity"
+            className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 group"
             title="Profile Menu"
           >
-            👤
+            <span className="text-xl group-hover:scale-110 transition-transform inline-block">👤</span>
           </button>
           
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center text-primary-600 dark:text-primary-400 text-xl">
+                  <div className="w-10 h-10 bg-gray-200 dark:bg-primary-900/30 rounded-full flex items-center justify-center text-gray-700 dark:text-primary-400 text-xl shadow-sm">
                     👤
                   </div>
                   <div className="flex-1 min-w-0">
@@ -324,20 +383,20 @@ export const Sidebar = ({
 
   return (
     <>
-      <aside className="bg-white dark:bg-gray-800 w-64 h-full shadow-sm transition-colors flex flex-col">
-        <nav className="py-6 flex-1 flex flex-col gap-2 overflow-y-auto">
+      <aside className="bg-white dark:bg-gray-800 w-64 h-full shadow-lg border-r border-gray-200 dark:border-gray-700 transition-colors flex flex-col">
+        <nav className="py-8 px-3 flex-1 flex flex-col gap-1.5 overflow-y-auto">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 transition-colors ${
+              className={`flex items-center gap-3 px-4 py-3.5 mx-1 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:shadow-sm transition-all duration-200 group ${
                 pathname === item.href
-                  ? 'bg-blue-50 dark:bg-gray-700 text-primary-600 dark:text-primary-400 border-l-4 border-primary-600 dark:border-primary-400 font-semibold'
-                  : ''
+                  ? 'bg-gray-800 dark:bg-primary-900/20 text-white dark:text-primary-400 shadow-md font-semibold scale-[1.02]'
+                  : 'hover:scale-[1.02]'
               }`}
             >
-              <span className="text-xl">{item.icon}</span>
-              <span>{item.label}</span>
+              <span className="text-xl transition-transform group-hover:scale-110">{item.icon}</span>
+              <span className="font-medium">{item.label}</span>
             </Link>
           ))}
         </nav>
@@ -465,10 +524,10 @@ export default function DashboardLayout({
       {/* Floating AI Button */}
       <button
         onClick={() => setShowAIPanel(true)}
-        className="fixed right-6 bottom-6 w-14 h-14 rounded-full bg-primary-600 hover:bg-primary-700 text-white shadow-lg flex items-center justify-center z-30 transition-transform hover:scale-110"
+        className="fixed right-6 bottom-6 w-14 h-14 rounded-full bg-gray-800 hover:bg-gray-900 dark:bg-primary-600 dark:hover:bg-primary-700 text-white shadow-2xl hover:shadow-gray-500/50 dark:hover:shadow-primary-500/50 flex items-center justify-center z-30 transition-all duration-300 hover:scale-110 group"
         aria-label="Open AI Assistant"
       >
-        <span className="text-2xl">🤖</span>
+        <span className="text-2xl group-hover:rotate-12 transition-transform">🤖</span>
       </button>
     </div>
   );

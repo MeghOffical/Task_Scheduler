@@ -234,7 +234,7 @@ export default function TasksPage() {
             </div>
           </div>
           {/* Search and Filters */}
-          <div className="bg-cyan-100 dark:bg-gray-800 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 shadow-sm">
             <div>
               <label htmlFor="search" className="block text-xs font-medium text-gray-700 mb-1">
                 Search
@@ -349,7 +349,7 @@ export default function TasksPage() {
                 {filtered.map((task: Task) => (
             <div
               key={task.id}
-              className="bg-cyan-100 dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
             >
               <div className="flex justify-between items-start">
                 <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{task.title}</h3>
