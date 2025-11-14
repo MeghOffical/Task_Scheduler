@@ -1,0 +1,3 @@
+# Google Gemini (PaLM) Integration
+langchain-google-genai
+google-generativeai
