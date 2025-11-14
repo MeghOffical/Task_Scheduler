@@ -26,14 +26,12 @@ PlanIt is packed with features to enhance your productivity..
 * **CRUD Operations:** Easily **C**reate, **R**ead, **U**pdate, and **D**elete tasks.
 * **Task Completion:** Mark tasks as complete to track your progress.
 * **Local Database Storage:** Your tasks are saved securely on your local machine and persist between sessions.
+* **Embedded AI Assistant:** Launch the Chatbot sidebar/page inside the Next.js dashboard, create multiple conversations, and get Gemini-powered productivity guidance retained per thread.
 
 ### Planned Features
 * ⏰ **Reminders & Notifications:** Set custom reminders so you never miss a deadline.
 * 🔍 **Task Filtering & Sorting:** Quickly find tasks by date, priority, or status.
 * 📊 **Progress Tracking:** Visualize your productivity with simple stats and charts.
-* 🤖 **AI Chatbot Assistant:** Use natural language to manage your schedule. Just type things like:
-    > "Remind me to finish the project report tomorrow at 5 pm."
-    > "What do I have to do today?"
 * 📤 **Data Export:** Export your task lists to common formats like CSV or TXT.
 
 ---
@@ -60,6 +58,16 @@ Our development focuses on meeting key functional and non-functional requirement
     * **Speed:** A snappy and responsive user experience.
     * **Privacy:** Ensuring all user data is stored locally and securely.
     * **Accessibility:** Building an app that is usable by a wide range of users.
+
+---
+
+## 🔑 Environment Variables
+
+Create `planit-next/.env.local` (or update your deployment secrets) with the following keys:
+
+* `MONGODB_URI` – existing connection string for the app database.
+* `GOOGLE_GENERATIVE_AI_API_KEY` – server-side Gemini key used by the in-app chatbot.
+* `GOOGLE_GENERATIVE_AI_MODEL` *(optional)* – override the default `gemini-1.5-flash` model name.
 
 ---
 

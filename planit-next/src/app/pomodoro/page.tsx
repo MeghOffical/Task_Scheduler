@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Task } from '@/types';
 
 declare global {
@@ -43,6 +43,36 @@ export default function PomodoroPage() {
   
   const timerRef = useRef<NodeJS.Timeout>();
   const audioContextRef = useRef<AudioContext>();
+  const isRunningRef = useRef(isRunning);
+
+  const fetchTasks = useCallback(async () => {
+    try {
+      const response = await fetch('/api/tasks');
+      if (response.ok) {
+        const data = await response.json();
+        setTasks(data);
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  }, []);
+
+  const fetchSettings = useCallback(async () => {
+    try {
+      const response = await fetch('/api/settings');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.pomodoroSettings) {
+          setSettings(data.pomodoroSettings);
+          if (!isRunningRef.current) {
+            setTimeLeft(data.pomodoroSettings.workDuration * 60);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  }, []);
 
   useEffect(() => {
     audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -56,7 +86,7 @@ export default function PomodoroPage() {
 
     const handleSettingsChange = (event: CustomEvent<PomodoroSettings>) => {
       setSettings(event.detail);
-      if (!isRunning) {
+      if (!isRunningRef.current) {
         setTimeLeft(event.detail.workDuration * 60);
       }
     };
@@ -69,7 +99,7 @@ export default function PomodoroPage() {
       }
       window.removeEventListener('pomodoroSettingsChanged', handleSettingsChange as EventListener);
     };
-  }, []);
+  }, [fetchSettings, fetchTasks]);
 
   useEffect(() => {
     try {
@@ -84,36 +114,11 @@ export default function PomodoroPage() {
       console.warn('postMessage failed', e);
     }
   }, [isBreak, isRunning]);
+
+  useEffect(() => {
+    isRunningRef.current = isRunning;
+  }, [isRunning]);
   
-  const fetchTasks = async () => {
-    try {
-      const response = await fetch('/api/tasks');
-      if (response.ok) {
-        const data = await response.json();
-        setTasks(data);
-      }
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-    }
-  };
-
-  const fetchSettings = async () => {
-    try {
-      const response = await fetch('/api/settings');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.pomodoroSettings) {
-          setSettings(data.pomodoroSettings);
-          if (!isRunning) {
-            setTimeLeft(data.pomodoroSettings.workDuration * 60);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-    }
-  };
-
   const playNotificationSound = () => {
     if (!audioContextRef.current) return;
     

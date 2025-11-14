@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { randomUUID } from 'crypto';
 
 const UserSchema = new mongoose.Schema({
   username: { 
@@ -117,6 +118,53 @@ const TaskSchema = new mongoose.Schema({
 // Add index for faster lookups
 TaskSchema.index({ userId: 1, createdAt: -1 });
 
+const ChatMessageSchema = new mongoose.Schema({
+  role: {
+    type: String,
+    enum: ['user', 'assistant', 'tool', 'system'],
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+}, { _id: false });
+
+const ChatThreadSchema = new mongoose.Schema({
+  threadId: {
+    type: String,
+    unique: true,
+    default: () => randomUUID(),
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  title: {
+    type: String,
+    default: 'New chat',
+    trim: true,
+  },
+  messages: {
+    type: [ChatMessageSchema],
+    default: [],
+  },
+}, {
+  timestamps: true,
+});
+
+ChatThreadSchema.pre('save', function handleTitle(next) {
+  if (!this.title && this.messages?.length) {
+    this.title = this.messages[0].content.slice(0, 60);
+  }
+  next();
+});
+
 // Clear model cache to ensure fresh schema
 if (mongoose.models.User) {
   delete mongoose.models.User;
@@ -124,6 +172,10 @@ if (mongoose.models.User) {
 if (mongoose.models.Task) {
   delete mongoose.models.Task;
 }
+if (mongoose.models.ChatThread) {
+  delete mongoose.models.ChatThread;
+}
 
 export const User = mongoose.model('User', UserSchema);
 export const Task = mongoose.model('Task', TaskSchema);
+export const ChatThread = mongoose.model('ChatThread', ChatThreadSchema);

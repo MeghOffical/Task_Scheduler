@@ -5,14 +5,34 @@ import dbConnect from '@/lib/db';
 
 export async function GET(request: Request) {
   try {
-    const userId = await getAuthenticatedUserId();
+    // Support both regular auth and internal tool calls
+    const internalUserId = request.headers.get('x-user-id');
+    const userId = internalUserId || await getAuthenticatedUserId();
+    
     if (!userId) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     await dbConnect();
 
-    const tasks = await Task.find({ userId }).sort({ createdAt: -1 });
+    // Parse query parameters for filtering
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get('q');
+    const status = searchParams.get('status');
+    const priority = searchParams.get('priority');
+
+    const filter: any = { userId };
+    
+    if (query) {
+      filter.$or = [
+        { title: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } },
+      ];
+    }
+    if (status) filter.status = status;
+    if (priority) filter.priority = priority;
+
+    const tasks = await Task.find(filter).sort({ createdAt: -1 });
     
     // Transform the MongoDB _id to id before sending
     const transformedTasks = tasks.map(task => ({

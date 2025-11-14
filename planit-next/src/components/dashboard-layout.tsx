@@ -19,8 +19,6 @@ const Header = () => {
   const [userInfo, setUserInfo] = useState<{ username: string; email: string } | null>(null);
   const [pendingTasks, setPendingTasks] = useState<Task[]>([]);
   const [missedTasks, setMissedTasks] = useState<Task[]>([]);
-  const pathname = usePathname();
-
   const fetchUserInfo = async () => {
     try {
       const response = await fetch('/api/user/me');
@@ -147,7 +145,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center transition-colors">
+    <header className="w-full bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center transition-colors sticky top-0 z-40">
       <Link href="/dashboard" className="text-2xl font-bold text-primary-600 dark:text-primary-400">
         Plan-it
       </Link>
@@ -320,6 +318,7 @@ export const Sidebar = ({
     { href: '/tasks', icon: '📋', label: 'Tasks' },
     { href: '/pomodoro', icon: '🍅', label: 'Pomodoro' },
     { href: '/analytics', icon: '📈', label: 'Analytics' },
+    { href: '/chatbot', icon: '🤖', label: 'Chatbot' },
     { href: '/settings', icon: '⚙️', label: 'Settings' },
   ];
 
@@ -444,7 +443,8 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="h-screen w-full flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors">
+      <Header />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar 
           showAIPanel={showAIPanel}
@@ -455,9 +455,8 @@ export default function DashboardLayout({
           setInputMessage={setInputMessage}
           handleSendMessage={handleSendMessage}
         />
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <Header />
-          <div className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto">
+          <div className="h-full p-6">
             {children}
           </div>
         </main>

@@ -6,7 +6,10 @@ import dbConnect from '@/lib/db';
 
 export async function GET(request: Request) {
   try {
-    const userIdString = await getAuthenticatedUserId();
+    // Support both regular auth and internal tool calls
+    const internalUserId = request.headers.get('x-user-id');
+    const userIdString = internalUserId || await getAuthenticatedUserId();
+    
     if (!userIdString) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }

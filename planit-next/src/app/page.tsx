@@ -45,7 +45,7 @@ export default async function Home() {
           </div>
           
           <p className="max-w-2xl mx-auto text-xl leading-relaxed text-gray-600">
-            Transform your productivity with Plan-it's comprehensive task management platform. 
+            Transform your productivity with Plan-it&apos;s comprehensive task management platform. 
             Our intuitive system helps you organize daily tasks, set priorities, and track your progress seamlessly.
             Built with security in mind, featuring robust user authentication and reliable data storage.
           </p>
