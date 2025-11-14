@@ -1,8 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
 
 interface Task {
   id: string;
@@ -294,11 +294,29 @@ const Header = () => {
   );
 };
 
-export const Sidebar = () => {
+interface SidebarProps {
+  showAIPanel: boolean;
+  setShowAIPanel: (show: boolean) => void;
+  messages: Array<{id: number; text: string; isUser: boolean}>;
+  setMessages: (messages: Array<{id: number; text: string; isUser: boolean}>) => void;
+  inputMessage: string;
+  setInputMessage: (message: string) => void;
+  handleSendMessage: (e: React.FormEvent) => void;
+}
+
+export const Sidebar = ({
+  showAIPanel,
+  setShowAIPanel,
+  messages,
+  setMessages,
+  inputMessage,
+  setInputMessage,
+  handleSendMessage
+}: SidebarProps) => {
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/dashboard', icon: '📊', label: 'Dashboard' },
+    { href: '/dashboard', icon: '🏠', label: 'Home' },
     { href: '/tasks', icon: '📋', label: 'Tasks' },
     { href: '/pomodoro', icon: '🍅', label: 'Pomodoro' },
     { href: '/analytics', icon: '📈', label: 'Analytics' },
@@ -306,24 +324,91 @@ export const Sidebar = () => {
   ];
 
   return (
-    <aside className="bg-white dark:bg-gray-800 w-64 min-h-screen shadow-sm transition-colors">
-      <nav className="py-6 flex flex-col gap-2">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex items-center gap-3 px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 transition-colors ${
-              pathname === item.href
-                ? 'bg-blue-50 dark:bg-gray-700 text-primary-600 dark:text-primary-400 border-l-4 border-primary-600 dark:border-primary-400 font-semibold'
-                : ''
-            }`}
-          >
-            <span className="text-xl">{item.icon}</span>
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </nav>
-    </aside>
+    <>
+      <aside className="bg-white dark:bg-gray-800 w-64 h-full shadow-sm transition-colors flex flex-col">
+        <nav className="py-6 flex-1 flex flex-col gap-2 overflow-y-auto">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 transition-colors ${
+                pathname === item.href
+                  ? 'bg-blue-50 dark:bg-gray-700 text-primary-600 dark:text-primary-400 border-l-4 border-primary-600 dark:border-primary-400 font-semibold'
+                  : ''
+              }`}
+            >
+              <span className="text-xl">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </nav>
+      </aside>
+
+      {/* AI Panel */}
+      <div className={`fixed inset-y-0 right-0 w-96 bg-white dark:bg-gray-800 shadow-lg transform ${showAIPanel ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out z-40 border-l border-gray-200 dark:border-gray-700`}>
+        <div className="h-full flex flex-col">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">AI Assistant</h3>
+            <button
+              onClick={() => setShowAIPanel(false)}
+              className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="space-y-4">
+              {messages.map((message) => (
+                <div 
+                  key={message.id}
+                  className={`p-4 rounded-lg ${
+                    message.isUser 
+                      ? 'bg-gray-100 dark:bg-gray-700 ml-8' 
+                      : 'bg-blue-50 dark:bg-blue-900/20 mr-8'
+                  }`}
+                >
+                  <p className={`text-sm ${
+                    message.isUser 
+                      ? 'text-gray-800 dark:text-gray-200' 
+                      : 'text-blue-800 dark:text-blue-200'
+                  }`}>
+                    {message.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Ask me anything..."
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              />
+              <button 
+                type="submit"
+                disabled={!inputMessage.trim()}
+                className="p-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {showAIPanel && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={() => setShowAIPanel(false)}
+        />
+      )}
+    </>
   );
 };
 
@@ -332,13 +417,60 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [showAIPanel, setShowAIPanel] = useState(false);
+  const [messages, setMessages] = useState([
+    { id: 1, text: "Hello! I'm your AI assistant. How can I help you today?", isUser: false }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputMessage.trim()) return;
+
+    // Add user message
+    const newMessage = { id: messages.length + 1, text: inputMessage, isUser: true };
+    setMessages([...messages, newMessage]);
+    setInputMessage('');
+
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse = { 
+        id: messages.length + 2, 
+        text: "I'm a simple AI assistant. In a real implementation, I would process your message and provide a helpful response.", 
+        isUser: false 
+      };
+      setMessages((prev: Array<{id: number; text: string; isUser: boolean}>) => [...prev, aiResponse]);
+    }, 500);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-      <Header />
-      <div className="flex">
-        <Sidebar />
-        <main className="flex-1 p-8 dark:bg-gray-900">{children}</main>
+    <div className="h-screen w-full flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar 
+          showAIPanel={showAIPanel}
+          setShowAIPanel={setShowAIPanel}
+          messages={messages}
+          setMessages={setMessages}
+          inputMessage={inputMessage}
+          setInputMessage={setInputMessage}
+          handleSendMessage={handleSendMessage}
+        />
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <Header />
+          <div className="flex-1 overflow-y-auto p-6">
+            {children}
+          </div>
+        </main>
       </div>
+      
+      {/* Floating AI Button */}
+      <button
+        onClick={() => setShowAIPanel(true)}
+        className="fixed right-6 bottom-6 w-14 h-14 rounded-full bg-primary-600 hover:bg-primary-700 text-white shadow-lg flex items-center justify-center z-30 transition-transform hover:scale-110"
+        aria-label="Open AI Assistant"
+      >
+        <span className="text-2xl">🤖</span>
+      </button>
     </div>
   );
 }
