@@ -181,9 +181,9 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative bg-[#E8F4F8] dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg p-6">
+              <div className="relative bg-[#1B2537] dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Tasks</h2>
+                  <h2 className="text-xl font-bold text-white dark:text-gray-100">Recent Tasks</h2>
                   <div className="text-sm text-gray-300 dark:text-gray-400">
                     Showing {Math.min(recentTasks.length, 5)} of {stats.totalTasks} tasks
                   </div>
@@ -239,8 +239,8 @@ export default function DashboardPage() {
               <div className="sticky top-6 space-y-6">
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="relative bg-[#E8F4F8] dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg p-6">
-                    <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-gray-100">Task Priority Breakdown</h2>
+                  <div className="relative bg-[#1B2537] dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg p-6">
+                    <h2 className="text-xl font-bold mb-6 text-white dark:text-gray-100">Task Priority Breakdown</h2>
                     <div className="space-y-4">
                       <PriorityItem
                         label="High Priority"

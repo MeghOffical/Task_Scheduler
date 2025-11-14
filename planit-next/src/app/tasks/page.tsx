@@ -234,9 +234,9 @@ export default function TasksPage() {
             </div>
           </div>
           {/* Search and Filters */}
-          <div className="bg-[#E8F4F8] dark:bg-gray-800 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
-              <label htmlFor="search" className="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+              <label htmlFor="search" className="block text-xs font-medium text-gray-300 mb-1">
                 Search
               </label>
               <input
@@ -245,18 +245,18 @@ export default function TasksPage() {
                 placeholder="Search by title or description…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#111827] text-gray-900 dark:text-white px-3 py-2 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+                className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600"
               />
             </div>
             <div>
-              <label htmlFor="statusFilter" className="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+              <label htmlFor="statusFilter" className="block text-xs font-medium text-gray-300 mb-1">
                 Status
               </label>
-                <select
-                  id="statusFilter"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as any)}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#111827] text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              <select
+                id="statusFilter"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
               >
                 <option value="all">All</option>
                 <option value="pending">Pending</option>
@@ -265,14 +265,14 @@ export default function TasksPage() {
               </select>
             </div>
             <div>
-              <label htmlFor="priorityFilter" className="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+              <label htmlFor="priorityFilter" className="block text-xs font-medium text-gray-300 mb-1">
                 Priority
               </label>
-                <select
-                  id="priorityFilter"
-                  value={priorityFilter}
-                  onChange={(e) => setPriorityFilter(e.target.value as any)}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#111827] text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              <select
+                id="priorityFilter"
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value as any)}
+                className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
               >
                 <option value="all">All</option>
                 <option value="low">Low</option>
@@ -282,7 +282,7 @@ export default function TasksPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="dueFrom" className="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+                <label htmlFor="dueFrom" className="block text-xs font-medium text-gray-300 mb-1">
                   From
                 </label>
                 <input
@@ -290,11 +290,11 @@ export default function TasksPage() {
                   type="date"
                   value={dueFrom}
                   onChange={(e) => setDueFrom(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#111827] text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+                  className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
                 />
               </div>
               <div>
-                <label htmlFor="dueTo" className="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+                <label htmlFor="dueTo" className="block text-xs font-medium text-gray-300 mb-1">
                   To
                 </label>
                 <input
@@ -302,7 +302,7 @@ export default function TasksPage() {
                   type="date"
                   value={dueTo}
                   onChange={(e) => setDueTo(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#111827] text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+                  className="w-full rounded-md border border-gray-600 bg-[#111827] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600"
                 />
               </div>
             </div>
@@ -349,35 +349,35 @@ export default function TasksPage() {
                 {filtered.map((task: Task) => (
             <div
               key={task.id}
-              className="bg-[#E8F4F8] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
+              className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
             >
               <div className="flex justify-between items-start">
-                <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{task.title}</h3>
+                <h3 className="font-semibold text-lg text-white dark:text-gray-100">{task.title}</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEditModal(task)}
-                    className="text-gray-500 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-primary-400 transition-colors"
+                    className="text-gray-300 dark:text-gray-400 hover:text-yellow-400 dark:hover:text-primary-400 transition-colors"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(task.id)}
-                    className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                    className="text-gray-300 dark:text-gray-400 hover:text-red-400 dark:hover:text-red-400 transition-colors"
                   >
                     🗑️
                   </button>
                 </div>
               </div>
 
-              <p className="text-gray-700 dark:text-gray-300 text-sm">{task.description}</p>
+              <p className="text-gray-300 dark:text-gray-300 text-sm">{task.description}</p>
 
               <div className="flex justify-between items-center text-sm">
                 <div className="flex flex-col gap-1">
-                  <span className="text-gray-600 dark:text-gray-400">
+                  <span className="text-gray-300 dark:text-gray-400">
                     Due: {new Date(task.dueDate || '').toLocaleDateString()}
                   </span>
                   {(task.startTime || task.endTime) && (
-                    <span className="text-gray-500 dark:text-gray-400 text-xs">
+                    <span className="text-gray-400 dark:text-gray-400 text-xs">
                       {task.startTime && `Start: ${task.startTime}`}
                       {task.startTime && task.endTime && ' | '}
                       {task.endTime && `End: ${task.endTime}`}

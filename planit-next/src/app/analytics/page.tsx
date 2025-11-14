@@ -292,29 +292,29 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#E8F4F8] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tasks by Status</h2>
+        <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white dark:text-gray-100">Tasks by Status</h2>
           <div className="relative h-72">
             <canvas ref={statusChartRef} />
           </div>
         </div>
 
-        <div className="bg-[#E8F4F8] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tasks by Priority</h2>
+        <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white dark:text-gray-100">Tasks by Priority</h2>
           <div className="relative h-72">
             <canvas ref={priorityChartRef} />
           </div>
         </div>
 
-        <div className="bg-[#E8F4F8] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Pomodoro Sessions This Week</h2>
+        <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white dark:text-gray-100">Pomodoro Sessions This Week</h2>
           <div className="relative h-72">
             <canvas ref={pomodoroChartRef} />
           </div>
         </div>
 
-        <div className="bg-[#E8F4F8] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Productivity Trend</h2>
+        <div className="bg-[#1B2537] dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white dark:text-gray-100">Productivity Trend</h2>
           <div className="relative h-72">
             <canvas ref={productivityChartRef} />
           </div>
