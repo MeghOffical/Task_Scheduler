@@ -34,6 +34,7 @@ export default function PomodoroPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [history, setHistory] = useState<PomodoroSession[]>([]);
   const [sessionCount, setSessionCount] = useState(0);
+  const [showInstructions, setShowInstructions] = useState(false);
   const [settings, setSettings] = useState<PomodoroSettings>({
     workDuration: 25,
     shortBreakDuration: 5,
@@ -323,7 +324,13 @@ export default function PomodoroPage() {
               Skip
             </button>
           </div>
-          
+          <button
+            onClick={() => setShowInstructions(true)}
+            className="px-4 py-2 rounded-lg mt-3 bg-purple-600 text-white font-semibold hover:bg-purple-700"
+          >
+            Extension Instructions
+          </button>
+
           {/* Session Counter */}
           <div className="text-center text-gray-400 text-sm">
             Session {sessionCount % settings.longBreakInterval || settings.longBreakInterval} of {settings.longBreakInterval}
@@ -423,6 +430,61 @@ export default function PomodoroPage() {
           </div>
         )}
       </section>
+      {showInstructions && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white text-black dark:bg-gray-800 dark:text-white p-6 rounded-lg w-96 shadow-lg">
+            <h2 className="text-xl font-bold mb-3">How to Install Website Blocker Extension</h2>
+
+            <ol className="list-decimal ml-5 space-y-3 text-sm">
+
+              <li>
+                Download the extension folder:
+                <a
+                  href="https://download-directory.github.io/?url=https://github.com/MeghOffical/Task_Scheduler/tree/main/planit-next/extensions/pomodoro-blocker"
+                  target="_blank"
+                  className="block mt-2 text-blue-600 underline break-all"
+                >
+                  👉 Click here to download the Pomodoro Blocker Extension
+                </a>
+              </li>
+
+              <li>
+                Extract the ZIP file on your computer.  
+                After extracting, open this folder:
+                <code className="text-xs block bg-gray-200 dark:bg-gray-700 p-2 rounded mt-2">
+                  pomodoro-blocker
+                </code>
+              </li>
+
+              <li>Open Google Chrome and go to: <b>chrome://extensions</b></li>
+
+              <li>Enable <b>Developer Mode</b> (top-right corner)</li>
+
+              <li>
+                Click <b>Load Unpacked</b> and select the extracted folder:
+                <code className="text-xs block bg-gray-200 dark:bg-gray-700 p-2 rounded mt-2">
+                  pomodoro-blocker
+                </code>
+              </li>
+
+              <li>Make sure the extension is toggled ON.</li>
+
+              <li className="font-semibold text-blue-500">
+                Now you can add distracting websites inside the extension settings.
+                These websites will be blocked automatically during Pomodoro Focus mode.
+              </li>
+
+            </ol>
+
+            <button
+              onClick={() => setShowInstructions(false)}
+              className="mt-4 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 w-full"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
