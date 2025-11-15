@@ -440,7 +440,8 @@ export default function PomodoroPage() {
               <li>
                 Download the extension folder:
                 <a
-                  href="https://download-directory.github.io/?url=https://github.com/MeghOffical/Task_Scheduler/tree/main/planit-next/extensions/pomodoro-blocker"
+                  href="https://github.com/Vansh-Vaishnani/planit-pomodoro-blocker/archive/refs/heads/main.zip
+"
                   target="_blank"
                   className="block mt-2 text-blue-600 underline break-all"
                 >
