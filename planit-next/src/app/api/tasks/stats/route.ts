@@ -7,7 +7,7 @@ import dbConnect from '@/lib/db';
 
 export async function GET(request: Request) {
   try {
-    const token = cookies().get('auth_token')?.value;
+    const token = (await cookies()).get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }

@@ -40,8 +40,8 @@ export async function POST(request: Request) {
       email: user.email,
     });
 
-    // Set cookie
-    cookies().set('auth_token', token, {
+    // Set cookie (cookies() is async in Next 16+)
+    (await cookies()).set('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

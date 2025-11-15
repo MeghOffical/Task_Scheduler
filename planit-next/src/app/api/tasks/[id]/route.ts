@@ -10,7 +10,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = cookies().get('auth_token')?.value;
+    const token = (await cookies()).get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
@@ -53,7 +53,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = cookies().get('auth_token')?.value;
+    const token = (await cookies()).get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
