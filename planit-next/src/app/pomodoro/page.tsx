@@ -328,7 +328,7 @@ export default function PomodoroPage() {
             onClick={() => setShowInstructions(true)}
             className="px-4 py-2 rounded-lg mt-3 bg-purple-600 text-white font-semibold hover:bg-purple-700"
           >
-            Extension Instructions
+            Activate Distraction Blocker
           </button>
 
           {/* Session Counter */}
