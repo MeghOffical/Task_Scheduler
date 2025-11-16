@@ -33,11 +33,11 @@ interface TaskFormData {
 const getPriorityClass = (priority: Task['priority']): string => {
   switch (priority) {
     case 'high':
-      return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
+      return 'bg-gradient-to-r from-red-100 to-rose-100 dark:from-red-900/40 dark:to-rose-900/40 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800';
     case 'medium':
-      return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
+      return 'bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/40 dark:to-amber-900/40 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800';
     case 'low':
-      return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
+      return 'bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800';
     default:
       return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300';
   }
@@ -46,11 +46,11 @@ const getPriorityClass = (priority: Task['priority']): string => {
 const getStatusClass = (status: Task['status']): string => {
   switch (status) {
     case 'completed':
-      return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
+      return 'bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800';
     case 'in-progress':
-      return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
+      return 'bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800';
     case 'pending':
-      return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
+      return 'bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/40 dark:to-orange-900/40 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800';
     default:
       return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300';
   }
@@ -214,27 +214,32 @@ export default function TasksPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+              Tasks
+            </h1>
             <div className="flex gap-3">
               <button
                 onClick={exportToCSV}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                className="group relative px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-green-500/30 hover:shadow-green-500/50 hover:scale-105 font-semibold overflow-hidden"
               >
-                <span>📊</span> Export CSV
+                <span className="relative z-10">📊</span>
+                <span className="relative z-10">Export CSV</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </button>
               <button
                 onClick={() => {
                   resetForm();
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                className="group relative px-5 py-2.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-xl hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 font-semibold overflow-hidden"
               >
-                Add Task
+                <span className="relative z-10">Add Task</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </button>
             </div>
           </div>
           {/* Search and Filters */}
-          <div className="glass-panel rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 rounded-2xl p-5 border border-white/20 dark:border-slate-700/50 shadow-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label htmlFor="search" className="block text-xs font-medium text-gray-700 mb-1">
                 Search
@@ -245,7 +250,7 @@ export default function TasksPage() {
                 placeholder="Search by title or description…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white dark:placeholder-gray-400"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-white px-3 py-2.5 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
               />
             </div>
             <div>
@@ -256,7 +261,7 @@ export default function TasksPage() {
                 id="statusFilter"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 <option value="all">All</option>
                 <option value="pending">Pending</option>
@@ -272,7 +277,7 @@ export default function TasksPage() {
                 id="priorityFilter"
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value as any)}
-                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 <option value="all">All</option>
                 <option value="low">Low</option>
@@ -290,7 +295,7 @@ export default function TasksPage() {
                   type="date"
                   value={dueFrom}
                   onChange={(e) => setDueFrom(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
                 />
               </div>
               <div>
@@ -302,7 +307,7 @@ export default function TasksPage() {
                   type="date"
                   value={dueTo}
                   onChange={(e) => setDueTo(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
                 />
               </div>
             </div>
@@ -310,7 +315,7 @@ export default function TasksPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg">{error}</div>
+          <div className="backdrop-blur-xl bg-red-50/80 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-4 rounded-xl border border-red-200 dark:border-red-800 shadow-lg">{error}</div>
         )}
 
         {/* Derived filtered tasks */}
@@ -342,42 +347,50 @@ export default function TasksPage() {
           });
           return (
             <>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                 Showing {filtered.length} of {tasks.length} tasks
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filtered.map((task: Task) => (
             <div
               key={task.id}
-              className="glass-panel rounded-xl p-6 space-y-4 transition-all"
+              className="group relative backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 rounded-2xl p-6 space-y-4 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] border border-white/20 dark:border-slate-700/50 shadow-lg hover:shadow-2xl overflow-hidden"
             >
-              <div className="flex justify-between items-start">
-                <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{task.title}</h3>
+              {/* Gradient overlay on hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              {/* Shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              
+              <div className="relative flex justify-between items-start">
+                <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:via-purple-600 group-hover:to-pink-600 group-hover:dark:from-blue-400 group-hover:dark:via-purple-400 group-hover:dark:to-pink-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                  {task.title}
+                </h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEditModal(task)}
-                    className="text-gray-300 dark:text-gray-400 hover:text-yellow-400 dark:hover:text-primary-400 transition-colors"
+                    className="p-2 rounded-lg bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-200 hover:to-amber-200 dark:hover:from-yellow-800/40 dark:hover:to-amber-800/40 transition-all duration-200 hover:scale-110 shadow-md hover:shadow-lg"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(task.id)}
-                    className="text-gray-300 dark:text-gray-400 hover:text-red-400 dark:hover:text-red-400 transition-colors"
+                    className="p-2 rounded-lg bg-gradient-to-br from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30 text-red-600 dark:text-red-400 hover:from-red-200 hover:to-rose-200 dark:hover:from-red-800/40 dark:hover:to-rose-800/40 transition-all duration-200 hover:scale-110 shadow-md hover:shadow-lg"
                   >
                     🗑️
                   </button>
                 </div>
               </div>
 
-              <p className="text-gray-300 dark:text-gray-300 text-sm">{task.description}</p>
+              <p className="relative text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{task.description}</p>
 
-              <div className="flex justify-between items-center text-sm">
+              <div className="relative flex justify-between items-center text-sm">
                 <div className="flex flex-col gap-1">
-                  <span className="text-gray-300 dark:text-gray-400">
+                  <span className="text-gray-600 dark:text-gray-400 font-medium">
                     Due: {new Date(task.dueDate || '').toLocaleDateString()}
                   </span>
                   {(task.startTime || task.endTime) && (
-                    <span className="text-gray-400 dark:text-gray-400 text-xs">
+                    <span className="text-gray-500 dark:text-gray-500 text-xs">
                       {task.startTime && `Start: ${task.startTime}`}
                       {task.startTime && task.endTime && ' | '}
                       {task.endTime && `End: ${task.endTime}`}
@@ -386,12 +399,12 @@ export default function TasksPage() {
                 </div>
                 <div className="space-x-2">
                   <span
-                    className={`px-2 py-1 rounded-full text-xs ${getPriorityClass(task.priority)}`}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-md ${getPriorityClass(task.priority)}`}
                   >
                     {task.priority}
                   </span>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs ${getStatusClass(task.status)}`}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-md ${getStatusClass(task.status)}`}
                   >
                     {task.status}
                   </span>
@@ -407,9 +420,9 @@ export default function TasksPage() {
 
       {/* Task Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
-          <div className="glass-panel rounded-xl p-7 w-full max-w-md transition-all">
-            <h2 className="text-lg font-semibold mb-6 text-gray-900 dark:text-gray-100">
+        <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 rounded-2xl p-7 w-full max-w-md transition-all shadow-2xl border border-white/20 dark:border-slate-700/50">
+            <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
               {editingTask ? 'Edit Task' : 'Add New Task'}
             </h2>
 
@@ -425,7 +438,7 @@ export default function TasksPage() {
                   onChange={(e: { target: { value: string } }) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
                   placeholder="Enter task title"
                   required
                 />
@@ -441,7 +454,7 @@ export default function TasksPage() {
                   onChange={(e: { target: { value: string } }) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all resize-none"
+                  className="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md resize-none"
                   placeholder="Enter task description"
                   rows={3}
                 />
@@ -461,7 +474,7 @@ export default function TasksPage() {
                         priority: e.target.value as 'low' | 'medium' | 'high',
                       })
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -482,7 +495,7 @@ export default function TasksPage() {
                         status: e.target.value as 'pending' | 'in-progress' | 'completed',
                       })
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     <option value="pending">Pending</option>
                     <option value="in-progress">In Progress</option>
@@ -519,7 +532,7 @@ export default function TasksPage() {
                     onChange={(e: { target: { value: string } }) =>
                       setFormData({ ...formData, startTime: e.target.value })
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
                     step="60"
                   />
                 </div>
@@ -535,7 +548,7 @@ export default function TasksPage() {
                     onChange={(e: { target: { value: string } }) =>
                       setFormData({ ...formData, endTime: e.target.value })
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white/90 dark:bg-slate-800/90 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
                     step="60"
                   />
                 </div>
@@ -548,15 +561,16 @@ export default function TasksPage() {
                     setShowModal(false);
                     resetForm();
                   }}
-                  className="flex-1 px-4 py-2.5 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+                  className="group flex-1 px-4 py-2.5 text-sm font-semibold bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2.5 text-sm font-medium bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 shadow-sm"
+                  className="group relative flex-1 px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-xl hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 overflow-hidden"
                 >
-                  {editingTask ? 'Update Task' : 'Add Task'}
+                  <span className="relative z-10">{editingTask ? 'Update Task' : 'Add Task'}</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                 </button>
               </div>
             </form>
