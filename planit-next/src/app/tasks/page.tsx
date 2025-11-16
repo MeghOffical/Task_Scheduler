@@ -234,7 +234,7 @@ export default function TasksPage() {
             </div>
           </div>
           {/* Search and Filters */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 shadow-sm">
+          <div className="glass-panel rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
               <label htmlFor="search" className="block text-xs font-medium text-gray-700 mb-1">
                 Search
@@ -349,7 +349,7 @@ export default function TasksPage() {
                 {filtered.map((task: Task) => (
             <div
               key={task.id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-6 space-y-4 transition-colors"
+              className="glass-panel rounded-xl p-6 space-y-4 transition-all"
             >
               <div className="flex justify-between items-start">
                 <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{task.title}</h3>
@@ -408,7 +408,7 @@ export default function TasksPage() {
       {/* Task Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-xl p-7 w-full max-w-md transition-colors">
+          <div className="glass-panel rounded-xl p-7 w-full max-w-md transition-all">
             <h2 className="text-lg font-semibold mb-6 text-gray-900 dark:text-gray-100">
               {editingTask ? 'Edit Task' : 'Add New Task'}
             </h2>

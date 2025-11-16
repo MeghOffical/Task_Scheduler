@@ -24,7 +24,7 @@ export function StatCard({ icon, label, value, color }: StatCardProps) {
   };
 
   return (
-    <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg dark:shadow-md p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <div className="relative glass-panel rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
       <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-30`} />
       <div className="relative flex items-center gap-4">
         <div className={`text-2xl p-3 rounded-xl bg-gray-100 dark:bg-gray-800 shadow-md ${colorMap[color as keyof typeof colorMap]}`}>
@@ -86,7 +86,7 @@ export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
   };
 
   return (
-    <div className="group p-4 bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-xl shadow-md hover:shadow-xl dark:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <div className="group glass-panel p-4 rounded-xl transition-all duration-300 hover:-translate-y-1">
       <div className="flex justify-between items-start gap-4">
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 truncate">{task.title}</h3>
@@ -184,7 +184,7 @@ export function PriorityItem({ label, count, color }: PriorityItemProps) {
   return (
     <div className="relative group">
       <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-      <div className="relative flex justify-between items-center p-4 bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-xl shadow-md transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+      <div className="relative flex justify-between items-center p-4 glass-panel rounded-xl transition-all duration-300 group-hover:-translate-y-1">
         <div className="flex items-center space-x-3">
           <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-800 shadow-sm ${colorMap[color as keyof typeof colorMap]}`}>
             {color === 'red' && (

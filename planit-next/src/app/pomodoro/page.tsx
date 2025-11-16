@@ -238,18 +238,9 @@ export default function PomodoroPage() {
   };
 
   return (
-    <div className="flex flex-1 gap-8 p-8 overflow-hidden bg-slate-50 dark:bg-gray-900">
+    <div className="flex flex-1 gap-8 p-8 overflow-hidden">
       
-      <section className="
-        flex-1 
-        bg-white 
-        dark:bg-gray-800 
-        rounded-2xl 
-        shadow-2xl 
-        p-12 
-        flex flex-col 
-        text-gray-900 
-        dark:text-white">
+      <section className="flex-1 glass-panel rounded-2xl p-12 flex flex-col text-gray-900 dark:text-white">
         
         <h1 className="text-3xl font-bold mb-12">Pomodoro Timer</h1>
 
@@ -382,11 +373,7 @@ export default function PomodoroPage() {
       </section>
 
       {/* SIDEBAR */}
-      <section className="w-80 
-        bg-white dark:bg-gray-700 
-        rounded-2xl shadow-xl 
-        p-8 flex flex-col 
-        text-gray-900 dark:text-white overflow-hidden">
+      <section className="w-80 glass-panel rounded-2xl p-8 flex flex-col text-gray-900 dark:text-white overflow-hidden">
 
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Activity Log & Insights</h2>
 
@@ -449,7 +436,7 @@ export default function PomodoroPage() {
             <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
               📊 Daily Focus
             </h3>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+            <div className="glass-panel rounded-lg p-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Total Focus Time: <span className="font-bold text-gray-900 dark:text-white">{history.filter(s => s.type === 'focus').length * 25} min</span>
               </p>
@@ -460,7 +447,7 @@ export default function PomodoroPage() {
 
       {showInstructions && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white text-black dark:bg-gray-800 dark:text-white p-6 rounded-lg w-96 shadow-lg">
+          <div className="glass-panel text-black dark:text-white p-6 rounded-lg w-96">
             <h2 className="text-xl font-bold mb-3">How to Install Website Blocker Extension</h2>
 
             <ol className="list-decimal ml-5 space-y-3 text-sm">

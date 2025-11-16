@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors;
+    @apply min-h-screen flex flex-col transition-colors;
   }
 }
 
@@ -40,7 +40,7 @@
   }
 
   .auth-container {
-    @apply w-full max-w-md bg-white p-8 rounded-2xl shadow-xl relative text-gray-900;
+    @apply w-full max-w-md glass-panel p-8 rounded-2xl relative;
     animation: fade-in 0.5s ease-in-out;
   }
 
@@ -67,7 +67,7 @@
 
   /* Feature Cards */
   .feature-card {
-    @apply bg-white p-8 rounded-xl text-center shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
+    @apply glass-panel p-8 rounded-xl text-center hover:-translate-y-1 transition-all duration-300;
   }
 
   .feature-icon {
@@ -116,6 +116,10 @@
 @layer utilities {
   .glass-elevated {
     @apply bg-slate-900/80 backdrop-blur-xl border border-slate-700/80 shadow-[0_22px_55px_rgba(15,23,42,0.75)];
+  }
+
+  .glass-panel {
+    @apply bg-white/25 dark:bg-slate-900/80 backdrop-blur-xl border border-white/70 dark:border-slate-600/80 shadow-[0_10px_25px_rgba(15,23,42,0.12)];
   }
 
   .fade-soft {

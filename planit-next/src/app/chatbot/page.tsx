@@ -118,7 +118,14 @@ export default function ChatbotPage() {
 
   const formatTimestamp = (timestamp?: string) => {
     if (!timestamp) return '';
-    return new Date(timestamp).toLocaleString();
+    return new Date(timestamp).toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
   };
 
   const displayedMessages = useMemo(() => {
@@ -259,7 +266,7 @@ export default function ChatbotPage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 min-h-[600px]">
-          <aside className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 flex flex-col">
+          <aside className="glass-panel rounded-2xl p-4 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Conversations</h2>
               <button
@@ -304,7 +311,7 @@ export default function ChatbotPage() {
             )}
           </aside>
 
-          <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
+          <section className="glass-panel rounded-2xl flex flex-col">
             <header className="border-b border-gray-100 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Current chat</p>

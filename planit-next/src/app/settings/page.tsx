@@ -161,7 +161,7 @@ export default function SettingsPage() {
   return (
       <div className='space-y-8'>
       {/* User Profile Section */}
-      <section className='bg-white dark:bg-gray-800 shadow rounded-lg p-6'>
+      <section className='glass-panel rounded-lg p-6'>
         <h2 className='text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6'>Profile Information</h2>
         <div className='space-y-4'>
           <div>
@@ -231,7 +231,7 @@ export default function SettingsPage() {
       </section>
 
       {/* Pomodoro Settings Section */}
-      <section className='bg-white dark:bg-gray-800 shadow rounded-lg p-6'>
+      <section className='glass-panel rounded-lg p-6'>
         <h2 className='text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6'>Pomodoro Timer Settings</h2>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div>

@@ -26,6 +26,7 @@ function LoadingSpinner() {
 }
 
 export default function DashboardPage() {
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<DashboardStats>({
@@ -74,6 +75,17 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const now = new Date();
+    setLastUpdated(
+      now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })
+    );
   }, []);
 
   // Initial load and listen for task updates
@@ -140,7 +152,7 @@ export default function DashboardPage() {
             </div>
             <div className="hidden sm:block">
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                Last updated: {new Date().toLocaleTimeString()}
+                {lastUpdated && <>Last updated: {lastUpdated}</>}
               </div>
             </div>
           </div>
@@ -181,7 +193,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg p-6">
+              <div className="relative glass-panel rounded-2xl p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Tasks</h2>
                   <div className="text-sm text-gray-300 dark:text-gray-400">
@@ -239,7 +251,7 @@ export default function DashboardPage() {
               <div className="sticky top-6 space-y-6">
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-lg p-6">
+                  <div className="relative glass-panel rounded-2xl p-6">
                     <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-gray-100">Task Priority Breakdown</h2>
                     <div className="space-y-4">
                       <PriorityItem

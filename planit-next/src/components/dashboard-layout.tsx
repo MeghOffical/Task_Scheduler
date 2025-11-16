@@ -151,7 +151,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-between items-center sticky top-0 z-40 transition-all">
+    <header className="w-full glass-panel px-6 py-4 flex justify-between items-center sticky top-0 z-40">
       
       {/* Logo */}
       <Link href="/dashboard" className="text-2xl font-bold flex items-center gap-2 text-gray-800 dark:text-white">
@@ -352,7 +352,7 @@ export const Sidebar = ({
 
   return (
     <>
-      <aside className="bg-white dark:bg-gray-800 w-64 h-full shadow-lg border-r border-gray-200 dark:border-gray-700 transition-colors flex flex-col">
+      <aside className="w-64 h-full glass-panel transition-colors flex flex-col">
         <nav className="py-8 px-3 flex-1 flex flex-col gap-1.5 overflow-y-auto">
 
           {navItems.map((item) => (
@@ -369,7 +369,7 @@ export const Sidebar = ({
       </aside>
 
       {/* AI Right Sidebar Panel */}
-      <div className={`fixed inset-y-0 right-0 w-96 bg-white dark:bg-gray-900 shadow-2xl transform ${showAIPanel ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 border-l border-gray-300 dark:border-gray-700 z-50`}>
+      <div className={`fixed inset-y-0 right-0 w-96 glass-panel transform ${showAIPanel ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 z-50`}>
         
         {/* Header */}
         <div className="p-4 border-b border-gray-300 dark:border-gray-700 flex justify-between items-center">
@@ -453,7 +453,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-50 transition-colors">
       <Header />
 
       <div className="flex flex-1 overflow-hidden">
