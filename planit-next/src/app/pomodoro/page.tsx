@@ -41,7 +41,7 @@ export default function PomodoroPage() {
     longBreakDuration: 15,
     longBreakInterval: 4
   });
-  
+
   const timerRef = useRef<NodeJS.Timeout>();
   const audioContextRef = useRef<AudioContext>();
   const isRunningRef = useRef(isRunning);
@@ -79,7 +79,7 @@ export default function PomodoroPage() {
     audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     fetchTasks();
     fetchSettings();
-    
+
     const savedHistory = localStorage.getItem('pomodoroHistory');
     if (savedHistory) {
       setHistory(JSON.parse(savedHistory));
@@ -119,10 +119,10 @@ export default function PomodoroPage() {
   useEffect(() => {
     isRunningRef.current = isRunning;
   }, [isRunning]);
-  
+
   const playNotificationSound = () => {
     if (!audioContextRef.current) return;
-    
+
     const oscillator = audioContextRef.current.createOscillator();
     const gainNode = audioContextRef.current.createGain();
     oscillator.connect(gainNode);
@@ -187,7 +187,6 @@ export default function PomodoroPage() {
     pauseTimer();
     playNotificationSound();
 
-    // Save to history
     const selectedTask = tasks.find(t => t.id === selectedTaskId);
     const sessionDuration = isBreak
       ? (isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration)
@@ -207,10 +206,8 @@ export default function PomodoroPage() {
     localStorage.setItem('pomodoroHistory', JSON.stringify(updatedHistory));
 
     if (!isBreak) {
-      // Only increment session count after focus sessions
       const newSessionCount = sessionCount + 1;
       setSessionCount(newSessionCount);
-      // Check if it's time for a long break
       if (newSessionCount % settings.longBreakInterval === 0) {
         setIsLongBreak(true);
       }
@@ -223,13 +220,11 @@ export default function PomodoroPage() {
   const switchSession = () => {
     const wasBreak = isBreak;
     setIsBreak(!wasBreak);
-    
+
     if (wasBreak) {
-      // Switching to focus mode
       setIsLongBreak(false);
       setTimeLeft(settings.workDuration * 60);
     } else {
-      // Switching to break mode
       const breakDuration = isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration;
       setTimeLeft(breakDuration * 60);
     }
@@ -237,24 +232,33 @@ export default function PomodoroPage() {
 
   const getTimerColor = () => {
     if (isBreak) {
-      return isLongBreak ? '#059669' /* emerald-600 */ : '#10B981' /* emerald-500 */;
+      return isLongBreak ? '#059669' : '#10B981';
     }
-    return '#0891B2' /* cyan-600 */;
+    return '#0891B2';
   };
 
   return (
-    <div className="flex flex-1 gap-8 p-8 overflow-hidden bg-gray-50 dark:bg-gray-900">
-      {/* Main Pomodoro Section */}
-      <section className="flex-1 bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-2xl p-12 flex flex-col text-white">
-        <h1 className="text-3xl font-bold mb-12 text-white">Pomodoro Timer</h1>
+    <div className="flex flex-1 gap-8 p-8 overflow-hidden bg-slate-50 dark:bg-gray-900">
+      
+      <section className="
+        flex-1 
+        bg-white 
+        dark:bg-gray-800 
+        rounded-2xl 
+        shadow-2xl 
+        p-12 
+        flex flex-col 
+        text-gray-900 
+        dark:text-white">
+        
+        <h1 className="text-3xl font-bold mb-12">Pomodoro Timer</h1>
 
         <div className="flex-1 flex flex-col items-center justify-center gap-8">
-          {/* Session Type */}
-          <div className="text-xl font-light tracking-wide text-gray-300">
+
+          <div className="text-xl font-light tracking-wide text-gray-500 dark:text-gray-300">
             {isBreak ? (isLongBreak ? 'Long Break' : 'Short Break') : 'Focus Session'}
           </div>
-          
-          {/* Timer Circle */}
+
           {(() => {
             const totalSeconds = isBreak
               ? (isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration) * 60
@@ -264,11 +268,11 @@ export default function PomodoroPage() {
             const circumference = 2 * Math.PI * radius;
             const strokeDashoffset = circumference * (1 - progress);
             const ringColor = getTimerColor();
-            const trackColor = '#374151';
+            const trackColor = "#E5E7EB"; // light mode change
+
             return (
               <div className="relative shadow-2xl shadow-cyan-500/40 rounded-full">
                 <svg width="240" height="240" viewBox="0 0 240 240" className="block drop-shadow-xl">
-                  {/* Background Circle */}
                   <circle
                     cx="120"
                     cy="120"
@@ -277,7 +281,6 @@ export default function PomodoroPage() {
                     stroke={trackColor}
                     strokeWidth={10}
                   />
-                  {/* Progress Circle */}
                   <circle
                     cx="120"
                     cy="120"
@@ -293,7 +296,7 @@ export default function PomodoroPage() {
                   />
                   <foreignObject x="0" y="0" width="240" height="240">
                     <div className="w-[240px] h-[240px] flex items-center justify-center">
-                      <div className="text-5xl font-bold font-mono text-white">
+                      <div className="text-5xl font-bold font-mono text-gray-900 dark:text-white">
                         {formatTime(timeLeft)}
                       </div>
                     </div>
@@ -303,50 +306,70 @@ export default function PomodoroPage() {
             );
           })()}
 
-          {/* Control Buttons */}
           <div className="flex gap-4 justify-center">
+
             <button
               onClick={toggleTimer}
-              className="px-10 py-3 rounded-lg bg-gray-800 hover:bg-gray-900 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
+              className="px-10 py-3 rounded-lg
+                bg-cyan-500 hover:bg-cyan-600
+                text-white font-semibold transition-all duration-300
+                shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
             >
               {isRunning ? 'Pause' : 'Start'}
             </button>
+
+
             <button
               onClick={resetTimer}
-              className="px-10 py-3 rounded-lg bg-gray-600 hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
+              className="px-10 py-3 rounded-lg
+                bg-gray-600 hover:bg-gray-700
+                text-white font-semibold transition-all duration-300
+                shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
             >
               Reset
             </button>
+
+
             <button
               onClick={skipSession}
-              className="px-10 py-3 rounded-lg bg-gray-700 hover:bg-gray-800 dark:bg-pink-500 dark:hover:bg-pink-600 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
+              className="px-10 py-3 rounded-lg
+                bg-pink-500 hover:bg-pink-600
+                text-white font-semibold transition-all duration-300
+                shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
             >
               Skip
             </button>
+
           </div>
+
           <button
             onClick={() => setShowInstructions(true)}
-            className="px-4 py-2 rounded-lg mt-3 bg-purple-600 text-white font-semibold hover:bg-purple-700"
+            className="px-4 py-2 rounded-lg mt-3 
+              bg-purple-500 hover:bg-purple-600 
+              text-white font-semibold"
           >
             Activate Distraction Blocker
           </button>
 
-          {/* Session Counter */}
-          <div className="text-center text-gray-400 text-sm">
+          <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
             Session {sessionCount % settings.longBreakInterval || settings.longBreakInterval} of {settings.longBreakInterval}
           </div>
         </div>
 
-        {/* Task Selection */}
         <div className="mt-8">
-          <label htmlFor="taskSelect" className="block text-sm font-semibold text-gray-300 mb-3">
+          <label htmlFor="taskSelect" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
             Link to Task (optional)
           </label>
           <select
             id="taskSelect"
             value={selectedTaskId || ''}
             onChange={(e) => setSelectedTaskId(e.target.value || null)}
-            className="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+            className="w-full p-3 border 
+              border-gray-200 dark:border-gray-600 
+              rounded-lg 
+              bg-violet-50 dark:bg-gray-700 
+              text-gray-900 dark:text-white 
+              focus:border-violet-400 focus:outline-none transition-colors"
           >
             <option value="">No task selected</option>
             {tasks.map((task) => (
@@ -358,10 +381,15 @@ export default function PomodoroPage() {
         </div>
       </section>
 
-      {/* Activity Log & Insights Sidebar */}
-      <section className="w-80 bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-xl p-8 flex flex-col text-gray-900 dark:text-white overflow-hidden">
+      {/* SIDEBAR */}
+      <section className="w-80 
+        bg-white dark:bg-gray-700 
+        rounded-2xl shadow-xl 
+        p-8 flex flex-col 
+        text-gray-900 dark:text-white overflow-hidden">
+
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Activity Log & Insights</h2>
-        
+
         <div className="flex-1 overflow-y-auto">
           {history.length === 0 ? (
             <div className="text-center text-gray-500 dark:text-gray-400 py-8">
@@ -369,11 +397,11 @@ export default function PomodoroPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {/* Group by type */}
+
               {(() => {
                 const breaks = history.filter(s => s.type === 'break');
                 const focuses = history.filter(s => s.type === 'focus');
-                
+
                 return (
                   <>
                     {breaks.length > 0 && (
@@ -392,7 +420,7 @@ export default function PomodoroPage() {
                         ))}
                       </div>
                     )}
-                    
+
                     {focuses.length > 0 && (
                       <div>
                         <h3 className="text-xs uppercase font-bold text-gray-600 dark:text-gray-400 mb-3 mt-6">Focus Sessions</h3>
@@ -416,9 +444,8 @@ export default function PomodoroPage() {
           )}
         </div>
 
-        {/* Daily Focus Stats */}
         {history.length > 0 && (
-          <div className="mt-8 pt-6 border-t border-gray-300 dark:border-gray-600">
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
             <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
               📊 Daily Focus
             </h3>
@@ -430,6 +457,7 @@ export default function PomodoroPage() {
           </div>
         )}
       </section>
+
       {showInstructions && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
           <div className="bg-white text-black dark:bg-gray-800 dark:text-white p-6 rounded-lg w-96 shadow-lg">
@@ -440,8 +468,7 @@ export default function PomodoroPage() {
               <li>
                 Download the extension folder:
                 <a
-                  href="https://github.com/Vansh-Vaishnani/planit-pomodoro-blocker/archive/refs/heads/main.zip
-"
+                  href="https://github.com/Vansh-Vaishnani/planit-pomodoro-blocker/archive/refs/heads/main.zip"
                   target="_blank"
                   className="block mt-2 text-blue-600 underline break-all"
                 >
@@ -450,7 +477,7 @@ export default function PomodoroPage() {
               </li>
 
               <li>
-                Extract the ZIP file on your computer.  
+                Extract the ZIP file on your computer.
                 After extracting, open this folder:
                 <code className="text-xs block bg-gray-200 dark:bg-gray-700 p-2 rounded mt-2">
                   pomodoro-blocker
