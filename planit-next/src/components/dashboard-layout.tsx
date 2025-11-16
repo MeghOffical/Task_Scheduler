@@ -151,17 +151,22 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full glass-panel px-6 py-4 flex justify-between items-center sticky top-0 z-40">
+    <header className="w-full backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-b border-white/20 dark:border-slate-700/50 px-6 py-4 flex justify-between items-center sticky top-0 z-40 shadow-lg shadow-black/5 dark:shadow-black/20">
       
       {/* Logo */}
-      <Link href="/dashboard" className="text-2xl font-bold flex items-center gap-2 text-gray-800 dark:text-white">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
-          viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-          className="w-7 h-7 text-blue-600 dark:text-blue-400">
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Z" />
-        </svg>
-        Plan-it
+      <Link href="/dashboard" className="text-2xl font-bold flex items-center gap-2 group">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition-opacity"></div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
+            viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+            className="w-7 h-7 text-blue-600 dark:text-blue-400 relative z-10 group-hover:scale-110 transition-transform">
+            <path strokeLinecap="round" strokeLinejoin="round"
+              d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Z" />
+          </svg>
+        </div>
+        <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+          Plan-it
+        </span>
       </Link>
 
 
@@ -174,11 +179,11 @@ const Header = () => {
               setShowNotifications(!showNotifications);
               if (!showNotifications) fetchNotifications();
             }}
-            className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition relative"
+            className="p-2.5 rounded-xl hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 transition-all relative group hover:scale-105 active:scale-95"
           >
-            <BellIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <BellIcon className="w-6 h-6 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors" />
             {notificationCount > 0 && (
-              <span className="absolute top-1 right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+              <span className="absolute top-1 right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse shadow-lg shadow-red-500/50 font-semibold">
                 {notificationCount}
               </span>
             )}
@@ -268,21 +273,21 @@ const Header = () => {
 
         {/* Dark / Light Mode Button */}
         <button onClick={toggleDarkMode}
-          className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+          className="p-2.5 rounded-xl hover:bg-gradient-to-br hover:from-yellow-50 hover:to-orange-50 dark:hover:from-yellow-900/20 dark:hover:to-orange-900/20 transition-all group hover:scale-105 active:scale-95"
           title={isDark ? "Light Mode" : "Dark Mode"}
         >
           {isDark ? (
-            <SunIcon className="w-6 h-6 text-yellow-400" />
+            <SunIcon className="w-6 h-6 text-yellow-400 group-hover:text-yellow-500 transition-colors" />
           ) : (
-            <MoonIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <MoonIcon className="w-6 h-6 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors" />
           )}
         </button>
 
         {/* Profile Menu */}
         <div className="relative profile-menu-container">
           <button onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-            <UserCircleIcon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+            className="p-2.5 rounded-xl hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 transition-all group hover:scale-105 active:scale-95">
+            <UserCircleIcon className="w-7 h-7 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors" />
           </button>
 
           {showProfileMenu && (
@@ -352,18 +357,31 @@ export const Sidebar = ({
 
   return (
     <>
-      <aside className="w-64 h-full glass-panel transition-colors flex flex-col">
-        <nav className="py-8 px-3 flex-1 flex flex-col gap-1.5 overflow-y-auto">
+      <aside className="w-64 h-full backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border-r border-white/20 dark:border-slate-700/50 transition-colors flex flex-col shadow-xl shadow-black/5 dark:shadow-black/20">
+        <nav className="py-8 px-3 flex-1 flex flex-col gap-2 overflow-y-auto">
 
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}
-              className={`flex items-center gap-3 px-4 py-3.5 mx-1 rounded-xl text-gray-600 dark:text-gray-300 
-              hover:bg-gray-100 dark:hover:bg-gray-700/50 transition 
-              ${pathname === item.href ? 'bg-gray-900 text-white dark:text-white font-semibold shadow-md' : ''}`}>
-              {item.icon}
-              <span className="font-medium">{item.label}</span>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link key={item.href} href={item.href}
+                className={`group flex items-center gap-3 px-4 py-3.5 mx-1 rounded-xl relative overflow-hidden transition-all duration-300
+                ${isActive 
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50 dark:shadow-blue-500/30 scale-105' 
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 hover:scale-105'
+                }`}>
+                {isActive && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse"></div>
+                )}
+                <div className={`relative z-10 transition-transform ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>
+                  {item.icon}
+                </div>
+                <span className={`font-medium relative z-10 ${isActive ? 'font-semibold' : ''}`}>{item.label}</span>
+                {isActive && (
+                  <div className="absolute right-2 w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                )}
+              </Link>
+            );
+          })}
 
         </nav>
       </aside>
@@ -453,10 +471,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-50 transition-colors">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 via-purple-50/20 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:via-blue-950/20 dark:to-slate-950 text-slate-900 dark:text-slate-50 transition-colors relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 dark:bg-purple-900/30 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 dark:bg-yellow-900/30 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 dark:bg-pink-900/30 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+
       <Header />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative z-10">
         <Sidebar
           showAIPanel={showAIPanel}
           setShowAIPanel={setShowAIPanel}
@@ -466,7 +491,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           setInputMessage={setInputMessage}
           handleSendMessage={handleSendMessage}
         />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 relative z-10">
           {children}
         </main>
       </div>
@@ -474,9 +499,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Floating AI Button */}
       <button
         onClick={() => setShowAIPanel(true)}
-        className="fixed right-6 bottom-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-xl hover:scale-110 transition"
+        className="fixed right-6 bottom-6 w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white flex items-center justify-center shadow-2xl shadow-purple-500/50 hover:scale-110 active:scale-95 transition-all duration-300 z-30 group"
       >
-        <SparklesIcon className="w-8 h-8" />
+        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-100 blur-xl transition-opacity"></div>
+        <SparklesIcon className="w-8 h-8 relative z-10" />
       </button>
     </div>
   );
