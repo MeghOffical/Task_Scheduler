@@ -11,6 +11,7 @@
   "dependencies": {
     "@emailjs/nodejs": "^5.0.2",
     "@google/generative-ai": "^0.24.1",
+    "@heroicons/react": "^2.2.0",
     "@types/node": "20.6.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "18.2.7",
