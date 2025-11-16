@@ -420,7 +420,7 @@ export default function TasksPage() {
 
       {/* Task Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
           <div className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 rounded-2xl p-7 w-full max-w-md transition-all shadow-2xl border border-white/20 dark:border-slate-700/50">
             <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
               {editingTask ? 'Edit Task' : 'Add New Task'}
