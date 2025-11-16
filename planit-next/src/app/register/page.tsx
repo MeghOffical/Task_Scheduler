@@ -90,12 +90,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-4 sm:px-6 lg:px-8 py-12">
       {/* Modal Container */}
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+      <div className="glass-elevated rounded-3xl w-full max-w-md p-8 sm:p-9">
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-blue-600 mb-2">Register</h2>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 mb-2">Create your workspace</p>
+          <h2 className="text-2xl sm:text-3xl font-semibold text-slate-50 mb-1">Plan-it account</h2>
+          <p className="text-xs text-slate-400">Sign up once. Your tasks, focus rituals, and AI copilot stay in sync everywhere.</p>
         </div>
 
         {/* Form */}
@@ -107,7 +109,7 @@ export default function RegisterPage() {
               name="username"
               type="text"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-700/80 bg-slate-950/60 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               placeholder="Username"
               value={formData.username}
               onChange={handleChange}
@@ -122,7 +124,7 @@ export default function RegisterPage() {
               type="email"
               autoComplete="email"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-700/80 bg-slate-950/60 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               placeholder="Email address"
               value={formData.email}
               onChange={handleChange}
@@ -135,7 +137,7 @@ export default function RegisterPage() {
               id="profession"
               name="profession"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-700/80 bg-slate-950/60 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               value={formData.profession}
               onChange={handleChange}
             >
@@ -160,7 +162,7 @@ export default function RegisterPage() {
                 name="otherProfession"
                 type="text"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-3 rounded-xl border border-slate-700/80 bg-slate-950/60 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                 placeholder="Specify your profession"
                 value={formData.otherProfession}
                 onChange={handleChange}
@@ -175,7 +177,7 @@ export default function RegisterPage() {
               name="password"
               type={showPassword ? 'text' : 'password'}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-700/80 bg-slate-950/60 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
@@ -183,7 +185,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
             >
               {showPassword ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,7 +207,7 @@ export default function RegisterPage() {
               name="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-700/80 bg-slate-950/60 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={handleChange}
@@ -213,7 +215,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
             >
               {showConfirmPassword ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,8 +232,8 @@ export default function RegisterPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="rounded-lg bg-red-50 p-4">
-              <div className="text-sm text-red-700 text-center">{error}</div>
+            <div className="rounded-xl bg-red-900/20 border border-red-700/60 p-3">
+              <div className="text-xs text-red-200 text-center">{error}</div>
             </div>
           )}
 
@@ -240,19 +242,19 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 text-slate-950 font-semibold shadow-[0_18px_35px_rgba(56,189,248,0.55)] hover:brightness-110 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating account...' : 'Register'}
+              {loading ? 'Creating account…' : 'Create account'}
             </button>
           </div>
         </form>
 
         {/* Login Link */}
         <div className="text-center mt-6">
-          <p className="text-sm text-gray-600">
+          <p className="text-xs text-slate-400">
             Already have an account?{' '}
-            <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-500">
-              Login
+            <Link href="/login" className="font-semibold text-sky-400 hover:text-sky-300">
+              Log in
             </Link>
           </p>
         </div>
