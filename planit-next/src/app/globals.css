@@ -122,6 +122,18 @@
     @apply bg-white/25 dark:bg-slate-900/80 backdrop-blur-xl border border-white/70 dark:border-slate-600/80 shadow-[0_10px_25px_rgba(15,23,42,0.12)];
   }
 
+  .dashboard-surface {
+    @apply bg-[#11141A] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.55)] rounded-xl;
+  }
+
+  .dashboard-surface-subtle {
+    @apply bg-[#151922] border border-white/5 shadow-[0_12px_30px_rgba(0,0,0,0.45)] rounded-xl;
+  }
+
+  .dashboard-button-quiet {
+    @apply bg-[#151922] border border-white/5 text-[#E6E9EF] rounded-lg px-3 py-2 text-sm font-medium transition-transform transition-colors duration-200 hover:bg-[#1A1F29] hover:-translate-y-[1px] active:translate-y-0;
+  }
+
   .fade-soft {
     opacity: 0;
     transform: translateY(16px);
@@ -157,6 +169,10 @@
   .tilt-hover:hover {
     transform: translateY(-4px) rotate3d(1, -1, 0, 6deg);
   }
+
+  .card-fade-up {
+    animation: card-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
 }
 
 @keyframes fade-in {
@@ -174,6 +190,17 @@
   from {
     opacity: 0;
     transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes card-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
   }
   to {
     opacity: 1;
