@@ -24,10 +24,10 @@ export function StatCard({ icon, label, value, color }: StatCardProps) {
   };
 
   return (
-    <div className="relative glass-panel rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-30`} />
+    <div className="relative glass-panel rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 bg-light-50/80 dark:bg-[#11141A]">
+      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-40`} />
       <div className="relative flex items-center gap-4">
-        <div className={`text-2xl p-3 rounded-xl bg-gray-100 dark:bg-gray-800 shadow-md ${colorMap[color as keyof typeof colorMap]}`}>
+        <div className={`text-2xl p-3 rounded-xl bg-light-100 dark:bg-gray-800 shadow-md ${colorMap[color as keyof typeof colorMap]}`}>
           {icon}
         </div>
         <div>
@@ -86,7 +86,7 @@ export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
   };
 
   return (
-    <div className="group glass-panel p-4 rounded-xl transition-all duration-300 hover:-translate-y-1">
+    <div className="group glass-panel p-4 rounded-xl transition-all duration-300 hover:-translate-y-1 bg-light-50/90 dark:bg-[#11141A]">
       <div className="flex justify-between items-start gap-4">
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 truncate">{task.title}</h3>

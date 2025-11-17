@@ -8,14 +8,14 @@
   }
 
   body {
-    @apply min-h-screen flex flex-col transition-colors;
+  @apply min-h-screen flex flex-col transition-colors bg-light-50 text-slate-900 dark:bg-[#020617] dark:text-slate-50;
   }
 }
 
 @layer components {
   /* Header Components */
   .header {
-    @apply bg-white py-4 px-5 shadow-sm flex justify-between items-center;
+  @apply bg-light-100 dark:bg-[#020617] py-4 px-5 shadow-sm flex justify-between items-center;
   }
 
   .logo {
@@ -36,11 +36,11 @@
 
   /* Auth Components */
   .auth-overlay {
-    @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+  @apply fixed inset-0 bg-light-100/70 dark:bg-black/50 flex items-center justify-center z-50;
   }
 
   .auth-container {
-    @apply w-full max-w-md glass-panel p-8 rounded-2xl relative;
+  @apply w-full max-w-md glass-panel p-8 rounded-2xl relative bg-light-50/80 dark:bg-slate-900/80;
     animation: fade-in 0.5s ease-in-out;
   }
 
@@ -67,7 +67,7 @@
 
   /* Feature Cards */
   .feature-card {
-    @apply glass-panel p-8 rounded-xl text-center hover:-translate-y-1 transition-all duration-300;
+  @apply glass-panel p-8 rounded-xl text-center hover:-translate-y-1 transition-all duration-300 bg-light-50/80 dark:bg-slate-900/80;
   }
 
   .feature-icon {
@@ -101,7 +101,7 @@
 
   /* Footer */
   .footer {
-    @apply bg-white py-5 text-center border-t border-gray-200 mt-10;
+  @apply bg-light-100 dark:bg-[#020617] py-5 text-center border-t border-gray-200 mt-10;
   }
 
   .footer-text {

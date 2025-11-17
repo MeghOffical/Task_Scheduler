@@ -369,7 +369,6 @@ export const Sidebar = ({
   setInputMessage,
   handleSendMessage
 }: SidebarProps) => {
-
   const pathname = usePathname();
 
   const navItems = [
@@ -382,7 +381,7 @@ export const Sidebar = ({
 
   return (
     <>
-      <aside className="w-64 h-full bg-slate-50 border-r border-slate-200 flex flex-col dark:bg-[#0B0E12] dark:border-white/5">
+      <aside className="w-64 h-full bg-light-200 border-r border-light-300 flex flex-col dark:bg-[#0B0E12] dark:border-white/5">
         <nav className="py-6 px-2 flex-1 flex flex-col gap-1 overflow-y-auto">
 
           {navItems.map((item) => {
@@ -392,11 +391,15 @@ export const Sidebar = ({
                 key={item.href}
                 href={item.href}
                 className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                ${isActive ? 'bg-[#151922] text-[#E6E9EF]' : 'text-slate-400 hover:bg-[#151922] hover:text-slate-100'}`}
+                ${isActive
+                  ? 'bg-light-400 text-slate-900 shadow-sm dark:bg-[#151922] dark:text-[#E6E9EF]'
+                  : 'text-slate-600 hover:bg-light-300 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100'}`}
               >
                 <span
                   className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-[13px]
-                  ${isActive ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-[#1F2430] text-slate-500'}`}
+                  ${isActive
+                    ? 'border-primary-500 bg-light-300 text-primary-600 dark:border-[#3B82F6] dark:bg-[#151922] dark:text-[#3B82F6]'
+                    : 'border-light-300 bg-light-50 text-slate-500 dark:border-[#1F2430] dark:bg-transparent dark:text-slate-500'}`}
                 >
                   {item.icon}
                 </span>
@@ -493,7 +496,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 transition-colors dark:bg-[#05070B] dark:text-slate-50">
+    <div className="min-h-screen flex flex-col bg-light-100 text-slate-900 transition-colors dark:bg-[#05070B] dark:text-slate-50">
       <Header />
 
       <div className="flex flex-1 overflow-hidden">
