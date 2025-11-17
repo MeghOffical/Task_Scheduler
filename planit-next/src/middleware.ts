@@ -14,15 +14,9 @@ export async function middleware(request: NextRequest) {
     const hasSession = sessionTokenNames.some(name => request.cookies.get(name)?.value)
     
     if (authToken || hasSession) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      return NextResponse.redirect(new URL('/home', request.url))
     }
-    // Not authenticated: allow access to public landing page at '/'
-    return NextResponse.next()
-  }
-
-  // Redirect /home to /dashboard to avoid AI chatbot on /home
-  if (pathname === '/home') {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   // Public routes that don't require authentication
@@ -60,8 +54,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // No valid authentication found: send to public landing page
-  return NextResponse.redirect(new URL('/', request.url))
+  // No valid authentication found
+  return NextResponse.redirect(new URL('/login', request.url))
 }
 
 export const config = {

@@ -125,7 +125,7 @@ const Header = () => {
   const handleLogout = async () => {
     if (confirm('Are you sure you want to logout?')) {
       await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.replace('/');
+      window.location.href = '/login';
     }
   };
 
