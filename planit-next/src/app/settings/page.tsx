@@ -112,7 +112,17 @@ export default function SettingsPage() {
       
       // If we updated the username, update the user state and reset the edit mode
       if (editUsername && newUsername.trim() !== '') {
-        setUser(prev => prev ? { ...prev, username: newUsername.trim() } : null);
+        const updatedUsername = newUsername.trim();
+        setUser(prev => prev ? { ...prev, username: updatedUsername } : null);
+
+        // Notify other components (e.g., header) so they can refresh cached profile info.
+        window.dispatchEvent(new CustomEvent('userProfileUpdated', {
+          detail: {
+            username: updatedUsername,
+            email: user?.email ?? '',
+          }
+        }));
+
         setEditUsername(false);
       }
 

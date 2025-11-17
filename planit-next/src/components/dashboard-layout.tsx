@@ -28,6 +28,11 @@ interface Task {
   dueDate: string;
 }
 
+type UserProfileUpdateDetail = {
+  username?: string;
+  email?: string;
+};
+
 const Header = () => {
   const [notificationCount, setNotificationCount] = useState(0);
   const [isDark, setIsDark] = useState(false);
@@ -97,6 +102,24 @@ const Header = () => {
 
     fetchUserInfo();
     fetchNotifications();
+  }, []);
+
+  useEffect(() => {
+    const handleUserProfileUpdated = (event: Event) => {
+      const detail = (event as CustomEvent<UserProfileUpdateDetail>).detail;
+      if (!detail) return;
+
+      setUserInfo((prev) => {
+        const current = prev ?? { username: '', email: '' };
+        return {
+          username: detail.username ?? current.username,
+          email: detail.email ?? current.email,
+        };
+      });
+    };
+
+    window.addEventListener('userProfileUpdated', handleUserProfileUpdated);
+    return () => window.removeEventListener('userProfileUpdated', handleUserProfileUpdated);
   }, []);
 
   useEffect(() => {
@@ -280,7 +303,7 @@ const Header = () => {
 
         {/* Profile Menu */}
         <div className="relative profile-menu-container">
-          <button onClick={() => setShowProfileMenu(!showProfileMenu)}
+          <button onClick={() => setShowProfileMenu((prev) => !prev)}
             className="flex h-9 w-9 items-center justify-center rounded-lg bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100">
             <UserCircleIcon className="w-6 h-6" />
           </button>
@@ -297,7 +320,15 @@ const Header = () => {
                 </div>
               </div>
 
-              <div className="px-2 py-1">
+              <div className="px-4 py-4 space-y-3">
+                <Link
+                  href="/settings"
+                  className="flex items-center justify-between rounded-lg border border-white/10 px-3 py-2 text-[13px] font-medium text-[#E6E9EF] hover:bg-[#151922] transition-colors"
+                >
+                  <span>Settings</span>
+                  <Cog6ToothIcon className="w-4 h-4 text-[#3B82F6]" />
+                </Link>
+
                 <button
                   onClick={handleLogout}
                   className="w-full rounded-lg px-3 py-2 text-left text-[13px] font-medium text-red-400 hover:bg-red-500/10 transition-colors"
@@ -347,7 +378,6 @@ export const Sidebar = ({
     { href: '/pomodoro', icon: <FireIcon className="w-4 h-4" />, label: 'Pomodoro' },
     { href: '/analytics', icon: <ChartBarIcon className="w-4 h-4" />, label: 'Analytics' },
     { href: '/chatbot', icon: <CpuChipIcon className="w-4 h-4" />, label: 'Chatbot' },
-    { href: '/settings', icon: <Cog6ToothIcon className="w-4 h-4" />, label: 'Settings' },
   ];
 
   return (
