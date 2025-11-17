@@ -178,7 +178,7 @@ export function PriorityItem({ label, count, color }: PriorityItemProps) {
   const colorMap = {
     red: 'from-red-500/10 to-red-600/10 dark:from-red-400/10 dark:to-red-600/10 text-red-600 dark:text-red-400',
     yellow: 'from-yellow-500/10 to-yellow-600/10 dark:from-yellow-400/10 dark:to-yellow-600/10 text-yellow-600 dark:text-yellow-400',
-    blue: 'from-blue-500/10 to-blue-600/10 dark:from-blue-400/10 dark:to-blue-600/10 text-blue-600 dark:text-blue-400',
+    green: 'from-green-500/10 to-green-600/10 dark:from-green-400/10 dark:to-green-600/10 text-green-600 dark:text-green-400',
   };
 
   return (
@@ -188,18 +188,36 @@ export function PriorityItem({ label, count, color }: PriorityItemProps) {
         <div className="flex items-center space-x-3">
           <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-800 shadow-sm ${colorMap[color as keyof typeof colorMap]}`}>
             {color === 'red' && (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <svg className="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H9l-5 3V7z" fill="currentColor" />
+                <g fill="#fff">
+                  <rect x="6.2" y="6.5" width="0.9" height="5.8" rx="0.45" />
+                  <circle cx="6.65" cy="13.5" r="0.55" />
+                  <rect x="9.2" y="6.5" width="0.9" height="5.8" rx="0.45" />
+                  <circle cx="9.65" cy="13.5" r="0.55" />
+                  <rect x="12.2" y="6.5" width="0.9" height="5.8" rx="0.45" />
+                  <circle cx="12.65" cy="13.5" r="0.55" />
+                </g>
               </svg>
             )}
             {color === 'yellow' && (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg className="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H9l-5 3V7z" fill="currentColor" />
+                <g fill="#fff">
+                  <rect x="8" y="6.5" width="0.9" height="5.8" rx="0.45" />
+                  <circle cx="8.45" cy="13.5" r="0.55" />
+                  <rect x="11" y="6.5" width="0.9" height="5.8" rx="0.45" />
+                  <circle cx="11.45" cy="13.5" r="0.55" />
+                </g>
               </svg>
             )}
-            {color === 'blue' && (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            {color === 'green' && (
+              <svg className="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H9l-5 3V7z" fill="currentColor" />
+                <g fill="#fff">
+                  <rect x="10.6" y="6.5" width="0.9" height="5.8" rx="0.45" />
+                  <circle cx="11.05" cy="13.5" r="0.55" />
+                </g>
               </svg>
             )}
           </div>

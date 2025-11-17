@@ -22,6 +22,14 @@ module.exports = {
           900: '#0c4a6e',
           950: '#082f49',
         },
+        light: {
+          50: '#F5FBFF',
+          100: '#E5F3FD',
+          200: '#D1E5F4',
+          300: '#BDD5E7',
+          400: '#AECCE4',
+          500: '#AECBEC',
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.5s ease-in-out',
