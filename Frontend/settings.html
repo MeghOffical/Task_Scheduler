@@ -537,13 +537,14 @@
         sessionStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
 
+    // Logout function (UPDATED)
     function logout() {
         if (confirm('Are you sure you want to logout?')) {
-            sessionStorage.clear();
-            window.location.href = 'login.html'; // Assuming index.html is the login page
-        }
-    }
-
+            // Only clear relevant items instead of calling sessionStorage.clear()
+            sessionStorage.removeItem('currentUser');
+            sessionStorage.removeItem('theme'); 
+            // Redirect to a specific login page
+            window.location.href = 'login.html';
     window.onload = function() {
         loadTheme();
         loadSettings();
