@@ -103,18 +103,24 @@ export default function DashboardPage() {
     window.addEventListener('task-updated', handleTaskUpdate);
     
     // Listen to postMessage (for cross-page communication)
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'task-updated') {
-        handleTaskUpdate();
-      }
-    };
+    const handleMessage = ({ data }: MessageEvent) => {
+    if (data?.type !== 'task-updated') return;
+
+    handleTaskUpdate();
+  };
     window.addEventListener('message', handleMessage);
 
     // Polling for updates every 10 seconds as a fallback
-    const pollInterval = setInterval(() => {
-      console.log('Polling for updates');
-      fetchDashboardData();
-    }, 10000);
+    // Define configuration constant for better readability
+const POLLING_DELAY_MS = 10_000;
+
+const performPolling = () => {
+  console.log('Polling for updates');
+  fetchDashboardData();
+};
+
+// Initialize interval with named reference
+const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
 
     return () => {
       console.log('Cleaning up dashboard polling and event listeners');
