@@ -34,3 +34,13 @@ In this sprint, we made it easy for users to track their task progress accuratel
 ## Sprint 2 and 3 Task Life Cycle State Diagram
 
 <img width="638" height="812" alt="image" src="https://github.com/user-attachments/assets/c0b37b5e-972c-47c3-b0f8-f9cab1069e58" />
+
+### Task Creation
+
+### Task Deletion 
+
+<img width="701" height="664" alt="deletion_state_diagram drawio" src="https://github.com/user-attachments/assets/9d3631b1-f580-426d-a8cb-a1f6d3dd7f45" />
+
+### Pomodora Feature
+<img width="686" height="283" alt="pomodora_state_diagram drawio" src="https://github.com/user-attachments/assets/6ce8084e-8203-4fd3-a793-49f79e14fa2a" />
+
