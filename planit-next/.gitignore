@@ -11,3 +11,10 @@ coverage/
 yarn-debug.log*
 yarn-error.log*
 .vercel.env.bak
+
+# Testing artifacts
+testing/mutation/reports/
+testing/mutation/coverage/
+testing/mutation/stryker-tmp/
+.stryker-tmp/
+*.lcov
