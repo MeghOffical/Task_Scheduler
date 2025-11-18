@@ -924,6 +924,20 @@ function dropTask(event, dropIndex) {
     draggedTaskIndex = null;
 }
 
+        function isTaskOverdue(task) {
+    if (task.status === 'completed') return false;
+    if (!task.dueDate) return false;
+
+    // Convert date string to Date object for comparison. We only care about the date for simplicity.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize today to midnight
+
+    const dueDate = new Date(task.dueDate);
+    dueDate.setHours(0, 0, 0, 0); // Normalize due date to midnight
+
+    // Check if the due date is strictly before today
+    return dueDate < today;
+}
     </script>
 </body>
 
