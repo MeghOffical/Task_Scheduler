@@ -346,7 +346,7 @@ export const Sidebar = ({
     { href: '/tasks', icon: <ClipboardDocumentListIcon className="w-4 h-4" />, label: 'Tasks' },
     { href: '/pomodoro', icon: <FireIcon className="w-4 h-4" />, label: 'Pomodoro' },
     { href: '/analytics', icon: <ChartBarIcon className="w-4 h-4" />, label: 'Analytics' },
-    { href: '/chatbot', icon: <CpuChipIcon className="w-4 h-4" />, label: 'Chatbot' },
+    { href: '/ai-assistant', icon: <SparklesIcon className="w-4 h-4" />, label: 'AI Assistant' },
     { href: '/settings', icon: <Cog6ToothIcon className="w-4 h-4" />, label: 'Settings' },
   ];
 
@@ -481,13 +481,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
       </div>
 
-      {/* Floating AI Button */}
-      <button
-        onClick={() => setShowAIPanel(true)}
-        className="fixed right-6 bottom-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-xl hover:scale-110 transition"
+      {/* Floating AI Assistant Button - Bottom Left */}
+      <Link
+        href="/ai-assistant"
+        className="fixed left-6 bottom-6 w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group z-50"
+        title="Open AI Assistant"
       >
-        <SparklesIcon className="w-8 h-8" />
-      </button>
+        <SparklesIcon className="w-7 h-7 group-hover:rotate-12 transition-transform" />
+        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+        </span>
+      </Link>
     </div>
   );
 }

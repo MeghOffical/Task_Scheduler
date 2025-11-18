@@ -25,13 +25,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  // Legacy login route: redirect to landing page which hosts auth popup
-  if (pathname === '/login') {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
-
   // Public routes that don't require authentication
   if (pathname.startsWith('/_next') || 
+      pathname === '/login' ||
       pathname === '/register' || 
       pathname === '/forgot-password' ||
       pathname === '/reset-password' ||
