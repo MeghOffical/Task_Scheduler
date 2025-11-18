@@ -14,3 +14,6 @@ This sprint was all about building the **first screen** (the Login page) and set
 
 The app now **opens to the Login page**, accepts text in the fields, and shows a message (success or error) when you try to log in. We're ready to start building the rest of the features!
 
+### Sprint 1 Login State Diagram
+
+![Login State Diagram](https://github.com/user-attachments/assets/334b7bdf-c9d6-4ee3-b548-57c35dfaf89e)
