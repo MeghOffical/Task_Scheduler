@@ -251,7 +251,6 @@ export default function LandingContent() {
               Sign In
             </Link>
           </div>
-          <p className="text-blue-200 text-sm mt-8">No credit card required • Free forever • Cancel anytime</p>
         </div>
       </section>
 
