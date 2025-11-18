@@ -46,6 +46,7 @@
     "@types/bcryptjs": "^2.4.4",
     "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.3",
+    "@types/nodemailer": "^7.0.3",
     "autoprefixer": "^10.4.16",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
@@ -53,6 +54,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
+    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2"
   }
 }

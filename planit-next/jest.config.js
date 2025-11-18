@@ -26,6 +26,7 @@ const customJestConfig = {
     '<rootDir>/testing/**/*.test.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/*.test.{js,jsx,ts,tsx}',
   ],
+  testPathIgnorePatterns: ['/node_modules/', '/.next/', '/testing/mutation/stryker-tmp/', '/.stryker-tmp/'],
   coverageThreshold: {
     global: {
       branches: 70,
