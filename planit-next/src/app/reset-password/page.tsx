@@ -53,9 +53,9 @@ function ResetPasswordForm() {
         throw new Error(data.message || 'Failed to reset password');
       }
 
-      setMessage('Password reset successfully! Redirecting to login...');
+      setMessage('Password reset successfully! Redirecting to home...');
       setTimeout(() => {
-        router.push('/login');
+        router.push('/');
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to reset password');
@@ -155,7 +155,7 @@ function ResetPasswordForm() {
 
             <div className="text-center">
               <Link
-                href="/login"
+                href="/"
                 className="font-medium text-primary-600 hover:text-primary-500 text-sm"
               >
                 Back to login

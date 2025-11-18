@@ -39,13 +39,13 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-4 sm:px-6 lg:px-8 py-12">
       {/* Modal Container - Same as login page */}
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+      <div className="glass-elevated rounded-3xl w-full max-w-md p-8 sm:p-9">
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-blue-600 mb-2">Forgot your password?</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-slate-50 mb-2">Forgot your password?</h2>
+          <p className="text-xs text-slate-400">
             Enter your email address and we&apos;ll send you a link to reset your password.
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
               type="email"
               autoComplete="email"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-700/80 bg-slate-950/60 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -69,15 +69,15 @@ export default function ForgotPasswordPage() {
 
           {/* Error Message - Same styling as login page */}
           {error && (
-            <div className="rounded-lg bg-red-50 p-4">
-              <div className="text-sm text-red-700 text-center">{error}</div>
+            <div className="rounded-xl bg-red-900/20 border border-red-700/60 p-3">
+              <div className="text-xs text-red-200 text-center">{error}</div>
             </div>
           )}
 
           {/* Success Message */}
           {message && (
-            <div className="rounded-lg bg-green-50 p-4 border border-green-200">
-              <div className="text-sm text-green-700 text-center">{message}</div>
+            <div className="rounded-xl bg-emerald-900/20 border border-emerald-700/60 p-3">
+              <div className="text-xs text-emerald-200 text-center">{message}</div>
             </div>
           )}
 
@@ -86,11 +86,11 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 text-slate-950 font-semibold shadow-[0_18px_35px_rgba(56,189,248,0.55)] hover:brightness-110 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -105,8 +105,8 @@ export default function ForgotPasswordPage() {
           {/* Back to Login Link - Same styling as login page links */}
           <div className="text-center pt-4">
             <Link 
-              href="/login" 
-              className="text-sm font-medium text-blue-600 hover:text-blue-500"
+              href="/" 
+              className="text-xs font-medium text-sky-400 hover:text-sky-300"
             >
               ← Back to login
             </Link>

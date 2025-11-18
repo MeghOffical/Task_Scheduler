@@ -69,8 +69,8 @@ export default function RegisterPage() {
         throw new Error(data.message || 'Something went wrong');
       }
 
-      // Successful registration
-      router.replace('/login');
+      // Successful registration: send user to landing page
+      router.replace('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to register');
     } finally {
@@ -253,7 +253,7 @@ export default function RegisterPage() {
         <div className="text-center mt-6">
           <p className="text-xs text-slate-400">
             Already have an account?{' '}
-            <Link href="/login" className="font-semibold text-sky-400 hover:text-sky-300">
+            <Link href="/" className="font-semibold text-sky-400 hover:text-sky-300">
               Log in
             </Link>
           </p>

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -303,6 +302,15 @@ function LoginForm() {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
           >
             {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        <div className="flex justify-end text-xs">
+          <button
+            type="button"
+            onClick={() => router.push('/forgot-password')}
+            className="text-sky-400 hover:text-sky-300"
+          >
+            Forgot password?
           </button>
         </div>
         {error && (

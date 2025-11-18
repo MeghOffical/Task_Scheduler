@@ -53,7 +53,8 @@ export const authConfig: AuthOptions = {
     maxAge: 24 * 60 * 60 // 24 hours
   },
   pages: {
-    signIn: '/login',
+    // Use landing page with auth popup as sign-in surface
+    signIn: '/',
   },
   cookies: {
     sessionToken: {
@@ -169,7 +170,7 @@ export const authConfig: AuthOptions = {
     },
     async redirect({ url, baseUrl }) {
       // After successful OAuth, redirect to dashboard
-      if (url === baseUrl || url === `${baseUrl}/login`) {
+      if (url === baseUrl || url === `${baseUrl}/`) {
         return `${baseUrl}/dashboard`;
       }
       // Allow relative callback URLs
