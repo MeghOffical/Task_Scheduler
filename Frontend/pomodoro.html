@@ -808,7 +808,88 @@ function completeSession() {
       renderHistory();
       updateDisplay();
     };
+
+    function switchSession(newMode) {
+    currentMode = newMode;
+    timeLeft = DURATION_TIMES[currentMode];
+
+    const circle = document.getElementById('timerCircle');
+    const display = document.getElementById('timerDisplay');
+    const label = document.getElementById('sessionLabel');
+
+    // Update mode button visuals
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    if (currentMode === 'focus') {
+        document.getElementById('modeFocus').classList.add('active');
+        circle.classList.remove('break-mode');
+        display.classList.remove('break-mode');
+        
+        // NEW: Display Pomodoro count
+        const currentCycle = pomodoroCount % 4 === 0 && pomodoroCount > 0 ? 4 : pomodoroCount % 4;
+        label.textContent = `Focus Session - Pomodoro ${currentCycle}/4`;
+        
+    } else {
+        if (currentMode === 'shortBreak') {
+            document.getElementById('modeShort').classList.add('active');
+            label.textContent = 'Short Break';
+        } else if (currentMode === 'longBreak') {
+            document.getElementById('modeLong').classList.add('active');
+            label.textContent = 'Long Break! 🎉';
+            // Reset count after a long break
+            pomodoroCount = 0;
+            sessionStorage.setItem(POMODORO_COUNT_KEY, pomodoroCount);
+        }
+        circle.classList.add('break-mode');
+        display.classList.add('break-mode');
+    }
+    
+    updateDisplay();
+}
+
+
+    function completeSession() {
+    pauseTimer();
+    playNotificationSound();
+
+    // Calculate actual duration
+    const sessionStart = sessionStorage.getItem('sessionStartTime');
+    const actualDuration = sessionStart
+        ? Math.round((Date.now() - parseInt(sessionStart)) / 60000)
+        : DURATION_TIMES[currentMode] / 60;
+
+    // Clear session start time
+    sessionStorage.removeItem('sessionStartTime');
+    
+    // NEW: Update Pomodoro count if it was a focus session
+    if (currentMode === 'focus') {
+        pomodoroCount++;
+        sessionStorage.setItem(POMODORO_COUNT_KEY, pomodoroCount);
+    }
+
+    // Save to history
+    const tasks = getTasks();
+    const selectedTask = tasks.find(t => t.id == selectedTaskId);
+
+    const history = getHistory();
+    const newSession = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        type: currentMode,
+        duration: actualDuration,
+        taskId: selectedTaskId,
+        taskTitle: selectedTask ? selectedTask.title : 'No task linked'
+    };
+
+    history.unshift(newSession);
+    saveHistory(history);
+    renderHistory();
+
+    // Switch session
+    alert(currentMode.includes('break') ? 'Break complete! Time to focus.' : 'Focus session complete! Take a break.');
+    switchSession(getNextMode());
+}
   </script>
 </body>
 
 </html>
+
