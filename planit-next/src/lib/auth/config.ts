@@ -53,8 +53,8 @@ export const authConfig: AuthOptions = {
     maxAge: 24 * 60 * 60 // 24 hours
   },
   pages: {
-    // Use landing page with auth popup as sign-in surface
-    signIn: '/',
+    signIn: '/login',
+    error: '/login',
   },
   cookies: {
     sessionToken: {
@@ -169,19 +169,26 @@ export const authConfig: AuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // After successful OAuth, redirect to dashboard
-      if (url === baseUrl || url === `${baseUrl}/`) {
+      try {
+        // After successful OAuth, redirect to dashboard
+        if (url === baseUrl || url === `${baseUrl}/` || url.includes('/login') || url.includes('/register')) {
+          return `${baseUrl}/dashboard`;
+        }
+        // Allow relative callback URLs
+        if (url.startsWith('/')) {
+          return `${baseUrl}${url}`;
+        }
+        // Allow same-origin URLs
+        const urlObj = new URL(url);
+        const baseUrlObj = new URL(baseUrl);
+        if (urlObj.origin === baseUrlObj.origin) {
+          return url;
+        }
+        return `${baseUrl}/dashboard`;
+      } catch (error) {
+        console.error('Redirect error:', error);
         return `${baseUrl}/dashboard`;
       }
-      // Allow relative callback URLs
-      if (url.startsWith('/')) {
-        return `${baseUrl}${url}`;
-      }
-      // Allow same-origin URLs
-      if (new URL(url).origin === baseUrl) {
-        return url;
-      }
-      return baseUrl;
     }
   }
 };
