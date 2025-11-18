@@ -90,9 +90,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-4 sm:px-6 lg:px-8 py-12">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 sm:px-6 lg:px-8 py-12 transition-colors duration-300">
       {/* Modal Container */}
-      <div className="bg-white rounded-3xl w-full max-w-md p-8 sm:p-9 shadow-2xl border border-gray-100">
+      <div className="bg-white dark:bg-slate-950 rounded-3xl w-full max-w-md p-8 sm:p-9 shadow-2xl border border-gray-100 dark:border-slate-800/80 transition-colors duration-300">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg mb-4">
@@ -100,15 +100,15 @@ export default function RegisterPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create Your Account</h2>
-          <p className="text-sm text-gray-600">Join Plan-It and start organizing your work</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Create Your Account</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Join Plan-It and start organizing your work</p>
         </div>
 
         {/* Form */}
         <form className="space-y-5" onSubmit={handleSubmit}>
           {/* Username Input */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Username
             </label>
             <input
@@ -116,7 +116,7 @@ export default function RegisterPage() {
               name="username"
               type="text"
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900/70 text-gray-900 dark:text-slate-50 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="Choose a username"
               value={formData.username}
               onChange={handleChange}
@@ -125,7 +125,7 @@ export default function RegisterPage() {
 
           {/* Email Input */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Email Address
             </label>
             <input
@@ -134,7 +134,7 @@ export default function RegisterPage() {
               type="email"
               autoComplete="email"
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900/70 text-gray-900 dark:text-slate-50 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
@@ -143,14 +143,14 @@ export default function RegisterPage() {
 
           {/* Profession Select */}
           <div>
-            <label htmlFor="profession" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="profession" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Profession
             </label>
             <select
               id="profession"
               name="profession"
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900/70 text-gray-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               value={formData.profession}
               onChange={handleChange}
             >
@@ -170,7 +170,7 @@ export default function RegisterPage() {
           {/* Other Profession Input (conditional) */}
           {formData.profession === 'Other' && (
             <div>
-              <label htmlFor="otherProfession" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="otherProfession" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Specify Profession
               </label>
               <input
@@ -178,7 +178,7 @@ export default function RegisterPage() {
                 name="otherProfession"
                 type="text"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900/70 text-gray-900 dark:text-slate-50 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="Your profession"
                 value={formData.otherProfession}
                 onChange={handleChange}
@@ -188,7 +188,7 @@ export default function RegisterPage() {
 
           {/* Password Input */}
           <div className="relative">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Password
             </label>
             <input
@@ -196,7 +196,7 @@ export default function RegisterPage() {
               name="password"
               type={showPassword ? 'text' : 'password'}
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900/70 text-gray-900 dark:text-slate-50 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="Create a strong password"
               value={formData.password}
               onChange={handleChange}
@@ -204,7 +204,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-[2.7rem] text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-[2.7rem] text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
             >
               {showPassword ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,7 +221,7 @@ export default function RegisterPage() {
 
           {/* Confirm Password Input */}
           <div className="relative">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Confirm Password
             </label>
             <input
@@ -229,7 +229,7 @@ export default function RegisterPage() {
               name="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900/70 text-gray-900 dark:text-slate-50 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="Confirm your password"
               value={formData.confirmPassword}
               onChange={handleChange}
@@ -237,7 +237,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-[2.7rem] text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-[2.7rem] text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
             >
               {showConfirmPassword ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,12 +254,12 @@ export default function RegisterPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="rounded-xl bg-red-50 border border-red-200 p-4">
+            <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/70 p-4">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <div className="text-sm text-red-800">{error}</div>
+                <div className="text-sm text-red-800 dark:text-red-200">{error}</div>
               </div>
             </div>
           )}
@@ -291,7 +291,7 @@ export default function RegisterPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="px-2 bg-white dark:bg-slate-950 text-gray-500 dark:text-gray-400">Or continue with</span>
             </div>
           </div>
 
@@ -300,7 +300,7 @@ export default function RegisterPage() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-50 dark:hover:bg-slate-800 hover:border-gray-400 dark:hover:border-slate-500 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
