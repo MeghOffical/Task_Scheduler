@@ -38,6 +38,9 @@ In this sprint, we made it easy for users to track their task progress accuratel
 
 ### Task Creation
 
+<img width="661" height="808" alt="image" src="https://github.com/user-attachments/assets/f8d31919-09ef-4f3f-8cd7-5677b571df2a" />
+
+
 ### Task Deletion 
 
 <img width="701" height="664" alt="deletion_state_diagram drawio" src="https://github.com/user-attachments/assets/9d3631b1-f580-426d-a8cb-a1f6d3dd7f45" />
