@@ -9,7 +9,7 @@ export default function LandingContent() {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldBeDark = savedTheme === 'light' ? false : (savedTheme === 'dark' || !savedTheme);
+    const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
     
     setIsDark(shouldBeDark);
     document.documentElement.classList.toggle('dark', shouldBeDark);
@@ -238,24 +238,6 @@ export default function LandingContent() {
                 </span>
                 <span className="text-sm text-gray-600 dark:text-gray-400">All systems operational</span>
               </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li><Link href="/register" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Features</Link></li>
-                <li><Link href="/register" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Pricing</Link></li>
-                <li><Link href="/register" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Security</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li><Link href="/register" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About</Link></li>
-                <li><Link href="/register" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</Link></li>
-                <li><Link href="/register" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy</Link></li>
-              </ul>
             </div>
           </div>
           
