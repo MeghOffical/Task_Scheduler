@@ -346,7 +346,30 @@ Be friendly, concise, and helpful. Always confirm actions you take.`
       const lowerMessage = message.toLowerCase();
       
       // Check if user might be asking about task status
-      if (lowerMessage.includes('complete') || lowerMessage.includes('finish') || 
+      if (lowerMessage.includes('change status') || lowerMessage.includes('update status')) {
+        // Interactive status change flow
+        if (userTasks.length === 0) {
+          responseText = "You don't have any tasks to change the status for. Would you like to create one?";
+        } else {
+          const tasksList = userTasks.slice(0, 10).map((t, i) => {
+            const statusLabel = t.status === 'completed' ? '[Completed]' : t.status === 'in-progress' ? '[In Progress]' : '[Pending]';
+            return `${i + 1}. ${t.title} ${statusLabel}`;
+          }).join('\n');
+          
+          const tasksForSelection = userTasks.slice(0, 10).map(t => ({
+            id: t._id.toString(),
+            title: t.title,
+            status: t.status
+          }));
+          
+          return NextResponse.json({
+            response: `📋 **Which task's status would you like to change?**\n\nPlease select a task:\n\n${tasksList}`,
+            tasksModified: false,
+            tasks: tasksForSelection,
+            actionType: 'changeStatus'
+          });
+        }
+      } else if (lowerMessage.includes('complete') || lowerMessage.includes('finish') || 
           lowerMessage.includes('done') || lowerMessage.includes('mark')) {
         if (userTasks.length === 0) {
           responseText = "You don't have any tasks to mark as completed yet. Would you like to create one?";
