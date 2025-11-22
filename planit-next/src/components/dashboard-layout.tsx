@@ -344,9 +344,26 @@ export const Sidebar = ({
   const navItems = [
     { href: '/dashboard', icon: <HomeIcon className="w-4 h-4" />, label: 'Home' },
     { href: '/tasks', icon: <ClipboardDocumentListIcon className="w-4 h-4" />, label: 'Tasks' },
-    { href: '/pomodoro', icon: <FireIcon className="w-4 h-4" />, label: 'Pomodoro' },
+    { href: '/pomodoro', icon: (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M9.5 6.5c.5-1 1.8-2 3.5-1.8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M15.5 6.5c-.5-1-1.8-2-3.5-1.8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M12 9.5v1.8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M16 8c.6-.3 1-1 1-1.6 0-.9-.9-1.6-1.8-1.6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
+      </svg>
+    ), label: 'Pomodoro' },
     { href: '/analytics', icon: <ChartBarIcon className="w-4 h-4" />, label: 'Analytics' },
-    { href: '/ai-assistant', icon: <SparklesIcon className="w-4 h-4" />, label: 'AI Assistant' },
+    { href: '/ai-assistant', icon: (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="6" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="9" cy="11" r="1" fill="currentColor" />
+        <circle cx="15" cy="11" r="1" fill="currentColor" />
+        <path d="M9.5 15.2c1 0.5 2.5 0.5 3.5 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M12 4v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M12 18v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ), label: 'AI Assistant' },
     { href: '/settings', icon: <Cog6ToothIcon className="w-4 h-4" />, label: 'Settings' },
   ];
 
@@ -419,7 +436,12 @@ export const Sidebar = ({
             />
             <button type="submit"
               className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-              <SparklesIcon className="w-5 h-5" />
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                <circle cx="9" cy="11" r="1" fill="currentColor" />
+                <circle cx="15" cy="11" r="1" fill="currentColor" />
+                <path d="M9.5 15.2c1 0.5 2.5 0.5 3.5 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
             </button>
           </div>
         </form>
@@ -491,7 +513,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         className="fixed left-6 bottom-6 w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group z-50"
         title="Open AI Assistant"
       >
-        <SparklesIcon className="w-7 h-7 group-hover:rotate-12 transition-transform" />
+        <svg className="w-7 h-7 group-hover:rotate-12 transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="6" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="9" cy="11" r="1" fill="currentColor" />
+          <circle cx="15" cy="11" r="1" fill="currentColor" />
+          <path d="M9.5 15.2c1 0.5 2.5 0.5 3.5 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
         <span className="absolute -top-1 -right-1 flex h-3 w-3">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
