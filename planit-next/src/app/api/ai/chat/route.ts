@@ -246,7 +246,7 @@ export async function POST(request: Request) {
     // Get user's tasks for context
    // L290: await dbConnect();
 // Get user's tasks for context
-const userTasks = await Task.find({ userId }).sort({ createdAt: -1 }).limit(20).lean(); // <-- ADD .lean()
+const userTasks = (await Task.find({ userId }).sort({ createdAt: -1 }).limit(20).lean()) as any[]; // <-- ADD .lean()
 
 const tasksContext = userTasks.map(t => ({
   id: t._id.toString(),
