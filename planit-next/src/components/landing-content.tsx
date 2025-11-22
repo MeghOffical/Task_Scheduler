@@ -9,7 +9,7 @@ export default function LandingContent() {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    const shouldBeDark = savedTheme === 'light' ? false : (savedTheme === 'dark' || !savedTheme);
     
     setIsDark(shouldBeDark);
     document.documentElement.classList.toggle('dark', shouldBeDark);
@@ -24,7 +24,6 @@ export default function LandingContent() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300">
-      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-blue-100/50 dark:border-white/10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -71,9 +70,7 @@ export default function LandingContent() {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
-        {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
           <div className="absolute top-40 right-10 w-96 h-96 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
@@ -119,7 +116,6 @@ export default function LandingContent() {
           </div>
         </div>
 
-        {/* Features Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
           <FeatureCard
             icon={
@@ -189,7 +185,6 @@ export default function LandingContent() {
         </div>
       </section>
 
-      {/* Benefits Section */}
       <section className="bg-white dark:bg-slate-900 border-t border-blue-100 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center mb-20">
@@ -221,40 +216,6 @@ export default function LandingContent() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-        </div>
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 text-center">
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Start Your Productivity Journey
-          </h2>
-          <p className="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
-            Experience a smarter way to manage your tasks and boost your productivity
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/register"
-              className="group w-full sm:w-auto px-10 py-5 text-lg font-semibold text-blue-600 bg-white rounded-2xl shadow-2xl hover:shadow-white/30 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
-            >
-              Get Started Free
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
-            <Link
-              href="/login"
-              className="w-full sm:w-auto px-10 py-5 text-lg font-semibold text-white border-2 border-white/30 rounded-2xl hover:bg-white/10 backdrop-blur-sm transition-all duration-300"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
       <footer className="bg-gray-50 dark:bg-slate-950 border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid md:grid-cols-4 gap-8 mb-8">

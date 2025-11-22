@@ -65,7 +65,15 @@ export default function DashboardPage() {
       console.log('Fetched tasks:', tasksData);
       console.log('Fetched stats:', statsData);
 
-      setRecentTasks(tasksData.slice(0, 5));
+      // Sort tasks by status: pending first, then in-progress, then completed
+      const statusOrder = { 'pending': 1, 'in-progress': 2, 'completed': 3 };
+      const sortedTasks = [...tasksData].sort((a, b) => {
+        const orderA = statusOrder[a.status as keyof typeof statusOrder] || 999;
+        const orderB = statusOrder[b.status as keyof typeof statusOrder] || 999;
+        return orderA - orderB;
+      });
+      
+      setRecentTasks(sortedTasks.slice(0, 5));
       setStats(statsData);
       setError(null);
     } catch (err) {

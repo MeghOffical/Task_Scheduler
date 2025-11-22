@@ -374,7 +374,9 @@ export default function TasksPage() {
               <div className="flex justify-between items-center text-sm">
                 <div className="flex flex-col gap-1">
                   <span className="text-gray-600 dark:text-gray-400">
-                    Due: {new Date(task.dueDate || '').toLocaleDateString()}
+                    Due: {task.dueDate && !isNaN(new Date(task.dueDate).getTime()) 
+                      ? new Date(task.dueDate).toLocaleDateString() 
+                      : 'No due date set'}
                   </span>
                   {(task.startTime || task.endTime) && (
                     <span className="text-gray-500 dark:text-gray-400 text-xs">
