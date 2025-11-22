@@ -362,11 +362,15 @@ export const Sidebar = ({
                 key={item.href}
                 href={item.href}
                 className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                ${isActive ? 'bg-[#151922] text-[#E6E9EF]' : 'text-slate-400 hover:bg-[#151922] hover:text-slate-100'}`}
+                ${isActive
+                  ? 'bg-primary-100 text-primary-800 shadow-sm ring-1 ring-primary-300 dark:bg-[#151922] dark:text-[#E6E9EF] dark:ring-0'
+                  : 'text-slate-600 hover:bg-primary-50 hover:text-primary-800 dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100'}`}
               >
                 <span
-                  className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-[13px]
-                  ${isActive ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-[#1F2430] text-slate-500'}`}
+                  className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-[13px] transition-colors
+                  ${isActive
+                    ? 'border-primary-400 bg-primary-50 text-primary-600 dark:border-[#3B82F6] dark:text-[#3B82F6] dark:bg-transparent'
+                    : 'border-slate-300 text-slate-500 group-hover:border-primary-300 group-hover:text-primary-600 dark:border-[#1F2430]'}`}
                 >
                   {item.icon}
                 </span>

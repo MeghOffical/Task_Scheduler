@@ -9,18 +9,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Updated light-mode friendly blue palette (from darker slate blue to near-white)
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
+          50: '#F6FAFC',   // near-white tint
+          100: '#EAF2F7',  // very light blue
+          200: '#D9E6EF',  // soft pale blue
+          300: '#C3D6E3',  // light muted blue
+          400: '#A5C2D4',  // medium light blue
+          500: '#89AEC5',  // base brand tone
+          600: '#6F95AE',  // darker for hover/action
+          700: '#5F89A5',  // accent emphasis
+          800: '#4C7089',  // headings / strong accents
+          900: '#3A566B',  // darkest shade for high contrast text
+          950: '#2B3F4F',  // ultra dark (rare usage)
         },
       },
       animation: {
