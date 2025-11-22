@@ -40,17 +40,46 @@ export default function AIAssistantPage() {
   const [mounted, setMounted] = useState(false);
   const [context, setContext] = useState<ConversationContext>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const isInitialMount = useRef(true);
+  const shouldAutoScroll = useRef(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = messagesContainerRef.current;
+    if (container) {
+      // Scroll within the messages container, not the entire page
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Don't scroll on initial mount
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    // Check if user has sent at least one message
+    const hasUserMessage = messages.some(msg => msg.role === 'user');
+    const lastMessage = messages[messages.length - 1];
+
+    // After user sends their first message and assistant responds,
+    // enable auto-scrolling for subsequent messages
+    if (hasUserMessage && lastMessage?.role === 'assistant') {
+      shouldAutoScroll.current = true;
+    }
+
+    // Only scroll if auto-scroll is enabled (after first exchange)
+    if (shouldAutoScroll.current) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   const processUserRequest = async (userMessage: string): Promise<string> => {
@@ -713,7 +742,7 @@ export default function AIAssistantPage() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 glass-panel rounded-2xl p-6 overflow-y-auto mb-4">
+        <div ref={messagesContainerRef} className="flex-1 glass-panel rounded-2xl p-6 overflow-y-auto mb-4">
           <div className="space-y-4">
             {messages.map((message) => (
               <div
