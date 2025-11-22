@@ -181,27 +181,72 @@ export function PriorityItem({ label, count, color }: PriorityItemProps) {
     blue: 'from-blue-500/10 to-blue-600/10 dark:from-blue-400/10 dark:to-blue-600/10 text-blue-600 dark:text-blue-400',
   };
 
+  const gaugeColor = {
+    red: '#ef4444',
+    yellow: '#eab308',
+    blue: '#3b82f6',
+  };
+
   return (
     <div className="relative group">
       <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
       <div className="relative flex justify-between items-center p-4 glass-panel rounded-xl transition-all duration-300 group-hover:-translate-y-1">
         <div className="flex items-center space-x-3">
           <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-800 shadow-sm ${colorMap[color as keyof typeof colorMap]}`}>
-            {color === 'red' && (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            )}
-            {color === 'yellow' && (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            )}
-            {color === 'blue' && (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-              </svg>
-            )}
+            {/* Gauge/Speedometer Icon */}
+            <svg className="w-5 h-5" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Outer circle */}
+              <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="3" opacity="0.3"/>
+              
+              {/* Gauge background arc */}
+              <path
+                d="M 15 50 A 35 35 0 0 1 85 50"
+                stroke="currentColor"
+                strokeWidth="8"
+                opacity="0.2"
+                strokeLinecap="round"
+              />
+              
+              {/* Active gauge arc based on priority */}
+              {color === 'red' && (
+                <path
+                  d="M 15 50 A 35 35 0 0 1 78 28"
+                  stroke={gaugeColor.red}
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                />
+              )}
+              {color === 'yellow' && (
+                <path
+                  d="M 15 50 A 35 35 0 0 1 50 16"
+                  stroke={gaugeColor.yellow}
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                />
+              )}
+              {color === 'blue' && (
+                <path
+                  d="M 15 50 A 35 35 0 0 1 32 25"
+                  stroke={gaugeColor.blue}
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                />
+              )}
+              
+              {/* Center circle */}
+              <circle cx="50" cy="50" r="6" fill="currentColor"/>
+              
+              {/* Needle */}
+              {color === 'red' && (
+                <line x1="50" y1="50" x2="70" y2="32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              )}
+              {color === 'yellow' && (
+                <line x1="50" y1="50" x2="50" y2="20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              )}
+              {color === 'blue' && (
+                <line x1="50" y1="50" x2="35" y2="28" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              )}
+            </svg>
           </div>
           <span className="font-medium text-gray-900 dark:text-gray-300">{label}</span>
         </div>
