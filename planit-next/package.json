@@ -48,6 +48,7 @@
     "@types/jsonwebtoken": "^9.0.3",
     "@types/nodemailer": "^7.0.3",
     "autoprefixer": "^10.4.16",
+    "cross-env": "^10.1.0",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "jest": "^30.2.0",
