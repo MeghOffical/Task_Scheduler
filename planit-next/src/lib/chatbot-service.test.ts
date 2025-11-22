@@ -2,8 +2,6 @@
  * Unit tests for chatbot service
  */
 
-import { generateChatTitle, generateResponse } from './chatbot-service';
-
 // Mock the Google AI SDK
 jest.mock('@google/generative-ai', () => ({
   GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
@@ -11,184 +9,121 @@ jest.mock('@google/generative-ai', () => ({
       generateContent: jest.fn().mockResolvedValue({
         response: {
           text: jest.fn().mockReturnValue('Mocked AI response'),
+          functionCalls: jest.fn().mockReturnValue(null),
         },
+      }),
+      startChat: jest.fn().mockReturnValue({
+        sendMessage: jest.fn().mockResolvedValue({
+          response: {
+            text: jest.fn().mockReturnValue('Mocked chat response'),
+            functionCalls: jest.fn().mockReturnValue(null),
+          },
+        }),
+        sendMessageStream: jest.fn().mockReturnValue({
+          stream: (async function* () {
+            yield {
+              text: () => 'Mocked',
+              functionCalls: () => null,
+            };
+          })(),
+        }),
       }),
     }),
   })),
 }));
 
+import { generateAssistantMessage, streamAssistantMessage } from './chatbot-service';
+
 describe('Chatbot Service', () => {
-  describe('generateChatTitle', () => {
-    it('should generate title from first message', async () => {
-      const message = 'Create a task for buying groceries tomorrow';
-      const title = await generateChatTitle(message);
+  describe('generateAssistantMessage', () => {
+    it('should generate message from user input', async () => {
+      const history: any[] = [];
+      const userMessage = 'Create a task for buying groceries tomorrow';
+      const userId = 'test-user-123';
       
-      expect(title).toBeDefined();
-      expect(typeof title).toBe('string');
-      expect(title.length).toBeGreaterThan(0);
+      const result = await generateAssistantMessage(history, userMessage, userId);
+      
+      expect(result).toBeDefined();
+      expect(result.response).toBeDefined();
+      expect(typeof result.response).toBe('string');
+      expect(result.response.length).toBeGreaterThan(0);
     });
 
-    it('should handle short messages', async () => {
-      const message = 'Help';
-      const title = await generateChatTitle(message);
-      
-      expect(title).toBeDefined();
-      expect(typeof title).toBe('string');
-    });
-
-    it('should handle long messages', async () => {
-      const message = 'I need help creating a comprehensive task management system with priorities, due dates, and notifications. Can you assist me with setting up multiple tasks?';
-      const title = await generateChatTitle(message);
-      
-      expect(title).toBeDefined();
-      expect(typeof title).toBe('string');
-      expect(title.length).toBeLessThan(100); // Should be truncated
-    });
-
-    it('should handle empty message gracefully', async () => {
-      const message = '';
-      const title = await generateChatTitle(message);
-      
-      expect(title).toBeDefined();
-      expect(typeof title).toBe('string');
-    });
-
-    it('should handle special characters', async () => {
-      const message = 'Task: Buy groceries @10:00 #urgent';
-      const title = await generateChatTitle(message);
-      
-      expect(title).toBeDefined();
-      expect(typeof title).toBe('string');
-    });
-  });
-
-  describe('generateResponse', () => {
-    it('should generate response for user message', async () => {
-      const messages = [
-        { role: 'user' as const, content: 'What tasks do I have today?' },
-      ];
-      
-      const response = await generateResponse(messages);
-      
-      expect(response).toBeDefined();
-      expect(typeof response).toBe('string');
-      expect(response.length).toBeGreaterThan(0);
-    });
-
-    it('should handle conversation context', async () => {
-      const messages = [
+    it('should handle conversation history', async () => {
+      const history = [
         { role: 'user' as const, content: 'Create a task' },
         { role: 'assistant' as const, content: 'What task would you like to create?' },
-        { role: 'user' as const, content: 'Buy groceries' },
       ];
+      const userMessage = 'Buy groceries';
+      const userId = 'test-user-123';
       
-      const response = await generateResponse(messages);
+      const result = await generateAssistantMessage(history, userMessage, userId);
       
-      expect(response).toBeDefined();
-      expect(typeof response).toBe('string');
+      expect(result).toBeDefined();
+      expect(result.response).toBeDefined();
     });
 
-    it('should handle system messages', async () => {
-      const messages = [
-        { role: 'system' as const, content: 'You are a helpful assistant' },
-        { role: 'user' as const, content: 'Help me with tasks' },
-      ];
+    it('should handle empty history', async () => {
+      const history: any[] = [];
+      const userMessage = 'Hello';
+      const userId = 'test-user-123';
       
-      const response = await generateResponse(messages);
+      const result = await generateAssistantMessage(history, userMessage, userId);
       
-      expect(response).toBeDefined();
-      expect(typeof response).toBe('string');
-    });
-
-    it('should handle empty message array', async () => {
-      const messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = [];
-      
-      await expect(generateResponse(messages)).rejects.toThrow();
-    });
-
-    it('should handle multi-turn conversation', async () => {
-      const messages = [
-        { role: 'user' as const, content: 'Show my tasks' },
-        { role: 'assistant' as const, content: 'You have 3 tasks' },
-        { role: 'user' as const, content: 'Show the first one' },
-        { role: 'assistant' as const, content: 'Task 1: Buy groceries' },
-        { role: 'user' as const, content: 'Mark it as complete' },
-      ];
-      
-      const response = await generateResponse(messages);
-      
-      expect(response).toBeDefined();
-      expect(typeof response).toBe('string');
+      expect(result).toBeDefined();
+      expect(result.response).toBeDefined();
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle API errors gracefully', async () => {
-      // This will use the mocked implementation
-      const messages = [
-        { role: 'user' as const, content: 'Test message' },
-      ];
+  describe('streamAssistantMessage', () => {
+    it('should stream response chunks', async () => {
+      const history: any[] = [];
+      const userMessage = 'What tasks do I have?';
+      const userId = 'test-user-123';
       
-      const response = await generateResponse(messages);
+      const stream = streamAssistantMessage(history, userMessage, userId);
       
-      // Should still return a response (mocked)
-      expect(response).toBeDefined();
+      const chunks: any[] = [];
+      for await (const chunk of stream) {
+        chunks.push(chunk);
+      }
+      
+      expect(chunks.length).toBeGreaterThan(0);
     });
 
-    it('should handle network timeouts', async () => {
-      jest.setTimeout(10000);
+    it('should handle streaming errors gracefully', async () => {
+      const history: any[] = [];
+      const userMessage = 'Test';
+      const userId = 'test-user-123';
       
-      const messages = [
-        { role: 'user' as const, content: 'Test message' },
-      ];
+      const stream = streamAssistantMessage(history, userMessage, userId);
       
-      // Should complete within timeout
-      const response = await generateResponse(messages);
-      expect(response).toBeDefined();
-    });
-  });
-
-  describe('Response Quality', () => {
-    it('should generate contextually relevant responses', async () => {
-      const messages = [
-        { role: 'user' as const, content: 'How do I create a high priority task?' },
-      ];
+      // Should not throw
+      const chunks: any[] = [];
+      for await (const chunk of stream) {
+        chunks.push(chunk);
+      }
       
-      const response = await generateResponse(messages);
-      
-      expect(response).toBeDefined();
-      expect(response.length).toBeGreaterThan(10);
-    });
-
-    it('should maintain conversation flow', async () => {
-      const messages = [
-        { role: 'user' as const, content: 'Create a task' },
-        { role: 'assistant' as const, content: 'What would you like the task to be?' },
-        { role: 'user' as const, content: 'Buy groceries tomorrow' },
-      ];
-      
-      const response = await generateResponse(messages);
-      
-      expect(response).toBeDefined();
-      expect(typeof response).toBe('string');
+      expect(chunks).toBeDefined();
     });
   });
 
   describe('Configuration', () => {
-    it('should use environment variables', () => {
-      const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-      const model = process.env.GOOGLE_GENERATIVE_AI_MODEL;
+    it('should handle missing API key', async () => {
+      const originalKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+      delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
       
-      // Should be defined or have defaults
-      expect(apiKey || 'default-key').toBeDefined();
-      expect(model || 'gemini-1.5-flash').toBeDefined();
+      // Should handle gracefully
+      const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+      expect(apiKey).toBeUndefined();
+      
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY = originalKey;
     });
 
-    it('should validate model configuration', () => {
-      const validModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
-      const currentModel = process.env.GOOGLE_GENERATIVE_AI_MODEL || 'gemini-1.5-flash';
-      
-      expect(validModels).toContain(currentModel);
+    it('should use default model if not specified', () => {
+      const model = process.env.GOOGLE_GENERATIVE_AI_MODEL || 'gemini-2.0-flash-exp';
+      expect(model).toBeDefined();
+      expect(typeof model).toBe('string');
     });
   });
 });

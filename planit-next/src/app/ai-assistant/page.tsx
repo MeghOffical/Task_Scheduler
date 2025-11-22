@@ -480,7 +480,48 @@ export default function AIAssistantPage() {
              'What would you like to see?';
     }
 
-    // Default response
+    // For greetings and general conversation, use AI
+    const greetings = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings', 'howdy'];
+    const isGreeting = greetings.some(greeting => lowerMessage === greeting || lowerMessage.startsWith(greeting + ' '));
+    
+    if (isGreeting || lowerMessage.includes('how are you') || lowerMessage.includes('what can you do') || 
+        lowerMessage.includes('who are you') || lowerMessage.includes('introduce yourself')) {
+      // Use AI for natural conversation
+      try {
+        const response = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            messages: [
+              {
+                role: 'system',
+                content: `You are Plan-It, a friendly productivity assistant. When greeted, introduce yourself warmly and briefly explain you can help with task management, scheduling, and productivity. Keep responses concise and friendly.`
+              },
+              { role: 'user', content: userMessage }
+            ]
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return data.message || data.response || 'Hello! I\'m Plan-It, your productivity assistant. How can I help you today?';
+        }
+      } catch (error) {
+        console.error('AI chat error:', error);
+      }
+      
+      // Fallback greeting
+      return `👋 Hello! I'm Plan-It, your productivity assistant.\n\n` +
+             `I can help you:\n` +
+             `• Create and manage tasks\n` +
+             `• Check your schedule\n` +
+             `• View task statistics\n` +
+             `• Set priorities and deadlines\n\n` +
+             `What would you like to do today?`;
+    }
+
+    // Default response for unrecognized commands
     return `I'm not sure how to help with that. Try asking me to:\n\n` +
            `• "Create a task: [task name]"\n` +
            `• "Show my tasks"\n` +
