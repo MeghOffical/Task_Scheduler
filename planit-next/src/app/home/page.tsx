@@ -157,22 +157,62 @@ export default function HomePage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg flex flex-col overflow-hidden" style={{ height: 'calc(100vh - 12rem)' }}>
+    <div style={{ 
+      width: '100%', 
+      maxWidth: '80rem', 
+      margin: '0 auto', 
+      padding: '0 clamp(0.5rem, 2vw, 2rem)'
+    }}>
+      <div style={{
+        backgroundColor: 'var(--bg-white)',
+        borderRadius: '0.5rem',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        height: 'clamp(60vh, 70vh, 85vh)'
+      }} className="bg-white dark:bg-gray-800 shadow-lg">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-primary-50 to-blue-50 dark:from-gray-800 dark:to-gray-800">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div style={{
+          padding: 'clamp(0.75rem, 2vw, 1.5rem)',
+          borderBottom: '1px solid',
+          flexShrink: 0
+        }} className="border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary-50 to-blue-50 dark:from-gray-800 dark:to-gray-800">
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 'clamp(0.5rem, 2vw, 1rem)',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{ flex: '1', minWidth: 0 }}>
+              <h1 style={{
+                fontSize: 'clamp(1rem, 2vw, 1.5rem)',
+                fontWeight: '600',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }} className="text-gray-900 dark:text-gray-100">
                 AI Task Assistant
               </h1>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+              <p style={{
+                fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+                marginTop: '0.25rem'
+              }} className="text-gray-600 dark:text-gray-400">
                 Natural language task management
               </p>
             </div>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium transition-colors"
+              style={{
+                padding: 'clamp(0.375rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1rem)',
+                fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                borderRadius: '0.375rem'
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white transition-colors"
               title="Clear conversation"
             >
               Clear Chat
@@ -182,24 +222,62 @@ export default function HomePage() {
 
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+            padding: 'clamp(1rem, 3vw, 2rem)'
+          }}>
+            <div style={{
+              maxWidth: 'min(90%, 28rem)',
+              width: '100%',
+              padding: 'clamp(1rem, 3vw, 2rem)',
+              borderRadius: '0.5rem'
+            }} className="bg-white dark:bg-gray-800 shadow-xl">
+              <h3 style={{
+                fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+                fontWeight: '600',
+                marginBottom: 'clamp(0.5rem, 2vw, 0.75rem)'
+              }} className="text-gray-900 dark:text-gray-100">
                 Clear Chat History?
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              <p style={{
+                fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+                marginBottom: 'clamp(1rem, 3vw, 1.5rem)'
+              }} className="text-gray-600 dark:text-gray-400">
                 This will permanently delete all messages in this conversation. This action cannot be undone.
               </p>
-              <div className="flex gap-3 justify-end">
+              <div style={{
+                display: 'flex',
+                gap: 'clamp(0.5rem, 2vw, 0.75rem)',
+                justifyContent: 'flex-end',
+                flexWrap: 'wrap'
+              }}>
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-md text-sm font-medium transition-colors"
+                  style={{
+                    padding: 'clamp(0.375rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1rem)',
+                    fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+                    fontWeight: '500',
+                    borderRadius: '0.375rem'
+                  }}
+                  className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteChat}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
+                  style={{
+                    padding: 'clamp(0.375rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1rem)',
+                    fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+                    fontWeight: '500',
+                    borderRadius: '0.375rem'
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white transition-colors"
                 >
                   Clear Chat
                 </button>
@@ -209,87 +287,180 @@ export default function HomePage() {
         )}
 
         {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0 bg-gray-50 dark:bg-gray-900">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: 'clamp(0.75rem, 2vw, 1.5rem)',
+          minHeight: 0
+        }} className="bg-gray-50 dark:bg-gray-900">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.75rem, 2vw, 1rem)' }}>
+            {messages.map((message, index) => (
               <div
-                className={`max-w-[80%] rounded-lg px-4 py-3 shadow-sm ${
-                  message.role === 'user'
+                key={index}
+                style={{
+                  display: 'flex',
+                  justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+                }}
+              >
+                <div
+                  style={{
+                    maxWidth: '80%',
+                    borderRadius: '0.5rem',
+                    padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 2vw, 1rem)',
+                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                  }}
+                  className={message.role === 'user'
                     ? 'bg-primary-600 text-white'
                     : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700'
-                }`}
-              >
-                <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
-                
-                {/* Task Selection Buttons */}
-                {message.tasks && message.tasks.length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    {message.tasks.map((task) => (
-                      <div
-                        key={task.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600"
-                      >
-                        <span className="text-sm text-gray-900 dark:text-gray-100 flex-1">
-                          {task.title}
-                        </span>
-                        <button
-                          onClick={() => handleTaskAction({
-                            messageIndex: index,
-                            taskId: task.id,
-                            taskTitle: task.title,
-                            actionType: message.actionType || 'delete'
-                          })}
-                          disabled={isLoading}
-                          className={`ml-3 px-3 py-1.5 text-xs font-medium rounded transition-colors ${
-                            message.actionType === 'complete'
-                              ? 'bg-green-600 hover:bg-green-700 text-white'
-                              : 'bg-red-600 hover:bg-red-700 text-white'
-                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  }
+                >
+                  <div style={{
+                    whiteSpace: 'pre-wrap',
+                    fontSize: 'clamp(0.813rem, 1.5vw, 1rem)',
+                    lineHeight: '1.625',
+                    wordBreak: 'break-word'
+                  }}>
+                    {message.content}
+                  </div>
+                  
+                  {/* Task Selection Buttons */}
+                  {message.tasks && message.tasks.length > 0 && (
+                    <div style={{
+                      marginTop: 'clamp(0.75rem, 2vw, 1rem)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 'clamp(0.5rem, 1.5vw, 0.75rem)'
+                    }}>
+                      {message.tasks.map((task) => (
+                        <div
+                          key={task.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: 'clamp(0.5rem, 2vw, 0.75rem)',
+                            padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
+                            borderRadius: '0.375rem',
+                            border: '1px solid',
+                            flexWrap: 'wrap'
+                          }}
+                          className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
                         >
-                          {message.actionType === 'complete' ? 'Mark Complete' : 'Delete'}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                    <span className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                  </div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Thinking...</span>
+                          <span style={{
+                            fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+                            flex: '1',
+                            wordBreak: 'break-word',
+                            minWidth: 'min(100%, 10rem)'
+                          }} className="text-gray-900 dark:text-gray-100">
+                            {task.title}
+                          </span>
+                          <button
+                            onClick={() => handleTaskAction({
+                              messageIndex: index,
+                              taskId: task.id,
+                              taskTitle: task.title,
+                              actionType: message.actionType || 'delete'
+                            })}
+                            disabled={isLoading}
+                            style={{
+                              padding: 'clamp(0.375rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1rem)',
+                              fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+                              fontWeight: '500',
+                              borderRadius: '0.25rem',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0
+                            }}
+                            className={`transition-colors text-white ${
+                              message.actionType === 'complete'
+                                ? 'bg-green-600 hover:bg-green-700'
+                                : 'bg-red-600 hover:bg-red-700'
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            {message.actionType === 'complete' ? 'Mark Complete' : 'Delete'}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
+            ))}
+            {isLoading && (
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <div style={{
+                  padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 2vw, 1rem)',
+                  borderRadius: '0.5rem',
+                  border: '1px solid',
+                  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                }} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}>
+                    <div style={{ display: 'flex', gap: '0.25rem' }}>
+                      <span style={{
+                        width: 'clamp(0.375rem, 1vw, 0.5rem)',
+                        height: 'clamp(0.375rem, 1vw, 0.5rem)',
+                        animationDelay: '0ms'
+                      }} className="bg-primary-500 rounded-full animate-bounce"></span>
+                      <span style={{
+                        width: 'clamp(0.375rem, 1vw, 0.5rem)',
+                        height: 'clamp(0.375rem, 1vw, 0.5rem)',
+                        animationDelay: '150ms'
+                      }} className="bg-primary-500 rounded-full animate-bounce"></span>
+                      <span style={{
+                        width: 'clamp(0.375rem, 1vw, 0.5rem)',
+                        height: 'clamp(0.375rem, 1vw, 0.5rem)',
+                        animationDelay: '300ms'
+                      }} className="bg-primary-500 rounded-full animate-bounce"></span>
+                    </div>
+                    <span style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)' }} className="text-gray-500 dark:text-gray-400">
+                      Thinking...
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
 
         {/* Input Form */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-white dark:bg-gray-800">
-          <form onSubmit={handleSubmit} className="flex gap-3">
+        <div style={{
+          padding: 'clamp(0.75rem, 2vw, 1.25rem)',
+          borderTop: '1px solid',
+          flexShrink: 0
+        }} className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <form onSubmit={handleSubmit} style={{
+            display: 'flex',
+            gap: 'clamp(0.5rem, 2vw, 0.75rem)',
+            flexWrap: 'wrap'
+          }}>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message... (e.g., 'Create a task to call John tomorrow')"
-              className="flex-1 px-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+              style={{
+                flex: '1',
+                minWidth: 'min(100%, 15rem)',
+                padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 2vw, 1rem)',
+                fontSize: 'clamp(0.813rem, 1.5vw, 1rem)',
+                border: '1px solid',
+                borderRadius: '0.375rem'
+              }}
+              className="border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="px-6 py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-md text-sm font-medium transition-colors whitespace-nowrap"
+              style={{
+                padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 2vw, 1.5rem)',
+                fontSize: 'clamp(0.813rem, 1.5vw, 1rem)',
+                fontWeight: '500',
+                borderRadius: '0.375rem',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
+              }}
+              className="bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white transition-colors"
             >
               {isLoading ? 'Sending...' : 'Send'}
             </button>

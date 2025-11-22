@@ -165,7 +165,7 @@ export default function TasksPage() {
     const csvHeader = ['Title,Description,Due Date,Time (24h),Status,Priority'];
     
     // Convert tasks to CSV format
-    const csvRows = tasks.map(task => {
+  const csvRows = tasks.map((task: Task) => {
       const formattedDate = new Date(task.dueDate).toLocaleDateString();
       // Escape commas and quotes in text fields to handle CSV properly
       const escapedTitle = task.title.replace(/"/g, '""');
@@ -316,7 +316,7 @@ export default function TasksPage() {
         {/* Derived filtered tasks */}
         {(() => {
           const normalizedQuery = searchQuery.trim().toLowerCase();
-          const filtered = tasks.filter((t) => {
+          const filtered = tasks.filter((t: Task) => {
             // Search
             const matchesQuery =
               !normalizedQuery ||
@@ -356,28 +356,28 @@ export default function TasksPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEditModal(task)}
-                    className="text-gray-300 dark:text-gray-400 hover:text-yellow-400 dark:hover:text-primary-400 transition-colors"
+                      className="text-gray-500 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(task.id)}
-                    className="text-gray-300 dark:text-gray-400 hover:text-red-400 dark:hover:text-red-400 transition-colors"
+                      className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
                   >
                     🗑️
                   </button>
                 </div>
               </div>
 
-              <p className="text-gray-300 dark:text-gray-300 text-sm">{task.description}</p>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">{task.description}</p>
 
               <div className="flex justify-between items-center text-sm">
                 <div className="flex flex-col gap-1">
-                  <span className="text-gray-300 dark:text-gray-400">
+                  <span className="text-gray-600 dark:text-gray-400">
                     Due: {new Date(task.dueDate || '').toLocaleDateString()}
                   </span>
                   {(task.startTime || task.endTime) && (
-                    <span className="text-gray-400 dark:text-gray-400 text-xs">
+                    <span className="text-gray-500 dark:text-gray-400 text-xs">
                       {task.startTime && `Start: ${task.startTime}`}
                       {task.startTime && task.endTime && ' | '}
                       {task.endTime && `End: ${task.endTime}`}
