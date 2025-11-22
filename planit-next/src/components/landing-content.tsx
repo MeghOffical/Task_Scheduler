@@ -189,72 +189,40 @@ export default function LandingContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center mb-20">
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              Why Teams Choose Plan-It
+              Built to Help You Get Stuff Done
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              Experience the perfect blend of simplicity, power, and intelligence in one productivity platform
-            </p>
+            {/* Tagline removed per simplification request */}
           </div>
 
           <div className="grid md:grid-cols-3 gap-10">
             <BenefitCard
               number="01"
-              title="Effortlessly Simple"
-              description="Beautiful, intuitive design that requires zero learning curve. Start organizing your work in seconds with our streamlined interface."
+              title="Fast & Simple"
+              description="Clean interface. Add tasks quickly. Focus on what matters."
             />
             <BenefitCard
               number="02"
-              title="Scientifically Proven"
-              description="Built on research-backed techniques like Pomodoro and priority matrices. Achieve 40% more in less time with focused work sessions."
+              title="Stay Focused"
+              description="Use Pomodoro and priorities to keep momentum without overthinking."
             />
             <BenefitCard
               number="03"
-              title="Always in Control"
-              description="Real-time sync across devices, smart notifications, and comprehensive analytics keep you on top of every deadline and goal."
+              title="See Progress"
+              description="Track what you finish and adjust. Light analytics, no overwhelm."
             />
           </div>
         </div>
       </section>
 
       <footer className="bg-gray-50 dark:bg-slate-950 border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Main Centered Footer Content */}
-          <div className="flex flex-col items-center text-center mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Plan-It</h3>
-            </div>
-            <p className="text-gray-600 dark:text-gray-400 max-w-md mb-6">
-              The all-in-one productivity platform that helps you organize work, track time, and achieve your goals.
-            </p>
-            <div className="flex items-center gap-2 justify-center">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-              </span>
-              <span className="text-sm text-gray-600 dark:text-gray-400">All systems operational</span>
-            </div>
-          </div>
-          
-          {/* Bottom Bar with Copyright and GitHub */}
-          <div className="pt-8 border-t border-gray-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              © 2025 Plan-It. All rights reserved.
-            </p>
-            <div className="flex items-center gap-4">
-              <a 
-                href="https://github.com/MeghOffical/Task_Scheduler" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-              </a>
-            </div>
+        <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">© 2025 Plan-It</p>
+          <div className="flex items-center gap-6">
+            <Link href="/status" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Status</Link>
+            <Link href="/docs" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Docs</Link>
+            <a href="https://github.com/MeghOffical/Task_Scheduler" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.833.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.447-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.919.678 1.852 0 1.337-.012 2.415-.012 2.743 0 .268.18.58.688.481A10.019 10.019 0 0022 12.017C22 6.484 17.523 2 12 2z" clipRule="evenodd"/></svg>
+            </a>
           </div>
         </div>
       </footer>
@@ -290,10 +258,10 @@ interface BenefitCardProps {
 function BenefitCard({ number, title, description }: BenefitCardProps) {
   return (
     <div className="relative group">
-      <div className="text-8xl font-bold text-blue-100 dark:text-blue-950/50 absolute -top-6 -left-4 group-hover:scale-110 transition-transform duration-300">{number}</div>
-      <div className="relative pt-12">
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{title}</h3>
-        <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">{description}</p>
+      <div className="text-7xl font-bold text-blue-100 dark:text-blue-950/50 absolute -top-4 -left-2 group-hover:scale-105 transition-transform duration-300">{number}</div>
+      <div className="relative pt-10">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-base">{description}</p>
       </div>
     </div>
   );
