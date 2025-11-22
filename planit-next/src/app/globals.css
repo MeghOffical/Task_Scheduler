@@ -10,6 +10,18 @@
   body {
     @apply min-h-screen flex flex-col transition-colors;
   }
+  html:not(.dark) body {
+    background: linear-gradient(90deg,
+      #6F95AE 0%,
+      #89AEC5 12%,
+      #A5C2D4 24%,
+      #C3D6E3 36%,
+      #D9E6EF 52%,
+      #EAF2F7 72%,
+      #F6FAFC 88%,
+      #FFFFFF 100%);
+    background-attachment: fixed;
+  }
 }
 
 @layer components {
@@ -114,12 +126,17 @@
 }
 
 @layer utilities {
+  .bg-light-brand-gradient {
+    background: linear-gradient(120deg, #F6FAFC 0%, #EAF2F7 18%, #D9E6EF 35%, #C3D6E3 55%, #A5C2D4 75%, #89AEC5 92%);
+  }
   .glass-elevated {
     @apply bg-slate-900/80 backdrop-blur-xl border border-slate-700/80 shadow-[0_22px_55px_rgba(15,23,42,0.75)];
   }
 
   .glass-panel {
-    @apply bg-white/25 dark:bg-slate-900/80 backdrop-blur-xl border border-white/70 dark:border-slate-600/80 shadow-[0_10px_25px_rgba(15,23,42,0.12)];
+  @apply dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_10px_25px_rgba(15,23,42,0.12)];
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(137,174,197,0.55);
   }
 
   .dashboard-surface {

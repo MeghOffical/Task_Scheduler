@@ -16,7 +16,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased min-h-screen text-gray-900 dark:text-slate-50`}>
+      {/* Gradient only in light mode; dark mode uses original solid background */}
+      <body className={`${inter.className} antialiased min-h-screen text-gray-900 dark:text-slate-50 bg-light-brand-gradient dark:bg-[#05070B]`}>
         <AuthProvider>
           {children}
         </AuthProvider>
