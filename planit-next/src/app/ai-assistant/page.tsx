@@ -21,6 +21,9 @@ type ConversationContext = {
   awaitingPrioritySelection?: boolean;
   awaitingTaskDeletion?: boolean;
   awaitingTaskCompletion?: boolean;
+  awaitingStatusChange?: boolean;
+  selectedTask?: any;
+  step?: string;
 };
 
 export default function AIAssistantPage() {
@@ -28,7 +31,7 @@ export default function AIAssistantPage() {
     {
       id: '1',
       role: 'assistant',
-      content: "Hello! I'm your AI task assistant. I can help you:\n\n• Create new tasks\n• View your existing tasks\n• Mark tasks as complete\n• Delete tasks\n• Get task statistics\n\nJust tell me what you'd like to do, like:\n- \"Create a task: Buy groceries\"\n- \"Show my tasks\"\n- \"Delete task 1\"\n- \"Mark task 2 as complete\"",
+      content: "Hello! I'm your AI task assistant. I can help you:\n\n• Create new tasks\n• View your existing tasks\n• Change task status (pending, in progress, completed)\n• Delete tasks\n• Get task statistics\n\nJust tell me what you'd like to do, like:\n- \"Create a task: Buy groceries\"\n- \"Change status\" (I'll guide you through it)\n- \"Show my tasks\"\n- \"Delete task 1\"",
       timestamp: new Date(),
     }
   ]);
@@ -52,6 +55,73 @@ export default function AIAssistantPage() {
 
   const processUserRequest = async (userMessage: string): Promise<string> => {
     const lowerMessage = userMessage.toLowerCase();
+
+    // Handle status change flow - Step 2: Status selection
+    if (context.awaitingStatusChange && context.step === 'selectStatus' && context.selectedTask) {
+      const statusMap: { [key: string]: string } = {
+        'pending': 'pending', '1': 'pending',
+        'progress': 'in-progress', 'in progress': 'in-progress', 'in-progress': 'in-progress', '2': 'in-progress',
+        'completed': 'completed', 'complete': 'completed', 'done': 'completed', '3': 'completed'
+      };
+      
+      let newStatus = '';
+      for (const [key, value] of Object.entries(statusMap)) {
+        if (lowerMessage.includes(key)) {
+          newStatus = value;
+          break;
+        }
+      }
+      
+      if (!newStatus) {
+        return '❌ Invalid status. Please select:\n1️⃣ Pending\n2️⃣ In Progress\n3️⃣ Completed';
+      }
+      
+      try {
+        const response = await fetch(`/api/tasks/${context.selectedTask.id}`, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (response.ok) {
+          setContext({});
+          const statusLabel = newStatus === 'in-progress' ? 'In Progress' : newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+          return `✅ **Task updated successfully!**\n\n"${context.selectedTask.title}" is now marked as **${statusLabel}**.`;
+        }
+        setContext({});
+        return '❌ Failed to update task status. Please try again.';
+      } catch (error) {
+        setContext({});
+        return '❌ Error updating task: ' + (error as Error).message;
+      }
+    }
+
+    // Handle status change flow - Step 1: Task selection
+    if (context.awaitingStatusChange && context.step === 'selectTask' && context.availableTasks) {
+      const taskNumber = parseInt(userMessage.trim());
+      let selectedTask = null;
+      
+      if (!isNaN(taskNumber) && taskNumber > 0 && taskNumber <= context.availableTasks.length) {
+        selectedTask = context.availableTasks[taskNumber - 1];
+      } else {
+        // Try to match by title
+        selectedTask = context.availableTasks.find((t: any) => 
+          t.title.toLowerCase().includes(lowerMessage) || lowerMessage.includes(t.title.toLowerCase())
+        );
+      }
+      
+      if (selectedTask) {
+        setContext({ 
+          awaitingStatusChange: true, 
+          selectedTask: selectedTask, 
+          step: 'selectStatus' 
+        });
+        return `✅ You selected: **${selectedTask.title}**\n\n📌 **What status would you like it to have?**\n\nPlease select:\n1️⃣ Pending\n2️⃣ In Progress\n3️⃣ Completed\n\nClick a status button or type 1, 2, or 3.`;
+      }
+      
+      return '❌ Invalid selection. Please enter a valid task number or title.';
+    }
 
     // Handle priority change flow
     if (context.awaitingPriorityChange && context.taskForPriorityChange) {
@@ -341,7 +411,34 @@ export default function AIAssistantPage() {
       }
     }
 
-    // Update/Modify status
+    // Check for "change status" or "update status" specifically (without task name)
+    if ((lowerMessage === 'change status' || lowerMessage === 'update status' || 
+         lowerMessage.match(/^(change|update)\s+status$/))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) {
+          return '❌ Failed to fetch tasks.';
+        }
+
+        const tasks = await response.json();
+        if (tasks.length === 0) {
+          return '📋 You have no tasks to update the status for.';
+        }
+
+        const allTasks = tasks.slice(0, 10);
+        setContext({ awaitingStatusChange: true, availableTasks: allTasks, step: 'selectTask' });
+        let result = '📋 **Which task\'s status would you like to change?**\n\n';
+        allTasks.forEach((task: any, index: number) => {
+          result += `${index + 1}. ${task.title} (${task.status})\n`;
+        });
+        result += '\nClick a task below or type the number/title.';
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    // Update/Modify status (with task identifier)
     if (lowerMessage.includes('mark') || lowerMessage.includes('complete') || 
         lowerMessage.includes('finish') || lowerMessage.includes('done') ||
         (lowerMessage.includes('update') && !lowerMessage.includes('delete')) ||
@@ -379,18 +476,39 @@ export default function AIAssistantPage() {
         }
 
         if (!taskToUpdate) {
-          const incompleteTasks = tasks.filter((t: any) => t.status !== 'completed');
-          if (incompleteTasks.length === 0) {
-            return '✅ All tasks are already completed!';
+          const allTasks = tasks.slice(0, 10);
+          if (allTasks.length === 0) {
+            return '📋 You have no tasks to update.';
           }
-          // Store in context for button handling
-          setContext({ awaitingTaskCompletion: true, availableTasks: incompleteTasks.slice(0, 10) });
-          let result = '✏️ Which task would you like to mark as complete?\n\n';
-          incompleteTasks.slice(0, 10).forEach((task: any, index: number) => {
+          // Store in context for button handling - use status change flow
+          setContext({ awaitingStatusChange: true, availableTasks: allTasks, step: 'selectTask' });
+          let result = '📋 **Which task\'s status would you like to change?**\n\n';
+          allTasks.forEach((task: any, index: number) => {
             result += `${index + 1}. ${task.title} (${task.status})\n`;
           });
           result += '\nClick a task below or type the number/title.';
           return result;
+        }
+
+        // If we have a task but no new status specified, ask for status selection
+        if (!lowerMessage.includes('pending') && !lowerMessage.includes('progress') && 
+            !lowerMessage.includes('completed') && !lowerMessage.includes('done')) {
+          setContext({ 
+            awaitingStatusChange: true, 
+            selectedTask: taskToUpdate, 
+            step: 'selectStatus' 
+          });
+          return `✅ You selected: **${taskToUpdate.title}**\n\n📌 **What status would you like it to have?**\n\nPlease select:\n1️⃣ Pending\n2️⃣ In Progress\n3️⃣ Completed\n\nClick a status button or type 1, 2, or 3.`;
+        }
+
+        // Determine the new status
+        let newStatus = 'completed';
+        if (lowerMessage.includes('pending') || lowerMessage.includes('1')) {
+          newStatus = 'pending';
+        } else if (lowerMessage.includes('progress') || lowerMessage.includes('2')) {
+          newStatus = 'in-progress';
+        } else if (lowerMessage.includes('completed') || lowerMessage.includes('done') || lowerMessage.includes('complete') || lowerMessage.includes('3')) {
+          newStatus = 'completed';
         }
 
         // Update the task status
@@ -398,12 +516,13 @@ export default function AIAssistantPage() {
           method: 'PATCH',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'completed' }),
+          body: JSON.stringify({ status: newStatus }),
         });
 
         if (updateResponse.ok) {
           setContext({ lastTaskId: taskToUpdate.id, lastTaskTitle: taskToUpdate.title });
-          return `✅ Task marked as completed!\n\nCompleted: "${taskToUpdate.title}"`;
+          const statusLabel = newStatus === 'in-progress' ? 'In Progress' : newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+          return `✅ **Task updated successfully!**\n\n"${taskToUpdate.title}" is now marked as **${statusLabel}**.`;
         }
         
         const errorData = await updateResponse.json().catch(() => ({}));
@@ -533,23 +652,10 @@ export default function AIAssistantPage() {
            `What would you like to do?`;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input,
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+  const processAndRespond = async (messageText: string) => {
     setLoading(true);
-
     try {
-      const response = await processUserRequest(input);
+      const response = await processUserRequest(messageText);
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -570,6 +676,24 @@ export default function AIAssistantPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: input,
+      timestamp: new Date(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    const messageToProcess = input;
+    setInput('');
+    
+    await processAndRespond(messageToProcess);
   };
 
   return (
@@ -713,6 +837,88 @@ export default function AIAssistantPage() {
                           </button>
                         );
                       })}
+                    </div>
+                  )}
+
+                  {/* Show task selection buttons for status change - Step 1 */}
+                  {message.role === 'assistant' && context.awaitingStatusChange && 
+                   context.step === 'selectTask' && context.availableTasks && 
+                   messages[messages.length - 1]?.id === message.id && (
+                    <div className="mt-3 space-y-2">
+                      {context.availableTasks.map((task: any, index: number) => {
+                        const statusEmoji = task.status === 'completed' ? '✅' : task.status === 'in-progress' ? '🔄' : '⏳';
+                        return (
+                          <button
+                            key={task.id}
+                            onClick={() => {
+                              const userMsg: Message = {
+                                id: Date.now().toString(),
+                                role: 'user',
+                                content: `${index + 1}`,
+                                timestamp: new Date(),
+                              };
+                              setMessages(prev => [...prev, userMsg]);
+                              processAndRespond(`${index + 1}`);
+                            }}
+                            className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-gray-900 dark:text-gray-100 transition-colors text-sm border border-blue-200 dark:border-blue-800"
+                          >
+                            {statusEmoji} {index + 1}. {task.title}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Show status selection buttons - Step 2 */}
+                  {message.role === 'assistant' && context.awaitingStatusChange && 
+                   context.step === 'selectStatus' && context.selectedTask && 
+                   messages[messages.length - 1]?.id === message.id && (
+                    <div className="mt-3 space-y-2">
+                      <button
+                        onClick={() => {
+                          const userMsg: Message = {
+                            id: Date.now().toString(),
+                            role: 'user',
+                            content: '1️⃣ Pending',
+                            timestamp: new Date(),
+                          };
+                          setMessages(prev => [...prev, userMsg]);
+                          processAndRespond('1');
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 text-gray-900 dark:text-gray-100 transition-colors text-sm border border-yellow-200 dark:border-yellow-800"
+                      >
+                        ⏳ Pending
+                      </button>
+                      <button
+                        onClick={() => {
+                          const userMsg: Message = {
+                            id: Date.now().toString(),
+                            role: 'user',
+                            content: '2️⃣ In Progress',
+                            timestamp: new Date(),
+                          };
+                          setMessages(prev => [...prev, userMsg]);
+                          processAndRespond('2');
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-gray-900 dark:text-gray-100 transition-colors text-sm border border-blue-200 dark:border-blue-800"
+                      >
+                        🔄 In Progress
+                      </button>
+                      <button
+                        onClick={() => {
+                          const userMsg: Message = {
+                            id: Date.now().toString(),
+                            role: 'user',
+                            content: '3️⃣ Completed',
+                            timestamp: new Date(),
+                          };
+                          setMessages(prev => [...prev, userMsg]);
+                          processAndRespond('3');
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 text-gray-900 dark:text-gray-100 transition-colors text-sm border border-green-200 dark:border-green-800"
+                      >
+                        ✅ Completed
+                      </button>
                     </div>
                   )}
 

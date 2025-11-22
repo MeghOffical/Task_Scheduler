@@ -28,6 +28,17 @@ type ToolCall = {
 // Simplified AI Response Engine (mimicking LangGraph/LangChain behavior)
 class TaskAssistantAI {
   private lastMessage: string = '';
+  private conversationState: {
+    awaitingTaskSelection?: boolean;
+    awaitingStatusSelection?: boolean;
+    availableTasks?: any[];
+    selectedTaskId?: string;
+    action?: string;
+  } = {};
+
+  public resetState() {
+    this.conversationState = {};
+  }
 
   private analyzeMessage(message: string): { intent: string; entities: any } {
     const lowerMessage = message.toLowerCase();
@@ -36,6 +47,11 @@ class TaskAssistantAI {
     const taskKeywords = ['task', 'todo', 'assignment', 'job', 'work'];
     const hasTaskContext = taskKeywords.some(keyword => lowerMessage.includes(keyword));
     
+    // Check for 'change status' specifically (without task name)
+    if ((lowerMessage.includes('change status') || lowerMessage.includes('update status')) && !lowerMessage.match(/change status (?:of|for) \w+/)) {
+      return { intent: 'change_status_interactive', entities: {} };
+    }
+
     // Enhanced intent recognition patterns - only for task management
     if (hasTaskContext && (lowerMessage.includes('create') || lowerMessage.includes('add') || lowerMessage.includes('new task') || 
         lowerMessage.includes('make a task') || lowerMessage.includes('schedule'))) {
@@ -300,8 +316,70 @@ class TaskAssistantAI {
     }
   }
 
+  private async handleTaskSelection(message: string, toolExecutor: (name: string, args: any) => Promise<any>): Promise<string> {
+    const input = message.trim();
+    const taskNumber = parseInt(input);
+    
+    if (isNaN(taskNumber) || taskNumber < 1 || taskNumber > (this.conversationState.availableTasks?.length || 0)) {
+      return `❌ Invalid selection. Please enter a number between 1 and ${this.conversationState.availableTasks?.length || 0}.`;
+    }
+    
+    // Store selected task
+    const selectedTask = this.conversationState.availableTasks![taskNumber - 1];
+    this.conversationState.selectedTaskId = selectedTask.id;
+    this.conversationState.awaitingTaskSelection = false;
+    this.conversationState.awaitingStatusSelection = true;
+    
+    return `✅ You selected: **${selectedTask.title}**\n\n📌 **What status would you like it to have?**\n\nPlease select:\n**1.** Pending\n**2.** In Progress\n**3.** Completed`;
+  }
+
+  private async handleStatusSelection(message: string, toolExecutor: (name: string, args: any) => Promise<any>): Promise<string> {
+    const input = message.trim().toLowerCase();
+    let newStatus = '';
+    
+    // Handle number or text input
+    if (input === '1' || input.includes('pending')) {
+      newStatus = 'pending';
+    } else if (input === '2' || input.includes('in progress') || input.includes('progress')) {
+      newStatus = 'in-progress';
+    } else if (input === '3' || input.includes('completed') || input.includes('complete') || input.includes('done')) {
+      newStatus = 'completed';
+    } else {
+      return `❌ Invalid status. Please select:\n**1.** Pending\n**2.** In Progress\n**3.** Completed`;
+    }
+    
+    // Get the task details
+    const taskId = this.conversationState.selectedTaskId;
+    
+    // Update the task
+    const updateResult = await toolExecutor('update_task', { 
+      taskId: taskId,
+      status: newStatus 
+    });
+    
+    // Reset conversation state
+    const taskTitle = this.conversationState.availableTasks?.find(t => t.id === taskId)?.title || 'the task';
+    this.conversationState = {};
+    
+    if (updateResult.error) {
+      return `❌ Sorry, I couldn't update the task status: ${updateResult.error}`;
+    }
+    
+    return `✅ **Task updated successfully!**\n\n"${taskTitle}" is now marked as **${newStatus === 'in-progress' ? 'In Progress' : newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}**.`;
+  }
+
   public async processMessage(message: string, toolExecutor: (name: string, args: any) => Promise<any>): Promise<string> {
     this.lastMessage = message;
+    
+    // Handle conversation state for interactive flows
+    if (this.conversationState.awaitingTaskSelection) {
+      return await this.handleTaskSelection(message, toolExecutor);
+    }
+    
+    if (this.conversationState.awaitingStatusSelection) {
+      return await this.handleStatusSelection(message, toolExecutor);
+    }
+    
     const analysis = this.analyzeMessage(message);
     
     try {
@@ -583,6 +661,27 @@ class TaskAssistantAI {
           return `🧮 ${firstNum} ${opSymbol} ${secondNum} = **${result}**`;
         }
 
+        case 'change_status_interactive': {
+          // Start interactive flow for changing status
+          const allTasks = await toolExecutor('get_tasks', {});
+          if (allTasks.error || !allTasks.tasks?.length) {
+            return "You don't have any tasks to update the status for.";
+          }
+          
+          // Store tasks and set state
+          this.conversationState.awaitingTaskSelection = true;
+          this.conversationState.availableTasks = allTasks.tasks;
+          this.conversationState.action = 'change_status';
+          
+          let response = "📋 **Which task's status would you like to change?**\n\nPlease select a task by typing its number:\n\n";
+          for (let i = 0; i < allTasks.tasks.length; i++) {
+            const task = allTasks.tasks[i];
+            response += `**${i + 1}.** ${task.title} _(${task.status})_\n`;
+          }
+          
+          return response;
+        }
+
         default: {
           return this.getGenericResponse(message);
         }
@@ -608,6 +707,7 @@ class TaskAssistantAI {
 • Update tasks (priority, status, dates)
 • Delete tasks by title
 • Show and filter your task lists
+• **Change status interactively** - Just say "change status" and I'll guide you!
 
 🧮 **Calculations:**
 • Basic math operations
@@ -844,7 +944,7 @@ export default function ChatbotPage() {
     if (messages.length === 0) {
       return [{
         role: 'assistant' as const,
-        content: "👋 Hi! I'm Plan-It, your AI productivity assistant. I can help you:\n\n✅ Create, update, and delete tasks\n📊 Search and filter your tasks\n🧮 Perform calculations\n\nTry asking:\n• \"Create a task to review code by Friday\"\n• \"Show me all high-priority tasks\"\n• \"What's 25 times 8?\"\n• \"Mark my project report as completed\"",
+        content: "👋 Hi! I'm Plan-It, your AI productivity assistant. I can help you:\n\n✅ Create, update, and delete tasks\n📊 Search and filter your tasks\n📝 Change task status (interactively)\n🧮 Perform calculations\n\nTry asking:\n• \"Create a task to review code by Friday\"\n• \"Change status\" (I'll guide you through it)\n• \"Show me all high-priority tasks\"\n• \"Mark my project report as completed\"",
         createdAt: new Date().toISOString(),
       }];
     }
