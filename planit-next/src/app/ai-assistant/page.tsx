@@ -138,7 +138,7 @@ export default function AIAssistantPage() {
         if (selectedTask) {
           setContext({ 
             awaitingPriorityChange: true,
-            taskForPriorityChange: { id: selectedTask._id, title: selectedTask.title }
+            taskForPriorityChange: { id: selectedTask.id, title: selectedTask.title }
           });
           return `📝 What priority would you like to set for "${selectedTask.title}" (current: ${selectedTask.priority})?\n\n` +
                  `1. High - Urgent and important\n` +
@@ -201,7 +201,7 @@ export default function AIAssistantPage() {
 
         if (response.ok) {
           const createdTask = await response.json();
-          setContext({ lastTaskId: createdTask._id, lastTaskTitle: title });
+          setContext({ lastTaskId: createdTask.id, lastTaskTitle: title });
           return `✅ Task created successfully!\n\nTitle: ${title}\nPriority: ${priority}\nStatus: Pending`;
         }
         return '❌ Failed to create task. Please try again.';
@@ -318,7 +318,7 @@ export default function AIAssistantPage() {
         }
 
         // Delete the task
-        const deleteResponse = await fetch(`/api/tasks/${taskToDelete._id}`, {
+        const deleteResponse = await fetch(`/api/tasks/${taskToDelete.id}`, {
           method: 'DELETE',
           credentials: 'include',
           headers: {
@@ -394,7 +394,7 @@ export default function AIAssistantPage() {
         }
 
         // Update the task status
-        const updateResponse = await fetch(`/api/tasks/${taskToUpdate._id}`, {
+        const updateResponse = await fetch(`/api/tasks/${taskToUpdate.id}`, {
           method: 'PATCH',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -402,7 +402,7 @@ export default function AIAssistantPage() {
         });
 
         if (updateResponse.ok) {
-          setContext({ lastTaskId: taskToUpdate._id, lastTaskTitle: taskToUpdate.title });
+          setContext({ lastTaskId: taskToUpdate.id, lastTaskTitle: taskToUpdate.title });
           return `✅ Task marked as completed!\n\nCompleted: "${taskToUpdate.title}"`;
         }
         
@@ -573,11 +573,11 @@ export default function AIAssistantPage() {
                                             task.priority === 'low' ? '🟢' : '🟡';
                         return (
                           <button
-                            key={task._id}
+                            key={task.id}
                             onClick={() => {
                               setContext({ 
                                 awaitingPriorityChange: true,
-                                taskForPriorityChange: { id: task._id, title: task.title }
+                                taskForPriorityChange: { id: task.id, title: task.title }
                               });
                               const msg: Message = {
                                 id: Date.now().toString(),
@@ -617,7 +617,7 @@ export default function AIAssistantPage() {
                                           task.status === 'in-progress' ? '🔄' : '⏳';
                         return (
                           <button
-                            key={task._id}
+                            key={task.id}
                             onClick={async () => {
                               const userMsg: Message = {
                                 id: Date.now().toString(),
@@ -629,7 +629,7 @@ export default function AIAssistantPage() {
                               setLoading(true);
 
                               try {
-                                const deleteResponse = await fetch(`/api/tasks/${task._id}`, {
+                                const deleteResponse = await fetch(`/api/tasks/${task.id}`, {
                                   method: 'DELETE',
                                   credentials: 'include',
                                   headers: { 'Content-Type': 'application/json' },
@@ -683,7 +683,7 @@ export default function AIAssistantPage() {
                         const statusEmoji = task.status === 'in-progress' ? '🔄' : '⏳';
                         return (
                           <button
-                            key={task._id}
+                            key={task.id}
                             onClick={async () => {
                               const userMsg: Message = {
                                 id: Date.now().toString(),
@@ -695,7 +695,7 @@ export default function AIAssistantPage() {
                               setLoading(true);
 
                               try {
-                                const updateResponse = await fetch(`/api/tasks/${task._id}`, {
+                                const updateResponse = await fetch(`/api/tasks/${task.id}`, {
                                   method: 'PATCH',
                                   credentials: 'include',
                                   headers: { 'Content-Type': 'application/json' },
@@ -717,7 +717,7 @@ export default function AIAssistantPage() {
                                   timestamp: new Date(),
                                 };
                                 setMessages(prev => [...prev, assistantMsg]);
-                                setContext({ lastTaskId: task._id, lastTaskTitle: task.title });
+                                setContext({ lastTaskId: task.id, lastTaskTitle: task.title });
                               } catch (error) {
                                 const errorMsg: Message = {
                                   id: (Date.now() + 1).toString(),
