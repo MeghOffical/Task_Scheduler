@@ -244,14 +244,19 @@ export async function POST(request: Request) {
     await dbConnect();
 
     // Get user's tasks for context
-    const userTasks = await Task.find({ userId }).sort({ createdAt: -1 }).limit(20);
-    const tasksContext = userTasks.map(t => ({
-      id: t._id.toString(),
-      title: t.title,
-      priority: t.priority,
-      status: t.status,
-      dueDate: t.dueDate
-    }));
+   // L290: await dbConnect();
+// Get user's tasks for context
+const userTasks = await Task.find({ userId }).sort({ createdAt: -1 }).limit(20).lean(); // <-- ADD .lean()
+
+const tasksContext = userTasks.map(t => ({
+  id: t._id.toString(),
+  title: t.title,
+  priority: t.priority,
+  status: t.status,
+  dueDate: t.dueDate
+}));
+// ... rest of the code
+  
 
     // Create system message with context
     const systemMessage: Message = {
