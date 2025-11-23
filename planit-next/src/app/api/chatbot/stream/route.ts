@@ -28,11 +28,11 @@ export async function POST(request: Request) {
       : null;
 
     if (!thread) {
-      thread = new ChatThread({ userId, title: 'New chat', messages: [] });
+      thread = new ChatThread({ userId, title: 'New chat', messages: [] }) as any;
     }
 
     // Store user message immediately
-    thread.messages.push({ role: 'user', content: userMessage, createdAt: new Date() });
+    thread!.messages.push({ role: 'user', content: userMessage, createdAt: new Date() });
 
     // Create a readable stream
     const encoder = new TextEncoder();

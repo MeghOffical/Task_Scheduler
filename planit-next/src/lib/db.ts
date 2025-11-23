@@ -1,11 +1,28 @@
 import mongoose from 'mongoose';
 
+// --- FIX: Augment the global object for Mongoose connection caching ---
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+// Define the global variable 'mongoose' for TypeScript
+declare global {
+  // eslint-disable-next-line no-var
+  var mongoose: MongooseCache;
+}
+// --- END FIX ---
+
+
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env');
+  throw new Error(
+    'Please define the MONGODB_URI environment variable inside .env.local'
+  );
 }
 
+// Reuse the cached connection across hot-reloads in development
 let cached = global.mongoose;
 
 if (!cached) {
@@ -20,28 +37,13 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-      console.log('Connected to MongoDB');
       return mongoose;
-    }).catch((error) => {
-      console.error('MongoDB connection error:', error);
-      throw error;
     });
   }
-
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    console.error('Failed to connect to MongoDB:', e);
-    throw e;
-  }
-
+  cached.conn = await cached.promise;
   return cached.conn;
 }
 

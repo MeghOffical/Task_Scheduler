@@ -25,7 +25,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const isMatch = await comparePasswords(password, user.password);
+    // --- FIX 1: Password Check and Non-Null Assertion ---
+    // Check if the user has a password (OAuth users will not).
+    if (!user.password) {
+      return NextResponse.json(
+        { message: 'Invalid credentials' },
+        { status: 400 }
+      );
+    }
+    
+    // Use non-null assertion (!) as check above guarantees password exists
+    const isMatch = await comparePasswords(password, user.password!); 
     if (!isMatch) {
       return NextResponse.json(
         { message: 'Invalid credentials' },
@@ -36,7 +46,9 @@ export async function POST(request: Request) {
     // Create JWT token
     const token = await createToken({
       id: user._id.toString(),
-      username: user.username,
+      // --- FIX 2: Username Non-Null Assertion (!) ---
+      // This solves the 'Type null is not assignable to type string' error
+      username: user.username!, 
       email: user.email,
     });
 

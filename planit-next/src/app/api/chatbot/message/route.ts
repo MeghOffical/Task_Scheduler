@@ -24,17 +24,18 @@ export async function POST(request: Request) {
 
     await dbConnect();
 
-    let thread = body.threadId
+    let thread: any = body.threadId
       ? await ChatThread.findOne({ threadId: body.threadId, userId })
       : null;
 
     if (!thread) {
-      thread = new ChatThread({ userId, title: 'New chat', messages: [] });
+      // --- FIX: Cast the new Mongoose Document to 'any' to bypass TS compiler complexity ---
+      thread = new ChatThread({ userId, title: 'New chat', messages: [] }) as any;
     }
 
     // Use the enhanced service with tool support
     const result = await generateAssistantMessage(
-      thread.messages ?? [],
+      thread?.messages ?? [],
       userMessage,
       userId
     );

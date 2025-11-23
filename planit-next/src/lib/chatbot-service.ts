@@ -188,7 +188,8 @@ async function executeTool(name: string, args: Record<string, any>, userId: stri
 const model = genAI?.getGenerativeModel({
   model: MODEL_NAME,
   systemInstruction: SYSTEM_PROMPT,
-  tools: [{ functionDeclarations: tools }],
+  // --- FIX: Cast the tools array to any to resolve the complex FunctionDeclaration type conflict ---
+  tools: [{ functionDeclarations: tools as any }], 
 });
 
 export async function generateAssistantMessage(
@@ -220,7 +221,10 @@ export async function generateAssistantMessage(
   
   while (response.functionCalls() && iterations < maxIterations) {
     iterations++;
-    const functionCalls = response.functionCalls();
+    const functionCalls = response.functionCalls() ?? [];
+
+    // If there are no function calls, stop iterating
+    if (functionCalls.length === 0) break;
     
     // Execute all tool calls
     const toolResults = await Promise.all(
@@ -292,6 +296,8 @@ export async function* streamAssistantMessage(
         const toolResult = await executeTool(call.name, call.args, userId);
         yield { type: 'tool_result', toolResult: { id: toolCall.id, result: toolResult } };
       }
+
+
     }
   }
   

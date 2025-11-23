@@ -43,14 +43,26 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    
+    // Safety check that password exists (required for hashing)
+    if (!user.password) {
+        return NextResponse.json(
+          { message: 'Cannot reset password for an account without a password.' },
+          { status: 400 }
+        );
+    }
 
     // Hash new password
     const hashedPassword = await hashPassword(password);
 
     // Update user password and clear reset token
     user.password = hashedPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
+    
+    // Clear reset token/expiry; cast user to any so null can be assigned regardless of declared types.
+    // This avoids changing the shared model typings here while allowing the fields to be cleared.
+    (user as any).resetPasswordToken = null;
+    (user as any).resetPasswordExpires = null;
+    
     await user.save();
 
     return NextResponse.json({
@@ -64,4 +76,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

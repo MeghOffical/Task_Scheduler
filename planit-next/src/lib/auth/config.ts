@@ -27,7 +27,16 @@ export const authConfig: AuthOptions = {
             return null;
           }
 
-          const isValid = await comparePasswords(credentials.password, user.password);
+          // --- START FIX ---
+          // 1. Check if the user object has a password (OAuth users will not).
+          if (!user.password) {
+            return null;
+          }
+
+          // 2. Use non-null assertion (!) because we've confirmed it exists.
+          const isValid = await comparePasswords(credentials.password, user.password!);
+          // --- END FIX ---
+          
           if (!isValid) {
             return null;
           }
@@ -106,7 +115,7 @@ export const authConfig: AuthOptions = {
     },
   },
   useSecureCookies: process.env.NODE_ENV === 'production',
-  trustHost: true, // Allows NextAuth to work without explicit NEXTAUTH_URL in development
+  // Removed unsupported 'trustHost' option to match AuthOptions type; set NEXTAUTH_URL in development if needed.
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google') {

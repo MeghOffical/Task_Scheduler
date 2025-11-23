@@ -53,14 +53,15 @@ declare module '@/types' {
     title: string;
     description?: string;
     priority: 'low' | 'medium' | 'high';
-    status: 'pending' | 'in-progress' | 'completed';
-    dueDate: string;
-    startTime?: string; // Format: "HH:mm" (24-hour format)
-    endTime?: string; // Format: "HH:mm" (24-hour format)
+    // --- FIX: ADDED 'overdue' TO MATCH MONGOOSE SCHEMA ---
+    status: 'pending' | 'in-progress' | 'completed' | 'overdue';
+    // ----------------------------------------------------
+    dueDate: string | null;
+    startTime?: string | null; // Format: "HH:mm" (24-hour format)
+    endTime?: string | null; // Format: "HH:mm" (24-hour format)
     userId: string;
     createdAt: string;
     updatedAt: string;
   }
 
-  export { TaskFormData, getPriorityClass, getStatusClass };
 }
