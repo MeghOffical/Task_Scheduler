@@ -3,6 +3,9 @@ import { Task } from '@/models';
 import { getAuthenticatedUserId } from '@/lib/auth-utils';
 import dbConnect from '@/lib/db';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     // Support both regular auth and internal tool calls

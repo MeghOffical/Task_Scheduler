@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { Task } from '@/models';
 import { getAuthenticatedUserId } from '@/lib/auth-utils';
 import dbConnect from '@/lib/db';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 import { ObjectId } from 'mongodb';
 
 export async function DELETE(
