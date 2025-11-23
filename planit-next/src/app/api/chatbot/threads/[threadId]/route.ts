@@ -29,9 +29,10 @@ export async function GET(
       title: thread.title,
       createdAt: thread.createdAt,
       updatedAt: thread.updatedAt,
-      messages: thread.messages?.map((message: any) => ({
+      messages: (thread.messages as any[])?.map((message: any) => ({
         role: message.role,
         content: message.content,
+        name: message.name,
         createdAt: message.createdAt,
       })) ?? [],
     });
