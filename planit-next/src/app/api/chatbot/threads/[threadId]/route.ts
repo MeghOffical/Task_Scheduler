@@ -19,9 +19,22 @@ export async function GET(
 
     await dbConnect();
 
-    const thread = await ChatThread.findOne({ threadId: params.threadId, userId }).lean();
+    const thread = (await ChatThread.findOne({ threadId: params.threadId, userId }).lean()) as any;
     if (!thread) {
       return NextResponse.json({ message: 'Thread not found' }, { status: 404 });
+    }
+
+    const messagesArray: any[] = [];
+    const threadMessages = thread.messages;
+    if (threadMessages) {
+      for (const message of threadMessages) {
+        messagesArray.push({
+          role: message.role,
+          content: message.content,
+          name: message.name,
+          createdAt: message.createdAt,
+        });
+      }
     }
 
     return NextResponse.json({
@@ -29,12 +42,7 @@ export async function GET(
       title: thread.title,
       createdAt: thread.createdAt,
       updatedAt: thread.updatedAt,
-      messages: (thread.messages as any[])?.map((message: any) => ({
-        role: message.role,
-        content: message.content,
-        name: message.name,
-        createdAt: message.createdAt,
-      })) ?? [],
+      messages: messagesArray,
     });
   } catch (error) {
     console.error('Error loading chatbot thread:', error);
