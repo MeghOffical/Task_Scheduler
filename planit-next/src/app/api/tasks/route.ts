@@ -35,18 +35,21 @@ export async function GET(request: Request) {
     const tasks = await Task.find(filter).sort({ createdAt: -1 });
     
     // Transform the MongoDB _id to id before sending
-    const transformedTasks = tasks.map(task => ({
-      id: task._id.toString(),
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      status: task.status,
-      dueDate: task.dueDate,
-      startTime: task.startTime || null,
-      endTime: task.endTime || null,
-      createdAt: task.createdAt,
-      userId: task.userId
-    }));
+    const transformedTasks: any[] = [];
+    for (const task of tasks) {
+      transformedTasks.push({
+        id: task._id.toString(),
+        title: task.title,
+        description: task.description,
+        priority: task.priority,
+        status: task.status,
+        dueDate: task.dueDate,
+        startTime: task.startTime || null,
+        endTime: task.endTime || null,
+        createdAt: task.createdAt,
+        userId: task.userId
+      });
+    }
 
     return NextResponse.json(transformedTasks);
   } catch (error) {
