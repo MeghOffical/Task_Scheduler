@@ -2,14 +2,5 @@
 command = "npm run build"
 publish = ".next"
 
-[functions]
-node_bundler = "esbuild"
-included_files = ["**/*.ts", "**/*.js"]
-
 [[plugins]]
 package = "@netlify/plugin-nextjs"
-
-[[redirects]]
-from = "/api/*"
-to = "/.netlify/functions/:splat"
-status = 200
