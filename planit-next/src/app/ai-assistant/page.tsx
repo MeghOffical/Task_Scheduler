@@ -31,7 +31,7 @@ export default function AIAssistantPage() {
     {
       id: '1',
       role: 'assistant',
-      content: "Hello! I'm your AI task assistant. I can help you:\n\n• Create new tasks\n• View your existing tasks\n• Change task status (pending, in progress, completed)\n• Delete tasks\n• Get task statistics\n\nJust tell me what you'd like to do, like:\n- \"Create a task: Buy groceries\"\n- \"Change status\" (I'll guide you through it)\n- \"Show my tasks\"\n- \"Delete task 1\"",
+      content: "Hello! I'm your AI task assistant. I can help you:\n\n• Create and manage tasks\n• Filter tasks by priority, status, or due date\n• Change task status (pending, in progress, completed)\n• Delete tasks\n• Get task statistics\n\n**Try these commands:**\n- \"Show high priority tasks\"\n- \"Show pending tasks\"\n- \"Show overdue tasks\"\n- \"Create a task: Buy groceries\"\n- \"Change status\"\n- \"Show my tasks\"",
       timestamp: new Date(),
     }
   ]);
@@ -81,6 +81,68 @@ export default function AIAssistantPage() {
       scrollToBottom();
     }
   }, [messages]);
+
+  // Helper function to use Gemini AI for intent understanding
+  const getAIIntent = async (userMessage: string): Promise<{
+    intent: string;
+    action?: string;
+    taskTitle?: string;
+    priority?: string;
+    status?: string;
+    filterType?: string;
+    filterValue?: string;
+  }> => {
+    try {
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'system',
+              content: `You are an intent classifier for a task management system. Analyze the user's message and return ONLY a JSON object with these fields:
+{
+  "intent": "task_operation|filter_tasks|greeting|help|other",
+  "action": "create|delete|update|show|change_status|change_priority" (if intent is task_operation),
+  "taskTitle": "extracted task title" (if creating/deleting/updating a task),
+  "priority": "high|medium|low" (if mentioned),
+  "status": "pending|in-progress|completed" (if mentioned),
+  "filterType": "priority|status|dueDate" (if intent is filter_tasks),
+  "filterValue": "high|medium|low|pending|in-progress|completed|overdue|today" (if filtering)
+}
+
+Handle misspellings, synonyms, and natural language. Examples:
+- "crete tsk buy groceries" -> {"intent":"task_operation","action":"create","taskTitle":"buy groceries"}
+- "shw high priorty tasks" -> {"intent":"filter_tasks","filterType":"priority","filterValue":"high"}
+- "delet task 1" -> {"intent":"task_operation","action":"delete"}
+- "mark as dne" -> {"intent":"task_operation","action":"change_status","status":"completed"}
+- "dispaly urgent items" -> {"intent":"filter_tasks","filterType":"priority","filterValue":"high"}
+
+Return ONLY valid JSON, no other text.`
+            },
+            { role: 'user', content: userMessage }
+          ]
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const aiResponse = data.message || data.response || '';
+        
+        // Extract JSON from the response
+        const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.error('AI intent parsing error:', error);
+    }
+    
+    return { intent: 'unknown' };
+  };
 
   const processUserRequest = async (userMessage: string): Promise<string> => {
     const lowerMessage = userMessage.toLowerCase();
@@ -261,6 +323,156 @@ export default function AIAssistantPage() {
       }
     }
 
+    // ====== AI-POWERED INTENT DETECTION (handles misspellings and natural language) ======
+    const aiIntent = await getAIIntent(userMessage);
+    
+    // Handle AI-detected filter tasks intent
+    if (aiIntent.intent === 'filter_tasks' && aiIntent.filterType && aiIntent.filterValue) {
+      const { filterType, filterValue } = aiIntent;
+      
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) {
+          return '❌ Failed to fetch tasks.';
+        }
+        
+        const tasks = await response.json();
+        let filteredTasks: any[] = [];
+        let filterDescription = '';
+        
+        if (filterType === 'priority') {
+          filteredTasks = tasks.filter((task: any) => task.priority === filterValue);
+          filterDescription = `${filterValue.toUpperCase()} priority`;
+        } else if (filterType === 'status') {
+          const statusValue = filterValue === 'in-progress' ? 'in-progress' : filterValue;
+          filteredTasks = tasks.filter((task: any) => task.status === statusValue);
+          filterDescription = statusValue.toUpperCase().replace('-', ' ');
+        } else if (filterType === 'dueDate') {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          if (filterValue === 'overdue') {
+            filteredTasks = tasks.filter((task: any) => {
+              if (!task.dueDate) return false;
+              const dueDate = new Date(task.dueDate);
+              return dueDate < today && task.status !== 'completed';
+            });
+            filterDescription = 'OVERDUE';
+          } else if (filterValue === 'today') {
+            filteredTasks = tasks.filter((task: any) => {
+              if (!task.dueDate) return false;
+              const dueDate = new Date(task.dueDate);
+              dueDate.setHours(0, 0, 0, 0);
+              return dueDate.getTime() === today.getTime();
+            });
+            filterDescription = 'DUE TODAY';
+          }
+        }
+        
+        if (filteredTasks.length === 0) {
+          return `📋 No ${filterDescription} tasks found.`;
+        }
+        
+        let result = `📋 ${filterDescription} Tasks (${filteredTasks.length}):\n\n`;
+        filteredTasks.slice(0, 10).forEach((task: any, index: number) => {
+          const priorityEmoji = task.priority === 'high' ? '🔴' : task.priority === 'low' ? '🟢' : '🟡';
+          const statusEmoji = task.status === 'completed' ? '✅' : task.status === 'in-progress' ? '🔄' : '⏳';
+          result += `${index + 1}. ${statusEmoji} ${task.title}\n`;
+          result += `   ${priorityEmoji} Priority: ${task.priority} | Status: ${task.status}\n`;
+          if (task.dueDate) {
+            result += `   📅 Due: ${new Date(task.dueDate).toLocaleDateString()}\n`;
+          }
+          result += '\n';
+        });
+        
+        if (filteredTasks.length > 10) {
+          result += `... and ${filteredTasks.length - 10} more tasks`;
+        }
+        
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+    
+    // Handle AI-detected task creation
+    if (aiIntent.intent === 'task_operation' && aiIntent.action === 'create' && aiIntent.taskTitle) {
+      try {
+        const priority = aiIntent.priority || 'medium';
+        
+        const response = await fetch('/api/tasks', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            title: aiIntent.taskTitle, 
+            priority,
+            status: 'pending',
+            description: `Created via AI Assistant`
+          }),
+        });
+
+        if (response.ok) {
+          const createdTask = await response.json();
+          setContext({ lastTaskId: createdTask.id, lastTaskTitle: aiIntent.taskTitle });
+          return `✅ Task created successfully!\n\nTitle: ${aiIntent.taskTitle}\nPriority: ${priority}\nStatus: Pending`;
+        }
+        return '❌ Failed to create task. Please try again.';
+      } catch (error) {
+        return '❌ Error creating task: ' + (error as Error).message;
+      }
+    }
+    
+    // Handle AI-detected status change
+    if (aiIntent.intent === 'task_operation' && aiIntent.action === 'change_status') {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) {
+          return '❌ Failed to fetch tasks.';
+        }
+
+        const tasks = await response.json();
+        if (tasks.length === 0) {
+          return '📋 You have no tasks to update.';
+        }
+
+        // If we have a clear status from AI and a task in context
+        if (aiIntent.status && context.lastTaskId && context.lastTaskTitle) {
+          try {
+            const updateResponse = await fetch(`/api/tasks/${context.lastTaskId}`, {
+              method: 'PATCH',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: aiIntent.status }),
+            });
+
+            if (updateResponse.ok) {
+              const statusEmoji = aiIntent.status === 'completed' ? '✅' : 
+                                 aiIntent.status === 'in-progress' ? '🔄' : '⏳';
+              return `${statusEmoji} Status updated successfully!\n\nTask: "${context.lastTaskTitle}"\nNew Status: ${aiIntent.status.toUpperCase().replace('-', ' ')}`;
+            }
+          } catch (error) {
+            console.error('Error updating status:', error);
+          }
+        }
+        
+        // Otherwise start the two-step flow
+        setContext({ awaitingStatusChange: true, step: 'selectTask', availableTasks: tasks.slice(0, 10) });
+        let result = '📝 Which task would you like to update?\n\n';
+        tasks.slice(0, 10).forEach((task: any, index: number) => {
+          const priorityEmoji = task.priority === 'high' ? '🔴' : task.priority === 'low' ? '🟢' : '🟡';
+          const statusEmoji = task.status === 'completed' ? '✅' : task.status === 'in-progress' ? '🔄' : '⏳';
+          result += `${index + 1}. ${statusEmoji} ${task.title} ${priorityEmoji}\n`;
+        });
+        result += '\nReply with the task number or title.';
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    // ====== FALLBACK TO PATTERN MATCHING (for exact commands) ======
+
     // Create task - more flexible matching
     if (lowerMessage.includes('create') || lowerMessage.includes('add') || lowerMessage.includes('new task')) {
       try {
@@ -309,7 +521,264 @@ export default function AIAssistantPage() {
       }
     }
 
-    // View tasks
+    // Filter by priority
+    if ((lowerMessage.includes('high priority') || (lowerMessage.includes('high') && lowerMessage.includes('priority'))) && 
+        (lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('view') || lowerMessage.includes('task'))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) return '❌ Failed to fetch tasks.';
+        
+        const tasks = await response.json();
+        const highPriorityTasks = tasks.filter((t: any) => t.priority === 'high');
+        
+        if (highPriorityTasks.length === 0) {
+          return '📋 You have no high priority tasks.';
+        }
+
+        let result = `🔴 **High Priority Tasks (${highPriorityTasks.length} total):**\n\n`;
+        highPriorityTasks.forEach((task: any, index: number) => {
+          const statusEmoji = task.status === 'completed' ? '✅' : 
+                            task.status === 'in-progress' ? '🔄' : '⏳';
+          result += `${index + 1}. ${statusEmoji} ${task.title}\n`;
+          result += `   Status: ${task.status}\n`;
+          if (task.dueDate) {
+            result += `   📅 Due: ${new Date(task.dueDate).toLocaleDateString()}\n`;
+          }
+          result += '\n';
+        });
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    if ((lowerMessage.includes('medium priority') || (lowerMessage.includes('medium') && lowerMessage.includes('priority'))) && 
+        (lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('view') || lowerMessage.includes('task'))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) return '❌ Failed to fetch tasks.';
+        
+        const tasks = await response.json();
+        const mediumPriorityTasks = tasks.filter((t: any) => t.priority === 'medium');
+        
+        if (mediumPriorityTasks.length === 0) {
+          return '📋 You have no medium priority tasks.';
+        }
+
+        let result = `🟡 **Medium Priority Tasks (${mediumPriorityTasks.length} total):**\n\n`;
+        mediumPriorityTasks.forEach((task: any, index: number) => {
+          const statusEmoji = task.status === 'completed' ? '✅' : 
+                            task.status === 'in-progress' ? '🔄' : '⏳';
+          result += `${index + 1}. ${statusEmoji} ${task.title}\n`;
+          result += `   Status: ${task.status}\n`;
+          if (task.dueDate) {
+            result += `   📅 Due: ${new Date(task.dueDate).toLocaleDateString()}\n`;
+          }
+          result += '\n';
+        });
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    if ((lowerMessage.includes('low priority') || (lowerMessage.includes('low') && lowerMessage.includes('priority'))) && 
+        (lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('view') || lowerMessage.includes('task'))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) return '❌ Failed to fetch tasks.';
+        
+        const tasks = await response.json();
+        const lowPriorityTasks = tasks.filter((t: any) => t.priority === 'low');
+        
+        if (lowPriorityTasks.length === 0) {
+          return '📋 You have no low priority tasks.';
+        }
+
+        let result = `🟢 **Low Priority Tasks (${lowPriorityTasks.length} total):**\n\n`;
+        lowPriorityTasks.forEach((task: any, index: number) => {
+          const statusEmoji = task.status === 'completed' ? '✅' : 
+                            task.status === 'in-progress' ? '🔄' : '⏳';
+          result += `${index + 1}. ${statusEmoji} ${task.title}\n`;
+          result += `   Status: ${task.status}\n`;
+          if (task.dueDate) {
+            result += `   📅 Due: ${new Date(task.dueDate).toLocaleDateString()}\n`;
+          }
+          result += '\n';
+        });
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    // Filter by status - pending
+    if (lowerMessage.includes('pending') && !lowerMessage.includes('change') && !lowerMessage.includes('status') &&
+        (lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('view') || lowerMessage.includes('task'))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) return '❌ Failed to fetch tasks.';
+        
+        const tasks = await response.json();
+        const pendingTasks = tasks.filter((t: any) => t.status === 'pending');
+        
+        if (pendingTasks.length === 0) {
+          return '📋 You have no pending tasks.';
+        }
+
+        let result = `⏳ **Pending Tasks (${pendingTasks.length} total):**\n\n`;
+        pendingTasks.forEach((task: any, index: number) => {
+          const priorityEmoji = task.priority === 'high' ? '🔴' : 
+                              task.priority === 'low' ? '🟢' : '🟡';
+          result += `${index + 1}. ${task.title} ${priorityEmoji}\n`;
+          result += `   Priority: ${task.priority}\n`;
+          if (task.dueDate) {
+            result += `   📅 Due: ${new Date(task.dueDate).toLocaleDateString()}\n`;
+          }
+          result += '\n';
+        });
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    // Filter by status - in progress
+    if ((lowerMessage.includes('in progress') || lowerMessage.includes('in-progress') || lowerMessage.includes('ongoing')) &&
+        (lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('view') || lowerMessage.includes('task'))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) return '❌ Failed to fetch tasks.';
+        
+        const tasks = await response.json();
+        const inProgressTasks = tasks.filter((t: any) => t.status === 'in-progress');
+        
+        if (inProgressTasks.length === 0) {
+          return '📋 You have no tasks in progress.';
+        }
+
+        let result = `🔄 **In Progress Tasks (${inProgressTasks.length} total):**\n\n`;
+        inProgressTasks.forEach((task: any, index: number) => {
+          const priorityEmoji = task.priority === 'high' ? '🔴' : 
+                              task.priority === 'low' ? '🟢' : '🟡';
+          result += `${index + 1}. ${task.title} ${priorityEmoji}\n`;
+          result += `   Priority: ${task.priority}\n`;
+          if (task.dueDate) {
+            result += `   📅 Due: ${new Date(task.dueDate).toLocaleDateString()}\n`;
+          }
+          result += '\n';
+        });
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    // Filter by status - completed
+    if (lowerMessage.includes('completed') && !lowerMessage.includes('mark') &&
+        (lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('view') || lowerMessage.includes('task'))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) return '❌ Failed to fetch tasks.';
+        
+        const tasks = await response.json();
+        const completedTasks = tasks.filter((t: any) => t.status === 'completed');
+        
+        if (completedTasks.length === 0) {
+          return '📋 You have no completed tasks.';
+        }
+
+        let result = `✅ **Completed Tasks (${completedTasks.length} total):**\n\n`;
+        completedTasks.forEach((task: any, index: number) => {
+          const priorityEmoji = task.priority === 'high' ? '🔴' : 
+                              task.priority === 'low' ? '🟢' : '🟡';
+          result += `${index + 1}. ${task.title} ${priorityEmoji}\n`;
+          result += `   Priority: ${task.priority}\n`;
+          if (task.dueDate) {
+            result += `   📅 Due: ${new Date(task.dueDate).toLocaleDateString()}\n`;
+          }
+          result += '\n';
+        });
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    // Filter by due date - overdue
+    if ((lowerMessage.includes('overdue') || lowerMessage.includes('late')) && 
+        (lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('view') || lowerMessage.includes('task'))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) return '❌ Failed to fetch tasks.';
+        
+        const tasks = await response.json();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const overdueTasks = tasks.filter((t: any) => {
+          if (!t.dueDate || t.status === 'completed') return false;
+          const dueDate = new Date(t.dueDate);
+          dueDate.setHours(0, 0, 0, 0);
+          return dueDate < today;
+        });
+        
+        if (overdueTasks.length === 0) {
+          return '✅ You have no overdue tasks!';
+        }
+
+        let result = `⚠️ **Overdue Tasks (${overdueTasks.length} total):**\n\n`;
+        overdueTasks.forEach((task: any, index: number) => {
+          const priorityEmoji = task.priority === 'high' ? '🔴' : 
+                              task.priority === 'low' ? '🟢' : '🟡';
+          const statusEmoji = task.status === 'in-progress' ? '🔄' : '⏳';
+          result += `${index + 1}. ${statusEmoji} ${task.title} ${priorityEmoji}\n`;
+          result += `   Status: ${task.status} | Priority: ${task.priority}\n`;
+          result += `   📅 Was due: ${new Date(task.dueDate).toLocaleDateString()}\n\n`;
+        });
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    // Filter by due date - today
+    if ((lowerMessage.includes('today') || lowerMessage.includes('due today')) && 
+        (lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('view') || lowerMessage.includes('task'))) {
+      try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) return '❌ Failed to fetch tasks.';
+        
+        const tasks = await response.json();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const todayTasks = tasks.filter((t: any) => {
+          if (!t.dueDate || t.status === 'completed') return false;
+          const dueDate = new Date(t.dueDate);
+          dueDate.setHours(0, 0, 0, 0);
+          return dueDate.getTime() === today.getTime();
+        });
+        
+        if (todayTasks.length === 0) {
+          return '📋 You have no tasks due today.';
+        }
+
+        let result = `📅 **Tasks Due Today (${todayTasks.length} total):**\n\n`;
+        todayTasks.forEach((task: any, index: number) => {
+          const priorityEmoji = task.priority === 'high' ? '🔴' : 
+                              task.priority === 'low' ? '🟢' : '🟡';
+          const statusEmoji = task.status === 'in-progress' ? '🔄' : '⏳';
+          result += `${index + 1}. ${statusEmoji} ${task.title} ${priorityEmoji}\n`;
+          result += `   Status: ${task.status} | Priority: ${task.priority}\n\n`;
+        });
+        return result;
+      } catch (error) {
+        return '❌ Error fetching tasks: ' + (error as Error).message;
+      }
+    }
+
+    // View all tasks (general case)
     if (lowerMessage.includes('show') || lowerMessage.includes('view') || lowerMessage.includes('list')) {
       try {
         const response = await fetch('/api/tasks');
@@ -563,15 +1032,21 @@ export default function AIAssistantPage() {
 
     // Help
     if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
-      return `🤖 Here's what I can help you with:\n\n` +
-             `1️⃣ Create tasks: "Create a task: Buy groceries"\n` +
-             `2️⃣ View tasks: "Show me my tasks" or "List all tasks"\n` +
-             `3️⃣ Delete tasks: "Delete task 1" or "Delete task: Buy groceries"\n` +
-             `4️⃣ Mark as complete: "Mark task 1 as complete"\n` +
-             `5️⃣ Change priority: "Change priority of task 1" or "Set priority"\n` +
-             `6️⃣ Get statistics: "Show task stats"\n` +
-             `7️⃣ Set priority when creating: Include "high", "medium", or "low"\n\n` +
-             `Try asking me to create, view, update, or delete tasks!`;
+      return `🤖 **Here's what I can help you with:**\n\n` +
+             `**Task Management:**\n` +
+             `• Create tasks: "Create a task: Buy groceries"\n` +
+             `• View all tasks: "Show me my tasks"\n` +
+             `• Delete tasks: "Delete task 1"\n` +
+             `• Change status: "Change status" (I'll guide you)\n` +
+             `• Mark complete: "Mark task 1 as complete"\n` +
+             `• Change priority: "Change priority"\n\n` +
+             `**Filter & Classify Tasks:**\n` +
+             `• By priority: "Show high priority tasks"\n` +
+             `• By status: "Show pending tasks" or "Show completed tasks"\n` +
+             `• By due date: "Show overdue tasks" or "Show tasks due today"\n\n` +
+             `**Statistics:**\n` +
+             `• View stats: "Show task statistics"\n\n` +
+             `Try asking me anything!`;
     }
 
     // Intelligent keyword-based fallback
