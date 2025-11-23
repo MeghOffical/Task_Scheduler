@@ -3,6 +3,9 @@ import { getAuthenticatedUserId } from '@/lib/auth-utils';
 import { User } from '@/models';
 import dbConnect from '@/lib/db';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const userId = await getAuthenticatedUserId();
