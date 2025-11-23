@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 export default function LandingContent() {
   const [isDark, setIsDark] = useState(false);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -14,6 +15,34 @@ export default function LandingContent() {
     setIsDark(shouldBeDark);
     document.documentElement.classList.toggle('dark', shouldBeDark);
   }, []);
+
+  const testimonials = [
+    {
+      quote: "Plan-It has completely transformed how I manage my daily tasks. The AI assistant is a game-changer!",
+      author: "Sarah Johnson",
+      role: "Product Manager",
+      avatar: "SJ"
+    },
+    {
+      quote: "The Pomodoro timer integration is brilliant. I'm 3x more productive than before.",
+      author: "Michael Chen",
+      role: "Software Developer",
+      avatar: "MC"
+    },
+    {
+      quote: "Finally, a task manager that understands natural language. Creating tasks feels effortless.",
+      author: "Emily Rodriguez",
+      role: "Entrepreneur",
+      avatar: "ER"
+    }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
 
   const toggleDarkMode = () => {
     const newDarkMode = !isDark;
@@ -187,32 +216,102 @@ export default function LandingContent() {
 
       <section className="bg-white dark:bg-slate-900 border-t border-blue-100 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              Built to Help You Get Stuff Done
-            </h2>
-            {/* Tagline removed per simplification request */}
+          <div className="max-w-4xl mx-auto mb-20">
+            <div className="relative bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-2xl border border-gray-100 dark:border-white/10">
+              <div className="absolute top-8 left-8 text-blue-600 dark:text-blue-400 opacity-50">
+                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+              </div>
+              <div className="relative pt-8">
+                <p className="text-xl sm:text-2xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed italic">
+                  {testimonials[activeTestimonial].quote}
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+                    {testimonials[activeTestimonial].avatar}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      {testimonials[activeTestimonial].author}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {testimonials[activeTestimonial].role}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center gap-2 mt-8">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveTestimonial(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === activeTestimonial
+                        ? 'bg-blue-600 w-8'
+                        : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                    aria-label={`Testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-10">
-            <BenefitCard
-              number="01"
-              title="Fast & Simple"
-              description="Clean interface. Add tasks quickly. Focus on what matters."
+        </div>
+      </section>
+
+      <section className="bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+              How Plan-It Works
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Get started in three simple steps
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 relative">
+            <div className="hidden md:block absolute top-24 left-1/4 right-1/4 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 z-0" style={{ transform: 'translateY(-50%)' }}></div>
+            
+            <StepCard
+              step="1"
+              title="Sign Up Free"
+              description="Create your account in seconds. No credit card needed."
+              icon={
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+              }
             />
-            <BenefitCard
-              number="02"
-              title="Stay Focused"
-              description="Use Pomodoro and priorities to keep momentum without overthinking."
+
+            <StepCard
+              step="2"
+              title="Add Your Tasks"
+              description="Use the AI assistant or create tasks manually with smart features."
+              icon={
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              }
             />
-            <BenefitCard
-              number="03"
-              title="See Progress"
-              description="Track what you finish and adjust. Light analytics, no overwhelm."
+
+            <StepCard
+              step="3"
+              title="Get Things Done"
+              description="Track progress, use Pomodoro, and achieve your goals efficiently."
+              icon={
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              }
             />
           </div>
         </div>
       </section>
+
+
 
       <footer className="bg-gray-50 dark:bg-slate-950 border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -249,19 +348,29 @@ function FeatureCard({ icon, title, description, color }: FeatureCardProps) {
   );
 }
 
-interface BenefitCardProps {
-  number: string;
+interface StepCardProps {
+  step: string;
   title: string;
   description: string;
+  icon: React.ReactNode;
 }
 
-function BenefitCard({ number, title, description }: BenefitCardProps) {
+function StepCard({ step, title, description, icon }: StepCardProps) {
   return (
-    <div className="relative group">
-      <div className="text-7xl font-bold text-blue-100 dark:text-blue-950/50 absolute -top-4 -left-2 group-hover:scale-105 transition-transform duration-300">{number}</div>
-      <div className="relative pt-10">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">{title}</h3>
-        <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-base">{description}</p>
+    <div className="relative z-10 text-center">
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-2xl font-bold mb-6 shadow-lg">
+        {step}
+      </div>
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-white/10 hover:shadow-xl transition-all duration-300">
+        <div className="inline-flex p-4 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 mb-4">
+          {icon}
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+          {title}
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+          {description}
+        </p>
       </div>
     </div>
   );
