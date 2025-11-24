@@ -109,6 +109,10 @@ const TaskSchema = new mongoose.Schema({
     type: String, // Format: "HH:mm" (24-hour format, e.g., "16:00")
     default: null
   },
+  completedAt: {
+    type: Date,
+    default: null
+  },
   createdAt: { 
     type: Date, 
     default: Date.now 
@@ -165,6 +169,32 @@ ChatThreadSchema.pre('save', function handleTitle(next) {
   next();
 });
 
+const TaskCompletionHistorySchema = new mongoose.Schema({
+  userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true 
+  },
+  taskId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Task', 
+    required: true 
+  },
+  completedAt: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  taskTitle: {
+    type: String,
+    required: true
+  }
+});
+
+// Add index for faster queries
+TaskCompletionHistorySchema.index({ userId: 1, completedAt: -1 });
+TaskCompletionHistorySchema.index({ userId: 1, taskId: 1 }, { unique: true });
+
 // Clear model cache to ensure fresh schema
 if (mongoose.models.User) {
   delete mongoose.models.User;
@@ -175,7 +205,11 @@ if (mongoose.models.Task) {
 if (mongoose.models.ChatThread) {
   delete mongoose.models.ChatThread;
 }
+if (mongoose.models.TaskCompletionHistory) {
+  delete mongoose.models.TaskCompletionHistory;
+}
 
 export const User = mongoose.model('User', UserSchema);
 export const Task = mongoose.model('Task', TaskSchema);
 export const ChatThread = mongoose.model('ChatThread', ChatThreadSchema);
+export const TaskCompletionHistory = mongoose.model('TaskCompletionHistory', TaskCompletionHistorySchema);
