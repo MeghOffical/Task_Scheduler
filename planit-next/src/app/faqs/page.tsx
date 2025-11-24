@@ -1,36 +1,48 @@
-import React from "react";
+import fs from 'fs'
+import path from 'path'
+import React from 'react'
+import MarkdownRenderer from '../../../components/MarkdownRenderer'
 
-const faqs = [
-  {
-    question: "What is Planit?",
-    answer: "Planit is a productivity and task management platform designed to help you organize your work and achieve your goals efficiently."
-  },
-  {
-    question: "How do I create a new task?",
-    answer: "Go to the Tasks page and click on 'Add Task'. Fill in the details and save your task."
-  },
-  {
-    question: "Can I use Planit on mobile devices?",
-    answer: "Yes, Planit is fully responsive and works on all modern mobile browsers."
-  },
-  {
-    question: "Is my data secure?",
-    answer: "We use industry-standard security practices to keep your data safe and private."
-  }
-];
+type FAQ = { question: string; answer: string }
 
-export default function FAQPage() {
+// Load JSON at build / request time (server component)
+const faqsPath = path.join(process.cwd(), 'src', 'app', 'faqs', 'faqs.json')
+let faqs: FAQ[] = []
+try {
+  const raw = fs.readFileSync(faqsPath, 'utf8')
+  faqs = JSON.parse(raw)
+} catch (e) {
+  // keep empty and the page will render a helpful message
+}
+
+export default function Page() {
   return (
-    <div className="max-w-2xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h1>
-      <div className="space-y-6">
-        {faqs.map((faq, idx) => (
-          <div key={idx} className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-2">{faq.question}</h2>
-            <p className="text-gray-700">{faq.answer}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    <main className="max-w-3xl mx-auto py-12 px-4">
+      <h1 className="text-3xl font-semibold mb-2">Frequently Asked Questions</h1>
+      <p className="text-muted-foreground mb-6">Answers to common questions about Planit.</p>
+
+      <section className="space-y-4">
+        {faqs.length === 0 ? (
+          <div className="p-4 border rounded text-sm text-gray-600">No FAQs found. Add entries to <code>src/app/faqs/faqs.json</code>.</div>
+        ) : (
+          faqs.map((f, i) => (
+            <details key={i} className="p-4 border rounded">
+              <summary className="cursor-pointer font-medium">{f.question}</summary>
+              <div className="mt-2 text-sm">
+                <MarkdownRenderer content={f.answer} />
+              </div>
+            </details>
+          ))
+        )}
+      </section>
+
+      <section className="mt-8 text-sm text-gray-600">
+        <p>
+          Still have questions? Reach out via the <strong>Help</strong> or
+          <strong> Contact</strong> page (if available) or open an issue in the
+          project repository.
+        </p>
+      </section>
+    </main>
+  )
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
@@ -11,7 +11,20 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('rememberedEmail');
+      if (saved) {
+        setEmail(saved);
+        setRemember(true);
+      }
+    } catch (e) {
+      // ignore localStorage errors in non-browser environments
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +43,22 @@ export default function LoginPage() {
       }
 
       if (result?.ok) {
+        try {
+          if (remember) {
+            localStorage.setItem('rememberedEmail', email);
+            // Ask server to extend the session cookie lifetime for this login
+            try {
+              await fetch('/api/auth/extend-session', { method: 'POST' });
+            } catch (err) {
+              // non-fatal: extension failed
+              console.warn('extend-session failed', err);
+            }
+          } else {
+            localStorage.removeItem('rememberedEmail');
+          }
+        } catch (e) {
+          // ignore localStorage errors
+        }
         router.replace('/dashboard');
       }
     } catch (err) {
@@ -120,8 +149,20 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Forgot Password Link */}
-          <div className="text-center">
+          {/* Remember Me + Forgot Password */}
+          <div className="flex items-center justify-between">
+            <label htmlFor="remember" className="inline-flex items-center gap-2 text-sm">
+              <input
+                id="remember"
+                name="remember"
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-sky-400 dark:hover:text-sky-300">Remember me</span>
+            </label>
+
             <Link href="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-sky-400 dark:hover:text-sky-300">
               Forgot Password?
             </Link>

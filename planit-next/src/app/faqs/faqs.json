@@ -1,0 +1,18 @@
+[
+  {
+    "question": "How do I create a new task?",
+    "answer": "Go to the Tasks page and click 'New Task'. Fill in the title, due date, and priority, then save."
+  },
+  {
+    "question": "Does Planit support time blocking or Pomodoro?",
+    "answer": "Yes — use the Pomodoro page to start focused sessions and block time for tasks. You can customize session length in Settings."
+  },
+  {
+    "question": "Can I sync my tasks across devices?",
+    "answer": "Sign in with your account and tasks will be persisted to your Planit profile and available across devices."
+  },
+  {
+    "question": "How do I change notification preferences?",
+    "answer": "Open Settings → Notifications to enable or disable reminder and desktop notifications."
+  }
+]

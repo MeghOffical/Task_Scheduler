@@ -73,6 +73,7 @@ export const authConfig: AuthOptions = {
         sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
+        // Cookie maxAge left unset to use NextAuth default (follows session.maxAge)
       },
     },
     callbackUrl: {
