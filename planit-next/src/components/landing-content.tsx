@@ -84,6 +84,12 @@ export default function LandingContent() {
               )}
             </button>
             <Link
+              href="/about"
+              className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              About Us
+            </Link>
+            <Link
               href="/login"
               className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
