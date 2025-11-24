@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Task } from '@/models';
+import { Task, TaskCompletionHistory } from '@/models';
 import { getAuthenticatedUserId } from '@/lib/auth-utils';
 import dbConnect from '@/lib/db';
 
@@ -73,18 +73,46 @@ export async function PUT(
       );
     }
 
+    // Prepare update data
+    const updateData: any = {
+      title,
+      description,
+      priority,
+      status,
+      dueDate: dueDate ? new Date(dueDate) : null,
+      startTime: startTime || null,
+      endTime: endTime || null,
+    };
+
+    // Set completedAt when task is marked as completed
+    if (status === 'completed' && task.status !== 'completed') {
+      updateData.completedAt = new Date();
+      
+      // Record completion in history for persistent tracking
+      await TaskCompletionHistory.findOneAndUpdate(
+        { userId, taskId: task._id },
+        { 
+          userId, 
+          taskId: task._id,
+          completedAt: updateData.completedAt,
+          taskTitle: title || task.title
+        },
+        { upsert: true, new: true }
+      );
+    } else if (status !== 'completed' && task.completedAt) {
+      updateData.completedAt = null;
+      
+      // Remove from completion history if unmarked as completed
+      await TaskCompletionHistory.deleteOne({
+        userId,
+        taskId: task._id
+      });
+    }
+
     // Update the task
     const updatedTask = await Task.findByIdAndUpdate(
       params.id,
-      {
-        title,
-        description,
-        priority,
-        status,
-        dueDate: dueDate ? new Date(dueDate) : null,
-        startTime: startTime || null,
-        endTime: endTime || null,
-      },
+      updateData,
       { new: true }
     );
 
@@ -125,10 +153,36 @@ export async function PATCH(
       );
     }
 
+    // If status is being changed to completed, set completedAt
+    const updateData = { ...body };
+    if (body.status === 'completed' && task.status !== 'completed') {
+      updateData.completedAt = new Date();
+      
+      // Record completion in history for persistent tracking
+      await TaskCompletionHistory.findOneAndUpdate(
+        { userId, taskId: task._id },
+        { 
+          userId, 
+          taskId: task._id,
+          completedAt: updateData.completedAt,
+          taskTitle: body.title || task.title
+        },
+        { upsert: true, new: true }
+      );
+    } else if (body.status && body.status !== 'completed' && task.completedAt) {
+      updateData.completedAt = null;
+      
+      // Remove from completion history if unmarked as completed
+      await TaskCompletionHistory.deleteOne({
+        userId,
+        taskId: task._id
+      });
+    }
+
     // Update only the provided fields
     const updatedTask = await Task.findByIdAndUpdate(
       params.id,
-      { $set: body },
+      { $set: updateData },
       { new: true }
     );
 

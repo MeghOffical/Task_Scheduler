@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import ActivityHeatmap from '@/components/activity-heatmap';
 
 type Task = {
   id: string;
@@ -14,6 +15,8 @@ type Task = {
 
 export default function AnalyticsPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [activity, setActivity] = useState<{ [date: string]: number }>({});
+  const [stats, setStats] = useState({ totalDays: 0, maxStreak: 0, currentStreak: 0 });
   const statusChartRef = useRef<HTMLCanvasElement | null>(null);
   const priorityChartRef = useRef<HTMLCanvasElement | null>(null);
   const productivityChartRef = useRef<HTMLCanvasElement | null>(null);
@@ -33,8 +36,89 @@ export default function AnalyticsPage() {
       }
     };
 
+    const migrateHistory = async () => {
+      try {
+        // Check if migration has been done before
+        const migrationDone = localStorage.getItem('completionHistoryMigrated');
+        if (!migrationDone) {
+          const res = await fetch('/api/analytics/migrate-history', { 
+            method: 'POST',
+            cache: 'no-store' 
+          });
+          if (res.ok) {
+            localStorage.setItem('completionHistoryMigrated', 'true');
+          }
+        }
+      } catch (e) {
+        // noop - migration is best effort
+      }
+    };
+
+    const fetchActivity = async () => {
+      try {
+        const res = await fetch('/api/analytics/activity', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        setActivity(data.activity || {});
+        calculateStats(data.activity || {});
+      } catch (e) {
+        // noop
+      }
+    };
+
     fetchTasks();
+    migrateHistory().then(fetchActivity);
   }, []);
+
+  const calculateStats = (activityData: { [date: string]: number }) => {
+    const dates = Object.keys(activityData).sort();
+    const totalDays = dates.filter(date => activityData[date] > 0).length;
+
+    // Calculate streaks
+    let maxStreak = 0;
+    let currentStreak = 0;
+    let tempStreak = 0;
+    const today = new Date().toISOString().split('T')[0];
+
+    // Check for current streak (working backwards from today)
+    const checkDate = new Date();
+    let streakActive = true;
+    
+    while (streakActive) {
+      const dateStr = checkDate.toISOString().split('T')[0];
+      if (activityData[dateStr] && activityData[dateStr] > 0) {
+        currentStreak++;
+      } else if (dateStr !== today) {
+        streakActive = false;
+      }
+      checkDate.setDate(checkDate.getDate() - 1);
+      if (currentStreak > 365) break; // Safety limit
+    }
+
+    // Calculate max streak
+    if (dates.length > 0) {
+      let prevDate = new Date(dates[0]);
+      tempStreak = activityData[dates[0]] > 0 ? 1 : 0;
+
+      for (let i = 1; i < dates.length; i++) {
+        const currentDate = new Date(dates[i]);
+        const dayDiff = Math.floor((currentDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        if (dayDiff === 1 && activityData[dates[i]] > 0) {
+          tempStreak++;
+          maxStreak = Math.max(maxStreak, tempStreak);
+        } else if (activityData[dates[i]] > 0) {
+          tempStreak = 1;
+        } else {
+          tempStreak = 0;
+        }
+
+        prevDate = currentDate;
+      }
+    }
+
+    setStats({ totalDays, maxStreak, currentStreak });
+  };
 
   useEffect(() => {
     // Load Chart.js from CDN
@@ -289,6 +373,31 @@ export default function AnalyticsPage() {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Analytics</h1>
+      </div>
+
+      {/* Activity Heatmap Section */}
+      <div className="glass-panel rounded-xl p-6">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Daily Activity</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Your task completion activity over the past year</p>
+          </div>
+          <div className="flex gap-6 text-sm">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalDays}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">Total active days</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.maxStreak}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">Max streak</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.currentStreak}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">Current streak</div>
+            </div>
+          </div>
+        </div>
+        <ActivityHeatmap activity={activity} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
