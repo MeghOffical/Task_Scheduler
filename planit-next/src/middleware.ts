@@ -34,6 +34,9 @@ export async function middleware(request: NextRequest) {
       // Make FAQ page public
       pathname === '/faqs' ||
       pathname.startsWith('/faqs') ||
+      // Make About page public
+      pathname === '/about' ||
+      pathname.startsWith('/about') ||
       pathname.startsWith('/api/auth')) {
     return NextResponse.next()
   }
