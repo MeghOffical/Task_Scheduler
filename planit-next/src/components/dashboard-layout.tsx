@@ -19,6 +19,8 @@ import {
   CpuChipIcon,
   Cog6ToothIcon,
   SparklesIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 
 interface Task {
@@ -327,6 +329,8 @@ interface SidebarProps {
   inputMessage: string;
   setInputMessage: (message: string) => void;
   handleSendMessage: (e: React.FormEvent) => void;
+  isMinimized: boolean;
+  setIsMinimized: (minimized: boolean) => void;
 }
 
 export const Sidebar = ({
@@ -336,7 +340,9 @@ export const Sidebar = ({
   setMessages,
   inputMessage,
   setInputMessage,
-  handleSendMessage
+  handleSendMessage,
+  isMinimized,
+  setIsMinimized
 }: SidebarProps) => {
 
   const pathname = usePathname();
@@ -369,8 +375,22 @@ export const Sidebar = ({
 
   return (
     <>
-      <aside className="w-64 h-full bg-slate-50 border-r border-slate-200 flex flex-col dark:bg-[#0B0E12] dark:border-white/5">
-        <nav className="py-6 px-2 flex-1 flex flex-col gap-1 overflow-y-auto">
+      <aside className={`${isMinimized ? 'w-20' : 'w-64'} h-full bg-slate-50 border-r border-slate-200 flex flex-col dark:bg-[#0B0E12] dark:border-white/5 transition-all duration-300 relative flex-shrink-0`}>
+        
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsMinimized(!isMinimized)}
+          className="absolute -right-3 top-6 z-10 h-6 w-6 rounded-full bg-white border border-slate-200 dark:bg-[#151922] dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:border-slate-300 dark:hover:border-white/20 transition-colors shadow-sm"
+          title={isMinimized ? "Expand sidebar" : "Minimize sidebar"}
+        >
+          {isMinimized ? (
+            <ChevronRightIcon className="w-4 h-4" />
+          ) : (
+            <ChevronLeftIcon className="w-4 h-4" />
+          )}
+        </button>
+
+        <nav className="py-6 px-2 flex-1 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
 
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -378,20 +398,30 @@ export const Sidebar = ({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
+                className={`group flex items-center ${isMinimized ? 'justify-center px-2' : 'gap-3 px-3'} rounded-lg py-2.5 text-sm transition-colors relative
                 ${isActive
                   ? 'bg-primary-100 text-primary-800 shadow-sm ring-1 ring-primary-300 dark:bg-[#151922] dark:text-[#E6E9EF] dark:ring-0'
                   : 'text-slate-600 hover:bg-primary-50 hover:text-primary-800 dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100'}`}
+                title={isMinimized ? item.label : undefined}
               >
                 <span
-                  className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-[13px] transition-colors
+                  className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-[13px] transition-colors flex-shrink-0
                   ${isActive
                     ? 'border-primary-400 bg-primary-50 text-primary-600 dark:border-[#3B82F6] dark:text-[#3B82F6] dark:bg-transparent'
                     : 'border-slate-300 text-slate-500 group-hover:border-primary-300 group-hover:text-primary-600 dark:border-[#1F2430]'}`}
                 >
                   {item.icon}
                 </span>
-                <span className="font-medium tracking-tight">{item.label}</span>
+                {!isMinimized && (
+                  <span className="font-medium tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{item.label}</span>
+                )}
+                
+                {/* Tooltip for minimized state */}
+                {isMinimized && (
+                  <span className="absolute left-full ml-2 px-2 py-1 bg-slate-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                    {item.label}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -465,10 +495,24 @@ export const Sidebar = ({
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, text: "Hello! I'm your AI assistant. How can I help you today?", isUser: false }
   ]);
   const [inputMessage, setInputMessage] = useState('');
+
+  // Load sidebar state from localStorage
+  useEffect(() => {
+    const savedState = localStorage.getItem('sidebarMinimized');
+    if (savedState !== null) {
+      setIsMinimized(savedState === 'true');
+    }
+  }, []);
+
+  // Save sidebar state to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarMinimized', isMinimized.toString());
+  }, [isMinimized]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -501,6 +545,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           inputMessage={inputMessage}
           setInputMessage={setInputMessage}
           handleSendMessage={handleSendMessage}
+          isMinimized={isMinimized}
+          setIsMinimized={setIsMinimized}
         />
         <main className="flex-1 overflow-y-auto p-6">
           {children}
