@@ -19,8 +19,8 @@ interface PomodoroSettings {
 interface PomodoroSession {
   id: number;
   date: string;
-  type: 'focus' | 'break';
-  duration: number;
+  type: 'focus' | 'short_break' | 'long_break';
+  duration: number; // minutes
   taskId?: string;
   taskTitle: string;
 }
@@ -82,7 +82,16 @@ export default function PomodoroPage() {
 
     const savedHistory = localStorage.getItem('pomodoroHistory');
     if (savedHistory) {
-      setHistory(JSON.parse(savedHistory));
+      try {
+        const parsed = JSON.parse(savedHistory);
+        // migrate legacy 'break' entries to 'short_break'
+        const migrated = Array.isArray(parsed)
+          ? parsed.map((s: any) => s.type === 'break' ? { ...s, type: 'short_break' } : s)
+          : [];
+        setHistory(migrated);
+      } catch (e) {
+        console.warn('Failed to parse pomodoroHistory', e);
+      }
     }
 
     const handleSettingsChange = (event: CustomEvent<PomodoroSettings>) => {
@@ -176,13 +185,6 @@ export default function PomodoroPage() {
     setTimeLeft(newTime);
   };
 
-  const skipSession = () => {
-    if (confirm('Skip this session?')) {
-      pauseTimer();
-      switchSession();
-    }
-  };
-
   const completeSession = () => {
     pauseTimer();
     playNotificationSound();
@@ -195,7 +197,7 @@ export default function PomodoroPage() {
     const newSession: PomodoroSession = {
       id: Date.now(),
       date: new Date().toISOString(),
-      type: isBreak ? 'break' : 'focus',
+      type: isBreak ? (isLongBreak ? 'long_break' : 'short_break') : 'focus',
       duration: sessionDuration,
       taskId: selectedTaskId || undefined,
       taskTitle: selectedTask ? selectedTask.title : 'No task linked'
@@ -213,7 +215,7 @@ export default function PomodoroPage() {
       }
     }
 
-    alert(isBreak ? 'Break complete! Time to focus.' : 'Focus session complete! Take a break.');
+  alert(isBreak ? 'Break complete! Time to focus.' : (isLongBreak ? 'Great! Long break complete.' : 'Focus session complete! Take a break.'));
     switchSession();
   };
 
@@ -230,6 +232,28 @@ export default function PomodoroPage() {
     }
   };
 
+  // Explicit mode switching via top tabs: Pomodoro / Short Break / Long Break
+  const selectPomodoro = () => {
+    pauseTimer();
+    setIsBreak(false);
+    setIsLongBreak(false);
+    setTimeLeft(settings.workDuration * 60);
+  };
+
+  const selectShortBreak = () => {
+    pauseTimer();
+    setIsBreak(true);
+    setIsLongBreak(false);
+    setTimeLeft(settings.shortBreakDuration * 60);
+  };
+
+  const selectLongBreak = () => {
+    pauseTimer();
+    setIsBreak(true);
+    setIsLongBreak(true);
+    setTimeLeft(settings.longBreakDuration * 60);
+  };
+
   const getTimerColor = () => {
     if (isBreak) {
       return isLongBreak ? '#059669' : '#10B981';
@@ -242,7 +266,37 @@ export default function PomodoroPage() {
       
       <section className="flex-1 glass-panel rounded-2xl p-12 flex flex-col text-gray-900 dark:text-white">
         
-        <h1 className="text-3xl font-bold mb-12">Pomodoro Timer</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">Pomodoro Timer</h1>
+
+        {/* MODE TABS: Pomodoro / Short Break / Long Break */}
+        <div className="flex items-center justify-center gap-6 mb-10">
+          <div className="flex items-center gap-8 bg-sky-900/60 rounded-3xl px-8 py-3 text-white shadow-lg">
+          <button
+            onClick={selectPomodoro}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+              !isBreak ? 'bg-sky-500' : 'bg-transparent'
+            }`}
+          >
+            Pomodoro
+          </button>
+          <button
+            onClick={selectShortBreak}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+              isBreak && !isLongBreak ? 'bg-sky-500' : 'bg-transparent'
+            }`}
+          >
+            Short Break
+          </button>
+          <button
+            onClick={selectLongBreak}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+              isBreak && isLongBreak ? 'bg-sky-500' : 'bg-transparent'
+            }`}
+          >
+            Long Break
+          </button>
+          </div>
+        </div>
 
         <div className="flex-1 flex flex-col items-center justify-center gap-8">
 
@@ -320,17 +374,6 @@ export default function PomodoroPage() {
               Reset
             </button>
 
-
-            <button
-              onClick={skipSession}
-              className="px-10 py-3 rounded-lg
-                bg-pink-500 hover:bg-pink-600
-                text-white font-semibold transition-all duration-300
-                shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
-            >
-              Skip
-            </button>
-
           </div>
 
           <button
@@ -386,19 +429,37 @@ export default function PomodoroPage() {
             <div className="space-y-4">
 
               {(() => {
-                const breaks = history.filter(s => s.type === 'break');
+                const shortBreaks = history.filter(s => s.type === 'short_break');
+                const longBreaks = history.filter(s => s.type === 'long_break');
                 const focuses = history.filter(s => s.type === 'focus');
 
                 return (
                   <>
-                    {breaks.length > 0 && (
+                    {shortBreaks.length > 0 && (
                       <div>
-                        <h3 className="text-xs uppercase font-bold text-gray-600 dark:text-gray-400 mb-3">Short Break</h3>
-                        {breaks.slice(0, 3).map((session) => (
+                        <h3 className="text-xs uppercase font-bold text-gray-600 dark:text-gray-400 mb-3">Short Breaks</h3>
+                        {shortBreaks.slice(0, 3).map((session) => (
                           <div key={session.id} className="flex items-center justify-between mb-2 text-sm">
                             <div className="flex items-center gap-2">
                               <span className="w-2 h-2 rounded-full bg-gray-800 dark:bg-cyan-500"></span>
                               <span className="text-gray-700 dark:text-gray-300">{session.taskTitle || 'Break'}</span>
+                            </div>
+                            <span className="text-xs text-gray-500 dark:text-gray-500">
+                              {new Date(session.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {longBreaks.length > 0 && (
+                      <div>
+                        <h3 className="text-xs uppercase font-bold text-gray-600 dark:text-gray-400 mb-3 mt-6">Long Breaks</h3>
+                        {longBreaks.slice(0, 2).map((session) => (
+                          <div key={session.id} className="flex items-center justify-between mb-2 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-green-700 dark:bg-green-500"></span>
+                              <span className="text-gray-700 dark:text-gray-300">{session.taskTitle || 'Long Break'}</span>
                             </div>
                             <span className="text-xs text-gray-500 dark:text-gray-500">
                               {new Date(session.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -438,7 +499,7 @@ export default function PomodoroPage() {
             </h3>
             <div className="glass-panel rounded-lg p-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Total Focus Time: <span className="font-bold text-gray-900 dark:text-white">{history.filter(s => s.type === 'focus').length * 25} min</span>
+                Total Focus Time: <span className="font-bold text-gray-900 dark:text-white">{history.filter(s => s.type === 'focus').reduce((acc, s) => acc + s.duration, 0)} min</span>
               </p>
             </div>
           </div>
