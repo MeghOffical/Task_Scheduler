@@ -2,12 +2,9 @@
 
 import React from "react";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import MainHeader from '@/components/main-header';
 
 const AboutUs = () => {
-  const router = useRouter();
-  const goHome = () => router.push('/');
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-gray-900 dark:text-white">
@@ -60,8 +57,7 @@ const AboutUs = () => {
         </div>
 
         <div className="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700 flex gap-4 justify-center flex-wrap">
-          <button onClick={goHome} className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all hover:scale-105">Back to Home</button>
-          <Link href="/register" className="px-6 py-3 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-700 transition-all">Get Started</Link>
+          <Link href="/register" className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all hover:scale-105">Get Started</Link>
         </div>
       </section>
       </div>

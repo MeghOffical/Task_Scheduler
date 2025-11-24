@@ -1,19 +1,15 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import MainHeader from '@/components/main-header';
 
 export default function ContactPage() {
-  const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-
-  const goHome = () => router.push('/');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,8 +51,7 @@ export default function ContactPage() {
         </form>
 
         <div className="mt-8 flex gap-3">
-          <Link href="/register" className="px-4 py-2 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-md">Create an account</Link>
-          <button onClick={goHome} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md">Back to Home</button>
+          <Link href="/register" className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md">Create an account</Link>
         </div>
       </section>
       </div>
