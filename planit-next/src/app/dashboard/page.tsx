@@ -26,6 +26,7 @@ function LoadingSpinner() {
 }
 
 export default function DashboardPage() {
+    const [taskPage, setTaskPage] = useState(1);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +74,7 @@ export default function DashboardPage() {
         return orderA - orderB;
       });
       
-      setRecentTasks(sortedTasks.slice(0, 5));
+      setRecentTasks(sortedTasks.slice(0, 10));
       setStats(statsData);
       setError(null);
     } catch (err) {
@@ -156,6 +157,10 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
     );
   }
 
+  // Pagination logic for recent tasks
+  const tasksPerPage = 5;
+  const paginatedTasks = recentTasks.slice((taskPage - 1) * tasksPerPage, taskPage * tasksPerPage);
+
   return (
     <PageWrapper>
         <div className="space-y-8">
@@ -211,11 +216,11 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Tasks</h2>
                   <div className="text-sm text-gray-300 dark:text-gray-400">
-                    Showing {Math.min(recentTasks.length, 5)} of {stats.totalTasks} tasks
+                    Showing {paginatedTasks.length} of {recentTasks.length} recent tasks (Page {taskPage} of {Math.ceil(recentTasks.length / tasksPerPage)})
                   </div>
                 </div>
                 <div className="space-y-4">
-                  {recentTasks.length === 0 ? (
+                  {paginatedTasks.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-8 text-gray-300 dark:text-gray-400">
                       <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -224,7 +229,7 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                       <p className="text-sm mt-1">Start by creating your first task!</p>
                     </div>
                   ) : (
-                    recentTasks.map((task) => (
+                    paginatedTasks.map((task) => (
                       <TaskCard 
                         key={task.id} 
                         task={task} 
@@ -258,6 +263,39 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                     ))
                   )}
                 </div>
+                {/* Pagination Controls */}
+                {recentTasks.length > tasksPerPage && (
+                  <div className="flex justify-center mt-4 space-x-2">
+                    <button
+                      className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={() => setTaskPage(1)}
+                      disabled={taskPage === 1}
+                    >
+                      First
+                    </button>
+                    <button
+                      className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={() => setTaskPage(taskPage - 1)}
+                      disabled={taskPage === 1}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === Math.ceil(recentTasks.length / tasksPerPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={() => setTaskPage(taskPage + 1)}
+                      disabled={taskPage === Math.ceil(recentTasks.length / tasksPerPage)}
+                    >
+                      Next
+                    </button>
+                    <button
+                      className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === Math.ceil(recentTasks.length / tasksPerPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={() => setTaskPage(Math.ceil(recentTasks.length / tasksPerPage))}
+                      disabled={taskPage === Math.ceil(recentTasks.length / tasksPerPage)}
+                    >
+                      Last
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

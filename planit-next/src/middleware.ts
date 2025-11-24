@@ -31,6 +31,9 @@ export async function middleware(request: NextRequest) {
       pathname === '/register' || 
       pathname === '/forgot-password' ||
       pathname === '/reset-password' ||
+      // Make FAQ page public
+      pathname === '/faqs' ||
+      pathname.startsWith('/faqs') ||
       pathname.startsWith('/api/auth')) {
     return NextResponse.next()
   }
