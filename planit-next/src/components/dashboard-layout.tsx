@@ -35,17 +35,97 @@ const Header = () => {
   const [isDark, setIsDark] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [userInfo, setUserInfo] = useState<{ username: string; email: string } | null>(null);
+  const [userInfo, setUserInfo] = useState<{ username: string; email: string; points?: number } | null>(null);
   const [pendingTasks, setPendingTasks] = useState<Task[]>([]);
   const [missedTasks, setMissedTasks] = useState<Task[]>([]);
   const [dismissedNotifications, setDismissedNotifications] = useState<Set<string>>(new Set());
+  const [lastPoints, setLastPoints] = useState<number | null>(null);
+  const [pointsToast, setPointsToast] = useState<{
+    delta: number;
+    message: string;
+  } | null>(null);
+
+  // Expose a simple global helper so other client components (e.g. Tasks page)
+  // can trigger a points toast without prop drilling. This attaches once on
+  // mount and is safe in the browser.
+  useEffect(() => {
+    (window as any).showPointsToast = (message: string, isPositive: boolean) => {
+      setPointsToast({
+        delta: isPositive ? 1 : -1,
+        message,
+      });
+      setTimeout(() => setPointsToast(null), 3500);
+    };
+
+    return () => {
+      if ((window as any).showPointsToast) {
+        delete (window as any).showPointsToast;
+      }
+    };
+  }, []);
 
   const fetchUserInfo = async () => {
     try {
       const response = await fetch('/api/user/me');
       if (response.ok) {
         const data = await response.json();
-        setUserInfo({ username: data.username, email: data.email });
+
+        const nextPoints = data.points ?? 0;
+        setUserInfo({ username: data.username, email: data.email, points: nextPoints });
+
+        // Detect point changes (e.g. from task completion or penalties)
+        setLastPoints((prev) => {
+          if (prev === null || prev === nextPoints) return nextPoints;
+
+          const delta = nextPoints - prev;
+          if (delta !== 0) {
+            setPointsToast({
+              delta,
+              message:
+                delta > 0
+                  ? `You earned +${delta} points`
+                  : `You lost ${Math.abs(delta)} points`,
+            });
+
+            setTimeout(() => setPointsToast(null), 3500);
+          }
+
+          return nextPoints;
+        });
+
+        // Automatic daily check-in on login / first load of the day
+        try {
+          const todayKey = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+          const stored = localStorage.getItem('lastDailyCheckinDate');
+          if (stored !== todayKey) {
+            const res = await fetch('/api/points/daily-checkin', { method: 'POST' });
+            const dcData = await res.json();
+
+            if (res.ok) {
+              localStorage.setItem('lastDailyCheckinDate', todayKey);
+
+              // Update local points if API sends it
+              setUserInfo(prev =>
+                prev
+                  ? {
+                      ...prev,
+                      points:
+                        typeof dcData.points === 'number'
+                          ? dcData.points
+                          : prev.points,
+                    }
+                  : prev
+              );
+
+              (window as any).showPointsToast?.(
+                'Daily login bonus! You earned +1 point.',
+                true
+              );
+            }
+          }
+        } catch (e) {
+          console.error('Auto daily check-in failed:', e);
+        }
       }
     } catch (error) {
       console.error('Error fetching user info:', error);
@@ -170,7 +250,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full sticky top-0 z-40 bg-white/90 border-b border-slate-200 backdrop-blur flex justify-between items-center px-6 py-3 dark:bg-[#11141A]/95 dark:border-white/5">
+  <header className="w-full sticky top-0 z-40 bg-white/90 border-b border-slate-200 backdrop-blur flex justify-between items-center px-6 py-3 dark:bg-[#11141A]/95 dark:border-white/5">
       
       {/* Logo */}
       <Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold tracking-tight text-slate-900 dark:text-[#E6E9EF]">
@@ -185,6 +265,20 @@ const Header = () => {
 
 
       <div className="flex items-center gap-3">
+        {/* Points toast */}
+        {pointsToast && (
+          <div className="fixed bottom-6 right-6 z-50 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 shadow-lg flex items-center gap-3 text-sm text-emerald-200">
+            <span className={`h-2 w-2 rounded-full ${pointsToast.delta >= 0 ? 'bg-emerald-400' : 'bg-red-400'} shadow-[0_0_10px_rgba(52,211,153,0.9)]`} />
+            <div>
+              <p className="font-semibold">
+                {pointsToast.message}
+              </p>
+              <p className="text-xs text-emerald-200/80">
+                Check your points in the profile menu.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Notifications */}
         <div className="relative notification-menu-container">
@@ -312,11 +406,16 @@ const Header = () => {
                   <div>
                     <p className="text-sm font-medium text-[#E6E9EF]">{userInfo?.username}</p>
                     <p className="text-xs text-[#8B929D]">{userInfo?.email}</p>
+                    {typeof userInfo?.points === 'number' && (
+                      <p className="mt-1 text-xs font-medium text-amber-300">
+                        Your Points: <span className="font-semibold">{userInfo.points}</span>
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
 
-              <div className="px-2 py-1">
+              <div className="px-2 py-2 space-y-1">
                 <button
                   onClick={handleLogout}
                   className="w-full rounded-lg px-3 py-2 text-left text-[13px] font-medium text-red-400 hover:bg-red-500/10 transition-colors"

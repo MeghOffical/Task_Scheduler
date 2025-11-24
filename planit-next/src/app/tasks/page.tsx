@@ -106,7 +106,31 @@ export default function TasksPage() {
 
     try {
       if (editingTask) {
+        const previousStatus = editingTask.status;
+
         await updateTask(editingTask.id, formData);
+
+        // Show immediate toast *if* we can infer an on-time completion or missed deadline
+        const newStatus = formData.status;
+  const hasDueDate = !!formData.dueDate;
+        const now = new Date();
+        const due = hasDueDate ? new Date(formData.dueDate) : null;
+
+        if (hasDueDate && due && !isNaN(due.getTime())) {
+          // Only consider if due date wasn't removed
+          if (newStatus === 'completed' && previousStatus !== 'completed' && now <= due) {
+            (window as any).showPointsToast?.(
+              'Task completed on time! You earned +10 points.',
+              true
+            );
+          } else if (newStatus === 'pending' && previousStatus !== 'pending' && now > due) {
+            // If you mark a past-due task as pending, treat it as missed deadline in UI
+            (window as any).showPointsToast?.(
+              'Deadline missed. You lost 5 points.',
+              false
+            );
+          }
+        }
       } else {
         await createTask(formData);
       }

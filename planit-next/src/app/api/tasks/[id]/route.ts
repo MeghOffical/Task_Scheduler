@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Task, TaskCompletionHistory } from '@/models';
+import { awardPoints } from '@/lib/points';
 import { getAuthenticatedUserId } from '@/lib/auth-utils';
 import dbConnect from '@/lib/db';
 
@@ -56,7 +57,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, description, priority, status, dueDate, startTime, endTime } = body;
+  const { title, description, priority, status, dueDate, startTime, endTime } = body;
 
     await dbConnect();
 
@@ -84,12 +85,12 @@ export async function PUT(
       endTime: endTime || null,
     };
 
-    // Set completedAt when task is marked as completed
+  // Set completedAt when task is marked as completed
     if (status === 'completed' && task.status !== 'completed') {
       updateData.completedAt = new Date();
       
       // Record completion in history for persistent tracking
-      await TaskCompletionHistory.findOneAndUpdate(
+  await TaskCompletionHistory.findOneAndUpdate(
         { userId, taskId: task._id },
         { 
           userId, 
@@ -99,6 +100,20 @@ export async function PUT(
         },
         { upsert: true, new: true }
       );
+
+      // Award points for on-time completion (completedAt <= dueDate)
+      if (task.dueDate && updateData.completedAt <= task.dueDate) {
+        try {
+          await awardPoints({
+            userId: userId.toString(),
+            type: 'task_completed_on_time',
+            amount: 10,
+            description: `Task completed on time: ${title || task.title}`,
+          });
+        } catch (e) {
+          console.error('Error awarding points for on-time completion (PUT):', e);
+        }
+      }
     } else if (status !== 'completed' && task.completedAt) {
       updateData.completedAt = null;
       
@@ -115,6 +130,20 @@ export async function PUT(
       updateData,
       { new: true }
     );
+
+    // If status changed to overdue, apply missed deadline penalty (-5)
+    if (status === 'overdue' && task.status !== 'overdue') {
+      try {
+        await awardPoints({
+          userId: userId.toString(),
+          type: 'missed_deadline',
+          amount: -5,
+          description: `Missed deadline: ${title || task.title}`,
+        });
+      } catch (e) {
+        console.error('Error applying missed deadline penalty (PUT):', e);
+      }
+    }
 
     return NextResponse.json(updatedTask);
   } catch (error) {
@@ -136,7 +165,7 @@ export async function PATCH(
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+  const body = await request.json();
 
     await dbConnect();
 
@@ -154,12 +183,12 @@ export async function PATCH(
     }
 
     // If status is being changed to completed, set completedAt
-    const updateData = { ...body };
-    if (body.status === 'completed' && task.status !== 'completed') {
+  const updateData = { ...body };
+  if (body.status === 'completed' && task.status !== 'completed') {
       updateData.completedAt = new Date();
       
       // Record completion in history for persistent tracking
-      await TaskCompletionHistory.findOneAndUpdate(
+  await TaskCompletionHistory.findOneAndUpdate(
         { userId, taskId: task._id },
         { 
           userId, 
@@ -169,6 +198,20 @@ export async function PATCH(
         },
         { upsert: true, new: true }
       );
+
+      // Award points for on-time completion (completedAt <= dueDate)
+      if (task.dueDate && updateData.completedAt <= task.dueDate) {
+        try {
+          await awardPoints({
+            userId: userId.toString(),
+            type: 'task_completed_on_time',
+            amount: 10,
+            description: `Task completed on time: ${body.title || task.title}`,
+          });
+        } catch (e) {
+          console.error('Error awarding points for on-time completion (PATCH):', e);
+        }
+      }
     } else if (body.status && body.status !== 'completed' && task.completedAt) {
       updateData.completedAt = null;
       
@@ -185,6 +228,20 @@ export async function PATCH(
       { $set: updateData },
       { new: true }
     );
+
+    // If status changed to overdue, apply missed deadline penalty (-5)
+    if (body.status === 'overdue' && task.status !== 'overdue') {
+      try {
+        await awardPoints({
+          userId: userId.toString(),
+          type: 'missed_deadline',
+          amount: -5,
+          description: `Missed deadline: ${body.title || task.title}`,
+        });
+      } catch (e) {
+        console.error('Error applying missed deadline penalty (PATCH):', e);
+      }
+    }
 
     return NextResponse.json(updatedTask);
   } catch (error) {
