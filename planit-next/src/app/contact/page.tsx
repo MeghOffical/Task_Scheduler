@@ -31,10 +31,11 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-gray-900 dark:text-white px-6 py-12 flex flex-col items-center">
+    <main className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-gray-900 dark:text-white">
       <MainHeader />
 
-      <section className="max-w-3xl w-full bg-white/80 dark:bg-slate-900/80 rounded-xl shadow-lg p-8 border border-gray-100 dark:border-white/10">
+      <div className="px-6 py-12 flex flex-col items-center">
+        <section className="max-w-3xl w-full bg-white/80 dark:bg-slate-900/80 rounded-xl shadow-lg p-8 border border-gray-100 dark:border-white/10">
         <h1 className="text-3xl font-extrabold mb-2 text-gray-900 dark:text-white">Contact Plan-It</h1>
         <p className="text-gray-700 dark:text-gray-300 mb-6">We’re happy to help — please provide your contact details and a brief message describing your query or suggestion. For urgent issues, email <a className="underline text-blue-600 dark:text-blue-400" href="mailto:support@planit.app">support@planit.app</a>.</p>
 
@@ -58,6 +59,7 @@ export default function ContactPage() {
           <button onClick={goHome} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md">Back to Home</button>
         </div>
       </section>
+      </div>
     </main>
   );
 }

@@ -10,10 +10,11 @@ const AboutUs = () => {
   const goHome = () => router.push('/');
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-gray-900 dark:text-white px-6 py-12 flex flex-col items-center">
+    <main className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-gray-900 dark:text-white">
       <MainHeader />
 
-      <section className="max-w-3xl w-full bg-white/80 dark:bg-slate-900/80 rounded-xl shadow-lg p-8 border border-gray-100 dark:border-white/10">
+      <div className="px-6 py-12 flex flex-col items-center">
+        <section className="max-w-3xl w-full bg-white/80 dark:bg-slate-900/80 rounded-xl shadow-lg p-8 border border-gray-100 dark:border-white/10">
         <h1 className="text-4xl font-extrabold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent text-center">About Plan-It</h1>
         <p className="text-lg mb-8 text-center text-gray-700 dark:text-gray-300">
           <strong>Plan-It</strong> is a modern productivity platform that helps individuals and teams organize, prioritize, and complete work efficiently. We combine intelligent automation, intuitive design, and proven productivity techniques to help users achieve measurable outcomes.
@@ -63,6 +64,7 @@ const AboutUs = () => {
           <Link href="/register" className="px-6 py-3 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-700 transition-all">Get Started</Link>
         </div>
       </section>
+      </div>
     </main>
   );
 };
