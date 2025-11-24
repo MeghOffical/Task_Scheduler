@@ -5,9 +5,11 @@ import AuthNavbar from './auth-navbar';
 
 // Mock Next.js Link component
 jest.mock('next/link', () => {
-  return ({ children, href }: any) => {
+  const MockLink = ({ children, href }: any) => {
     return <a href={href}>{children}</a>;
   };
+  MockLink.displayName = 'Link';
+  return MockLink;
 });
 
 describe('AuthNavbar Component', () => {
