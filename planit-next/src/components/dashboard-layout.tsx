@@ -126,8 +126,24 @@ const Header = () => {
 
   const handleLogout = async () => {
     if (confirm('Are you sure you want to logout?')) {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.replace('/');
+      try {
+        // Clear custom auth token
+        await fetch('/api/auth/logout', { method: 'POST' });
+        
+        // Also clear NextAuth session
+        const { signOut } = await import('next-auth/react');
+        await signOut({ redirect: false });
+        
+        // Force redirect to home
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Logout error:', error);
+        // Fallback: just clear cookies and redirect
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+        window.location.href = '/';
+      }
     }
   };
 
