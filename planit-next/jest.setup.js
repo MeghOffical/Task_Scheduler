@@ -10,3 +10,14 @@ global.TextDecoder = TextDecoder
 process.env.MONGODB_URI = 'mongodb://localhost:27017/test'
 process.env.JWT_SECRET = 'test-secret'
 process.env.NEXTAUTH_URL = 'http://localhost:3000'
+
+// Polyfill Web Streams for jose
+const { ReadableStream, TransformStream } = require('stream/web')
+
+if (typeof ReadableStream === 'undefined') {
+  global.ReadableStream = ReadableStream
+}
+
+if (typeof TransformStream === 'undefined') {
+  global.TransformStream = TransformStream
+}

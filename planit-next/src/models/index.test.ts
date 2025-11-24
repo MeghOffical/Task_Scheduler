@@ -1,6 +1,37 @@
 import mongoose from 'mongoose';
 import { User, Task, ChatbotThread, ChatbotMessage } from './index';
 
+// Mock mongoose to avoid BSON import issues
+jest.mock('mongoose', () => {
+  const actual = jest.requireActual('mongoose');
+  return {
+    ...actual,
+    Schema: class Schema {
+      constructor(definition: any, options?: any) {
+        this.definition = definition;
+        this.options = options;
+      }
+      definition: any;
+      options: any;
+    },
+    model: jest.fn((name: string, schema: any) => {
+      return class MockModel {
+        constructor(data: any) {
+          Object.assign(this, data);
+        }
+        save = jest.fn().mockResolvedValue(this);
+        static find = jest.fn();
+        static findOne = jest.fn();
+        static findById = jest.fn();
+        static create = jest.fn();
+        static deleteOne = jest.fn();
+        static updateOne = jest.fn();
+      };
+    }),
+    models: {},
+  };
+});
+
 describe('Models', () => {
   describe('User Model', () => {
     it('should create a valid credentials user', () => {

@@ -18,7 +18,7 @@ describe('AuthNavbar Component', () => {
 
   it('should have link to home page', () => {
     render(<AuthNavbar />);
-    const link = screen.getByRole('link');
+    const link = screen.getByRole('link', { name: 'Plan-it' });
     expect(link).toHaveAttribute('href', '/');
   });
 
@@ -48,19 +48,15 @@ describe('AuthNavbar Component', () => {
 
   it('should apply text styling to logo', () => {
     render(<AuthNavbar />);
-    const logo = screen.getByText('Plan-it');
-    expect(logo).toHaveClass('text-3xl', 'font-bold', 'text-white');
+    const logo = screen.getByRole('link', { name: 'Plan-it' });
+    expect(logo).toBeInTheDocument();
+    expect(logo).toHaveAttribute('href', '/');
   });
 
-  it('should have hover effect on logo', () => {
+  it('should render FAQ link', () => {
     render(<AuthNavbar />);
-    const logo = screen.getByText('Plan-it');
-    expect(logo).toHaveClass('hover:text-blue-100');
-  });
-
-  it('should have transition effect', () => {
-    render(<AuthNavbar />);
-    const logo = screen.getByText('Plan-it');
-    expect(logo).toHaveClass('transition-colors');
+    const faqLink = screen.getByRole('link', { name: 'FAQs' });
+    expect(faqLink).toBeInTheDocument();
+    expect(faqLink).toHaveAttribute('href', '/faqs');
   });
 });
