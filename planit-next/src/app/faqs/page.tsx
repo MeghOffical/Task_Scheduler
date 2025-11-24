@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import React from 'react'
-import MarkdownRenderer from '../../../components/MarkdownRenderer'
+import MarkdownRenderer from '@/components/MarkdownRenderer'
 
 type FAQ = { question: string; answer: string }
 
