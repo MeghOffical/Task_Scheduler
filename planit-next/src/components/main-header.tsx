@@ -31,7 +31,7 @@ export default function MainHeader() {
             </svg>
           </div>
           <div className="hidden sm:block">
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Plan-It</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-blue-900 dark:text-white">Plan-It</h1>
             <p className="text-xs text-gray-600 dark:text-gray-400">Smart Task Management</p>
           </div>
         </Link>

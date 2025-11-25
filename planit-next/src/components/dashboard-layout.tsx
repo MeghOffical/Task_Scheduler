@@ -272,7 +272,7 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen }: { isMobileMenuOpen: b
               d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Z" />
           </svg>
         </div>
-        <span className="uppercase tracking-[0.16em] text-[10px] sm:text-xs text-slate-900 dark:text-white">Plan-It</span>
+        <span className="uppercase tracking-[0.16em] text-xs sm:text-sm font-black text-blue-900 dark:text-white">Plan-It</span>
       </Link>
 
 
@@ -482,15 +482,7 @@ export const Sidebar = ({
   const navItems = [
     { href: '/dashboard', icon: <HomeIcon className="w-4 h-4" />, label: 'Home' },
     { href: '/tasks', icon: <ClipboardDocumentListIcon className="w-4 h-4" />, label: 'Tasks' },
-    { href: '/pomodoro', icon: (
-      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M9.5 6.5c.5-1 1.8-2 3.5-1.8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M15.5 6.5c-.5-1-1.8-2-3.5-1.8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M12 9.5v1.8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M16 8c.6-.3 1-1 1-1.6 0-.9-.9-1.6-1.8-1.6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
-      </svg>
-    ), label: 'Pomodoro' },
+    { href: '/pomodoro', icon: <ClockIcon className="w-4 h-4" />, label: 'Pomodoro' },
     { href: '/analytics', icon: <ChartBarIcon className="w-4 h-4" />, label: 'Analytics' },
     { href: '/ai-assistant', icon: (
       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -720,12 +712,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         className="fixed left-4 sm:left-6 bottom-6 w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group z-50"
         title="Open AI Assistant"
       >
-        <svg className="w-6 sm:w-7 h-6 sm:h-7 group-hover:rotate-12 transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="4" y="6" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="9" cy="11" r="1" fill="currentColor" />
-          <circle cx="15" cy="11" r="1" fill="currentColor" />
-          <path d="M9.5 15.2c1 0.5 2.5 0.5 3.5 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
+        <SparklesIcon className="w-6 sm:w-7 h-6 sm:h-7 group-hover:rotate-12 transition-transform" />
         <span className="absolute -top-1 -right-1 flex h-3 w-3">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
