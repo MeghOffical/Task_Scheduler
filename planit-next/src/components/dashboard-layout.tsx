@@ -251,7 +251,7 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen }: { isMobileMenuOpen: b
   };
 
   return (
-  <header className="w-full sticky top-0 z-40 bg-white/90 border-b border-slate-200 backdrop-blur flex justify-between items-center px-2 sm:px-6 py-2.5 sm:py-3 dark:bg-[#11141A]/95 dark:border-white/5">
+  <header className="w-full sticky top-0 z-40 bg-white border-b border-slate-200 backdrop-blur flex justify-between items-center px-2 sm:px-6 py-2.5 sm:py-3 dark:bg-[#11141A]/95 dark:border-white/5 relative">
       
       {/* Mobile Menu Button - Inside Header */}
       <button
@@ -500,7 +500,7 @@ export const Sidebar = ({
   return (
     <>
       {/* Desktop Sidebar - Always Expanded */}
-      <aside className="hidden md:flex w-64 h-full bg-slate-50 border-r border-slate-200 flex-col dark:bg-[#0B0E12] dark:border-white/5 transition-all duration-300 relative flex-shrink-0">
+      <aside className="hidden md:flex w-64 h-full bg-slate-50 border-r border-slate-200 flex-col dark:bg-[#0F1218] dark:border-white/5 transition-all duration-300 relative flex-shrink-0 rounded-tr-3xl rounded-br-3xl">
         
         <nav className="py-6 px-2 flex-1 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
 
@@ -532,12 +532,12 @@ export const Sidebar = ({
       </aside>
 
       {/* Mobile Sidebar - Slide from left */}
-      <div className={`md:hidden fixed inset-y-0 left-0 w-64 bg-slate-50 border-r border-slate-200 flex flex-col dark:bg-[#0B0E12] dark:border-white/5 z-40 transform transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/5">
+      <div className={`md:hidden fixed inset-y-0 left-0 w-64 bg-blue-200 border-r border-blue-300 flex flex-col dark:bg-[#0F1218] dark:border-white/5 z-40 transform transition-transform duration-300 rounded-r-3xl ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-between p-4 border-b border-blue-300 dark:border-white/5">
           <h3 className="text-sm font-semibold text-slate-900 dark:text-[#E6E9EF]">Menu</h3>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#151922] transition-colors"
+            className="p-1.5 rounded-lg hover:bg-blue-300 dark:hover:bg-[#151922] transition-colors"
           >
             <XMarkIcon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
           </button>
@@ -684,10 +684,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 transition-colors dark:bg-[#05070B] dark:text-slate-50">
+    <div className="min-h-screen flex flex-col bg-blue-50 text-slate-900 transition-colors dark:bg-[#16191F] dark:text-slate-50">
       <Header isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden h-[calc(100vh-73px)]">
         <Sidebar
           showAIPanel={showAIPanel}
           setShowAIPanel={setShowAIPanel}

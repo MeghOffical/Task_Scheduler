@@ -5,7 +5,7 @@
 @layer base {
   * {
     @apply m-0 p-0 box-border;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Roboto, 'Noto Sans', sans-serif;
   }
 
   body {
@@ -135,7 +135,7 @@
   }
 
   .glass-panel {
-  @apply dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_10px_25px_rgba(15,23,42,0.12)];
+  @apply dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_10px_25px_rgba(15,23,42,0.12)] rounded-2xl;
   background: rgba(255,255,255,0.75);
   border: 1px solid rgba(137,174,197,0.55);
   }
