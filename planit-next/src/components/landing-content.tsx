@@ -1,11 +1,13 @@
-'use client';
+"use client";
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import MainHeader from '@/components/main-header';
+import faqsData from '@/app/faqs/faqs.json';
 
 export default function LandingContent() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [faqItems, setFaqItems] = useState<{ q: string; a: string }[]>([]);
 
   const testimonials = [
     {
@@ -34,6 +36,19 @@ export default function LandingContent() {
     }, 5000);
     return () => clearInterval(interval);
   }, [testimonials.length]);
+
+  useEffect(() => {
+    // Load FAQ items from JSON (client-side safe - JSON is static)
+    try {
+      const items = (faqsData || []).map((f: any) => ({ q: f.question, a: f.answer }));
+      setFaqItems(items);
+    } catch (e) {
+      // fallback: basic inline items
+      setFaqItems([
+        { q: 'How do I sign up?', a: 'Click Sign Up in the header and follow the steps.' },
+      ]);
+    }
+  }, []);
 
   // Dark mode is handled by the shared MainHeader component.
 
@@ -262,36 +277,35 @@ export default function LandingContent() {
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Quick answers to common questions so you can get started faster.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
-              <summary className="font-semibold cursor-pointer">How do I sign up?</summary>
-              <p className="mt-3 text-gray-600 dark:text-gray-300">Click the "Sign Up" button in the header, fill in your email and password, and confirm. No credit card required for the free tier.</p>
-            </details>
-
-            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
-              <summary className="font-semibold cursor-pointer">Is Plan-It free to use?</summary>
-              <p className="mt-3 text-gray-600 dark:text-gray-300">Yes. We offer a free plan that includes core features like task creation, Pomodoro timer, and basic analytics. Paid plans add advanced collaboration and integrations.</p>
-            </details>
-
-            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
-              <summary className="font-semibold cursor-pointer">What is the Pomodoro timer?</summary>
-              <p className="mt-3 text-gray-600 dark:text-gray-300">The Pomodoro timer helps you work in focused intervals (default 25 minutes) followed by short breaks. It improves focus and reduces burnout.</p>
-            </details>
-
-            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
-              <summary className="font-semibold cursor-pointer">Can I collaborate with a team?</summary>
-              <p className="mt-3 text-gray-600 dark:text-gray-300">Yes. Plan-It supports team workspaces, task assignments, and shared projects to help teams stay aligned.</p>
-            </details>
-
-            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
-              <summary className="font-semibold cursor-pointer">How is my data protected?</summary>
-              <p className="mt-3 text-gray-600 dark:text-gray-300">We follow standard security practices. For production deployments ensure HTTPS and secure storage of environment secrets.</p>
-            </details>
-
-            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
-              <summary className="font-semibold cursor-pointer">Where can I get help?</summary>
-              <p className="mt-3 text-gray-600 dark:text-gray-300">Visit the Docs page, contact support through the Contact page, or open an issue in the project's GitHub repository.</p>
-            </details>
+          <div className="max-w-4xl mx-auto">
+            <Accordion
+              items={[
+                {
+                  q: 'How do I sign up?',
+                  a: 'Click the "Sign Up" button in the header, fill in your email and password, and confirm. No credit card required for the free tier.'
+                },
+                {
+                  q: 'Is Plan-It free to use?',
+                  a: 'Yes. We offer a free plan that includes core features like task creation, Pomodoro timer, and basic analytics. Paid plans add advanced collaboration and integrations.'
+                },
+                {
+                  q: 'What is the Pomodoro timer?',
+                  a: 'The Pomodoro timer helps you work in focused intervals (default 25 minutes) followed by short breaks. It improves focus and reduces burnout.'
+                },
+                {
+                  q: 'Can I collaborate with a team?',
+                  a: 'Yes. Plan-It supports team workspaces, task assignments, and shared projects to help teams stay aligned.'
+                },
+                {
+                  q: 'How is my data protected?',
+                  a: 'We follow standard security practices. For production deployments ensure HTTPS and secure storage of environment secrets.'
+                },
+                {
+                  q: 'Where can I get help?',
+                  a: "Visit the Docs page, contact support through the Contact page, or open an issue in the project's GitHub repository."
+                }
+              ]}
+            />
           </div>
         </div>
       </section>
@@ -356,6 +370,87 @@ function StepCard({ step, title, description, icon }: StepCardProps) {
           {description}
         </p>
       </div>
+    </div>
+  );
+}
+
+interface AccordionItem {
+  q: string;
+  a: string;
+}
+
+function Accordion({ items }: { items: AccordionItem[] }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const contentRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const focusButton = (index: number) => {
+    const btn = buttonRefs.current[index];
+    if (btn) btn.focus();
+  };
+
+  return (
+    <div className="grid md:grid-cols-2 gap-6">
+      {items.map((item, idx) => {
+        const isOpen = openIndex === idx;
+        return (
+          <div key={idx} className="overflow-hidden rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-slate-800 shadow-sm">
+            <button
+              ref={(el) => (buttonRefs.current[idx] = el)}
+              onClick={() => setOpenIndex(isOpen ? null : idx)}
+              onKeyDown={(e) => {
+                const key = e.key;
+                if (key === 'ArrowDown') {
+                  e.preventDefault();
+                  focusButton((idx + 1) % items.length);
+                } else if (key === 'ArrowUp') {
+                  e.preventDefault();
+                  focusButton((idx - 1 + items.length) % items.length);
+                } else if (key === 'Home') {
+                  e.preventDefault();
+                  focusButton(0);
+                } else if (key === 'End') {
+                  e.preventDefault();
+                  focusButton(items.length - 1);
+                } else if (key === 'Enter' || key === ' ') {
+                  e.preventDefault();
+                  setOpenIndex(isOpen ? null : idx);
+                }
+              }}
+              className="w-full flex items-center justify-between p-6 text-left"
+              aria-expanded={isOpen}
+              aria-controls={`faq-${idx}`}
+            >
+              <span className="font-semibold text-gray-900 dark:text-white">{item.q}</span>
+              <svg
+                className={`w-5 h-5 transition-transform duration-500 ease-out ${isOpen ? 'rotate-180 scale-110 text-blue-600' : 'rotate-0 scale-100 text-gray-500 dark:text-gray-300'}`}
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 8l4 4 4-4" />
+              </svg>
+            </button>
+
+            <div
+              id={`faq-${idx}`}
+              className="px-6 pb-6 text-gray-600 dark:text-gray-300 transition-all duration-500 ease-out"
+              style={{
+                maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx]!.scrollHeight}px` : '0px',
+                overflow: 'hidden'
+              }}
+            >
+              <div
+                ref={(el) => (contentRefs.current[idx] = el)}
+                className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-out`}
+              >
+                {item.a}
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
