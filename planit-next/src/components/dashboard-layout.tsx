@@ -21,6 +21,7 @@ import {
   SparklesIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Bars3Icon,
 } from "@heroicons/react/24/outline";
 
 interface Task {
@@ -30,7 +31,7 @@ interface Task {
   dueDate: string;
 }
 
-const Header = () => {
+const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen }: { isMobileMenuOpen: boolean; setIsMobileMenuOpen: (open: boolean) => void }) => {
   const [notificationCount, setNotificationCount] = useState(0);
   const [isDark, setIsDark] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -250,30 +251,41 @@ const Header = () => {
   };
 
   return (
-  <header className="w-full sticky top-0 z-40 bg-white/90 border-b border-slate-200 backdrop-blur flex justify-between items-center px-6 py-3 dark:bg-[#11141A]/95 dark:border-white/5">
+  <header className="w-full sticky top-0 z-40 bg-white/90 border-b border-slate-200 backdrop-blur flex justify-between items-center px-2 sm:px-6 py-2.5 sm:py-3 dark:bg-[#11141A]/95 dark:border-white/5">
       
-      {/* Logo */}
-      <Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold tracking-tight text-slate-900 dark:text-[#E6E9EF]">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
-          viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-          className="w-5 h-5 text-[#3B82F6]">
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Z" />
-        </svg>
-        <span className="uppercase tracking-[0.16em] text-xs text-[#8B929D]">Plan-it</span>
+      {/* Mobile Menu Button - Inside Header */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="md:hidden flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-[#151922] transition-colors mr-1"
+        title="Toggle menu"
+      >
+        <Bars3Icon className="w-5 h-5" />
+      </button>
+
+      {/* Logo - Show on all screens */}
+      <Link href="/dashboard" className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold tracking-tight text-slate-900 dark:text-white flex-shrink-0">
+        <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
+            viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+            className="w-4 sm:w-5 h-4 sm:h-5">
+            <path strokeLinecap="round" strokeLinejoin="round"
+              d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Z" />
+          </svg>
+        </div>
+        <span className="uppercase tracking-[0.16em] text-[10px] sm:text-xs text-slate-900 dark:text-white">Plan-It</span>
       </Link>
 
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3">
         {/* Points toast */}
         {pointsToast && (
-          <div className="fixed bottom-6 right-6 z-50 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 shadow-lg flex items-center gap-3 text-sm text-emerald-200">
+          <div className="fixed bottom-6 right-6 z-50 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-3 sm:px-4 py-2 sm:py-3 shadow-lg flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-emerald-200">
             <span className={`h-2 w-2 rounded-full ${pointsToast.delta >= 0 ? 'bg-emerald-400' : 'bg-red-400'} shadow-[0_0_10px_rgba(52,211,153,0.9)]`} />
             <div>
               <p className="font-semibold">
                 {pointsToast.message}
               </p>
-              <p className="text-xs text-emerald-200/80">
+              <p className="text-[10px] sm:text-xs text-emerald-200/80">
                 Check your points in the profile menu.
               </p>
             </div>
@@ -287,9 +299,9 @@ const Header = () => {
               setShowNotifications(!showNotifications);
               if (!showNotifications) fetchNotifications();
             }}
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100"
+            className="relative flex h-8 sm:h-9 w-8 sm:w-9 items-center justify-center rounded-lg bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100"
           >
-            <BellIcon className="w-5 h-5" />
+            <BellIcon className="w-4 sm:w-5 h-4 sm:h-5" />
             {notificationCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-[#3B82F6] px-1 text-[10px] font-medium text-white">
                 {notificationCount}
@@ -299,17 +311,17 @@ const Header = () => {
 
           {/* Notifications Drop-down */}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 w-80 rounded-xl bg-[#11141A] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.65)] z-50 max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-2">
-              <div className="flex items-center justify-between border-b border-white/5 px-4 py-3">
-                <div className="flex justify-between items-center">
+            <div className="absolute right-0 mt-3 w-72 sm:w-80 rounded-xl bg-[#11141A] border border-white/5 shadow-[0_18px_40px_rgba(0,0,0,0.65)] z-50 max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-center justify-between border-b border-white/5 px-3 sm:px-4 py-2.5 sm:py-3">
+                <div className="flex justify-between items-center flex-1">
                   <h3 className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-[#8B929D]">
-                    <BellIcon className="w-4 h-4 text-[#3B82F6]" />
+                    <BellIcon className="w-3 sm:w-4 h-3 sm:h-4 text-[#3B82F6]" />
                     Notifications
                   </h3>
 
                   {(pendingTasks.length > 0 || missedTasks.length > 0) && (
                     <button onClick={clearAllNotifications}
-                      className="text-[11px] text-[#8B929D] hover:text-red-400 px-2 py-1 rounded transition-colors">
+                      className="text-[10px] sm:text-[11px] text-[#8B929D] hover:text-red-400 px-2 py-1 rounded transition-colors">
                       Clear All
                     </button>
                   )}
@@ -318,25 +330,25 @@ const Header = () => {
 
               {/* Missed Tasks */}
               {missedTasks.length > 0 && (
-                <div className="border-b border-white/5 px-4 py-3">
+                <div className="border-b border-white/5 px-3 sm:px-4 py-2.5 sm:py-3">
                   <h4 className="flex items-center gap-2 text-xs font-medium text-red-400">
-                    <ExclamationTriangleIcon className="w-4 h-4" />
+                    <ExclamationTriangleIcon className="w-3 sm:w-4 h-3 sm:h-4" />
                     Missed Tasks ({missedTasks.length})
                   </h4>
 
                   <div className="space-y-2 mt-2">
                     {missedTasks.map((task) => (
                       <div key={task.id}
-                        className="relative rounded-lg bg-[#151922] px-3 py-2 text-xs text-[#E6E9EF]">
+                        className="relative rounded-lg bg-[#151922] px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs text-[#E6E9EF]">
 
                         <button onClick={() => dismissNotification(task.id)}
                           className="absolute top-1.5 right-1.5 text-slate-500 hover:text-slate-300 transition-colors">
                           <XMarkIcon className="w-3 h-3" />
                         </button>
 
-                        <p className="text-[13px] font-medium text-[#E6E9EF]">{task.title}</p>
+                        <p className="text-[12px] sm:text-[13px] font-medium text-[#E6E9EF] pr-4">{task.title}</p>
                         {task.dueDate && (
-                          <p className="mt-0.5 text-[11px] text-[#8B929D]">Due: {new Date(task.dueDate).toLocaleDateString()}</p>
+                          <p className="mt-0.5 text-[10px] sm:text-[11px] text-[#8B929D]">Due: {new Date(task.dueDate).toLocaleDateString()}</p>
                         )}
                       </div>
                     ))}
@@ -346,25 +358,25 @@ const Header = () => {
 
               {/* Pending Tasks */}
               {pendingTasks.length > 0 && (
-                <div className="px-4 py-3">
+                <div className="px-3 sm:px-4 py-2.5 sm:py-3">
                   <h4 className="flex items-center gap-2 text-xs font-medium text-[#E6E9EF]">
-                    <ClockIcon className="w-4 h-4 text-slate-500" />
+                    <ClockIcon className="w-3 sm:w-4 h-3 sm:h-4 text-slate-500" />
                     Pending Tasks ({pendingTasks.length})
                   </h4>
 
                   <div className="space-y-2 mt-2">
                     {pendingTasks.map((task) => (
                       <div key={task.id}
-                        className="relative rounded-lg bg-[#151922] px-3 py-2 text-xs text-[#E6E9EF]">
+                        className="relative rounded-lg bg-[#151922] px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs text-[#E6E9EF]">
 
                         <button onClick={() => dismissNotification(task.id)}
                           className="absolute top-1.5 right-1.5 text-slate-500 hover:text-slate-300 transition-colors">
                           <XMarkIcon className="w-3 h-3" />
                         </button>
 
-                        <p className="text-[13px] font-medium text-[#E6E9EF]">{task.title}</p>
+                        <p className="text-[12px] sm:text-[13px] font-medium text-[#E6E9EF] pr-4">{task.title}</p>
                         {task.dueDate && (
-                          <p className="mt-0.5 text-[11px] text-[#8B929D]">Due: {new Date(task.dueDate).toLocaleDateString()}</p>
+                          <p className="mt-0.5 text-[10px] sm:text-[11px] text-[#8B929D]">Due: {new Date(task.dueDate).toLocaleDateString()}</p>
                         )}
                       </div>
                     ))}
@@ -373,7 +385,7 @@ const Header = () => {
               )}
 
               {pendingTasks.length === 0 && missedTasks.length === 0 && (
-                <div className="px-4 py-6 text-center text-[12px] text-[#8B929D]">No notifications</div>
+                <div className="px-3 sm:px-4 py-4 sm:py-6 text-center text-[11px] sm:text-[12px] text-[#8B929D]">No notifications</div>
               )}
             </div>
           )}
@@ -381,31 +393,31 @@ const Header = () => {
 
         {/* Dark / Light Mode Button */}
         <button onClick={toggleDarkMode}
-          className="flex h-9 w-9 items-center justify-center rounded-lg bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100"
+          className="flex h-8 sm:h-9 w-8 sm:w-9 items-center justify-center rounded-lg bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100"
           title={isDark ? "Light Mode" : "Dark Mode"}
         >
           {isDark ? (
-            <SunIcon className="w-5 h-5" />
+            <SunIcon className="w-4 sm:w-5 h-4 sm:h-5" />
           ) : (
-            <MoonIcon className="w-5 h-5" />
+            <MoonIcon className="w-4 sm:w-5 h-4 sm:h-5" />
           )}
         </button>
 
         {/* Profile Menu */}
         <div className="relative profile-menu-container">
           <button onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100">
-            <UserCircleIcon className="w-6 h-6" />
+            className="flex h-8 sm:h-9 w-8 sm:w-9 items-center justify-center rounded-lg bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100">
+            <UserCircleIcon className="w-5 sm:w-6 h-5 sm:h-6" />
           </button>
 
           {showProfileMenu && (
-            <div className="absolute right-0 mt-3 w-64 overflow-hidden rounded-xl border border-white/5 bg-[#11141A] shadow-[0_18px_40px_rgba(0,0,0,0.65)] z-50">
-              <div className="border-b border-white/5 px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <UserCircleIcon className="h-9 w-9 text-slate-300" />
-                  <div>
-                    <p className="text-sm font-medium text-[#E6E9EF]">{userInfo?.username}</p>
-                    <p className="text-xs text-[#8B929D]">{userInfo?.email}</p>
+            <div className="absolute right-0 mt-3 w-56 sm:w-64 overflow-hidden rounded-xl border border-white/5 bg-[#11141A] shadow-[0_18px_40px_rgba(0,0,0,0.65)] z-50">
+              <div className="border-b border-white/5 px-3 sm:px-4 py-2.5 sm:py-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <UserCircleIcon className="h-7 w-7 sm:h-9 sm:w-9 text-slate-300 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-[#E6E9EF] truncate">{userInfo?.username}</p>
+                    <p className="text-xs text-[#8B929D] truncate">{userInfo?.email}</p>
                     {typeof userInfo?.points === 'number' && (
                       <p className="mt-1 text-xs font-medium text-amber-300">
                         Your Points: <span className="font-semibold">{userInfo.points}</span>
@@ -418,7 +430,7 @@ const Header = () => {
               <div className="px-2 py-2 space-y-1">
                 <button
                   onClick={handleLogout}
-                  className="w-full rounded-lg px-3 py-2 text-left text-[13px] font-medium text-red-400 hover:bg-red-500/10 transition-colors"
+                  className="w-full rounded-lg px-3 py-2 text-left text-[12px] sm:text-[13px] font-medium text-red-400 hover:bg-red-500/10 transition-colors"
                 >
                   Logout
                 </button>
@@ -447,6 +459,8 @@ interface SidebarProps {
   handleSendMessage: (e: React.FormEvent) => void;
   isMinimized: boolean;
   setIsMinimized: (minimized: boolean) => void;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
 }
 
 export const Sidebar = ({
@@ -458,7 +472,9 @@ export const Sidebar = ({
   setInputMessage,
   handleSendMessage,
   isMinimized,
-  setIsMinimized
+  setIsMinimized,
+  isMobileMenuOpen,
+  setIsMobileMenuOpen
 }: SidebarProps) => {
 
   const pathname = usePathname();
@@ -491,21 +507,9 @@ export const Sidebar = ({
 
   return (
     <>
-      <aside className={`${isMinimized ? 'w-20' : 'w-64'} h-full bg-slate-50 border-r border-slate-200 flex flex-col dark:bg-[#0B0E12] dark:border-white/5 transition-all duration-300 relative flex-shrink-0`}>
+      {/* Desktop Sidebar - Always Expanded */}
+      <aside className="hidden md:flex w-64 h-full bg-slate-50 border-r border-slate-200 flex-col dark:bg-[#0B0E12] dark:border-white/5 transition-all duration-300 relative flex-shrink-0">
         
-        {/* Toggle Button */}
-        <button
-          onClick={() => setIsMinimized(!isMinimized)}
-          className="absolute -right-3 top-6 z-10 h-6 w-6 rounded-full bg-white border border-slate-200 dark:bg-[#151922] dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:border-slate-300 dark:hover:border-white/20 transition-colors shadow-sm"
-          title={isMinimized ? "Expand sidebar" : "Minimize sidebar"}
-        >
-          {isMinimized ? (
-            <ChevronRightIcon className="w-4 h-4" />
-          ) : (
-            <ChevronLeftIcon className="w-4 h-4" />
-          )}
-        </button>
-
         <nav className="py-6 px-2 flex-1 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
 
           {navItems.map((item) => {
@@ -514,11 +518,10 @@ export const Sidebar = ({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center ${isMinimized ? 'justify-center px-2' : 'gap-3 px-3'} rounded-lg py-2.5 text-sm transition-colors relative
+                className={`group flex items-center gap-3 px-3 rounded-lg py-2.5 text-sm transition-colors relative
                 ${isActive
                   ? 'bg-primary-100 text-primary-800 shadow-sm ring-1 ring-primary-300 dark:bg-[#151922] dark:text-[#E6E9EF] dark:ring-0'
                   : 'text-slate-600 hover:bg-primary-50 hover:text-primary-800 dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100'}`}
-                title={isMinimized ? item.label : undefined}
               >
                 <span
                   className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-[13px] transition-colors flex-shrink-0
@@ -528,22 +531,61 @@ export const Sidebar = ({
                 >
                   {item.icon}
                 </span>
-                {!isMinimized && (
-                  <span className="font-medium tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{item.label}</span>
-                )}
-                
-                {/* Tooltip for minimized state */}
-                {isMinimized && (
-                  <span className="absolute left-full ml-2 px-2 py-1 bg-slate-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                    {item.label}
-                  </span>
-                )}
+                <span className="font-medium tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{item.label}</span>
               </Link>
             );
           })}
 
         </nav>
       </aside>
+
+      {/* Mobile Sidebar - Slide from left */}
+      <div className={`md:hidden fixed inset-y-0 left-0 w-64 bg-slate-50 border-r border-slate-200 flex flex-col dark:bg-[#0B0E12] dark:border-white/5 z-40 transform transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/5">
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-[#E6E9EF]">Menu</h3>
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#151922] transition-colors"
+          >
+            <XMarkIcon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+          </button>
+        </div>
+
+        <nav className="py-4 px-2 flex-1 flex flex-col gap-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-3 rounded-lg py-2.5 text-sm transition-colors
+                ${isActive
+                  ? 'bg-primary-100 text-primary-800 shadow-sm ring-1 ring-primary-300 dark:bg-[#151922] dark:text-[#E6E9EF] dark:ring-0'
+                  : 'text-slate-600 hover:bg-primary-50 hover:text-primary-800 dark:text-slate-400 dark:hover:bg-[#151922] dark:hover:text-slate-100'}`}
+              >
+                <span
+                  className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-[13px] transition-colors flex-shrink-0
+                  ${isActive
+                    ? 'border-primary-400 bg-primary-50 text-primary-600 dark:border-[#3B82F6] dark:text-[#3B82F6] dark:bg-transparent'
+                    : 'border-slate-300 text-slate-500 dark:border-[#1F2430]'}`}
+                >
+                  {item.icon}
+                </span>
+                <span className="font-medium tracking-tight">{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/40 z-30"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
 
       {/* AI Right Sidebar Panel */}
       <div className={`fixed inset-y-0 right-0 w-96 glass-panel transform ${showAIPanel ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 z-50`}>
@@ -612,6 +654,7 @@ export const Sidebar = ({
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, text: "Hello! I'm your AI assistant. How can I help you today?", isUser: false }
   ]);
@@ -650,7 +693,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 transition-colors dark:bg-[#05070B] dark:text-slate-50">
-      <Header />
+      <Header isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
@@ -663,8 +706,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           handleSendMessage={handleSendMessage}
           isMinimized={isMinimized}
           setIsMinimized={setIsMinimized}
+          isMobileMenuOpen={isMobileMenuOpen}
+          setIsMobileMenuOpen={setIsMobileMenuOpen}
         />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {children}
         </main>
       </div>
@@ -672,10 +717,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Floating AI Assistant Button - Bottom Left */}
       <Link
         href="/ai-assistant"
-        className="fixed left-6 bottom-6 w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group z-50"
+        className="fixed left-4 sm:left-6 bottom-6 w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group z-50"
         title="Open AI Assistant"
       >
-        <svg className="w-7 h-7 group-hover:rotate-12 transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className="w-6 sm:w-7 h-6 sm:h-7 group-hover:rotate-12 transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="4" y="6" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
           <circle cx="9" cy="11" r="1" fill="currentColor" />
           <circle cx="15" cy="11" r="1" fill="currentColor" />

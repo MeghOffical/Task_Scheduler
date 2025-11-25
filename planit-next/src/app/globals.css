@@ -277,3 +277,112 @@
     @apply text-sm;
   }
 }
+
+/* Mobile Responsive Utilities */
+@media (max-width: 1024px) {
+  /* Tablet and mobile adjustments */
+  body {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Tablet adjustments */
+  body {
+    font-size: 14px;
+  }
+
+  /* Ensure main content area has proper padding on mobile */
+  main {
+    @apply p-3 md:p-4 lg:p-6;
+  }
+
+  /* Make cards more compact */
+  .card {
+    @apply p-3 sm:p-4;
+  }
+
+  /* Adjust grid layouts */
+  .grid-cols-3 {
+    @apply grid-cols-2;
+  }
+
+  .grid-cols-4 {
+    @apply grid-cols-2;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Mobile adjustments */
+  body {
+    font-size: 13px;
+  }
+
+  /* Stack layouts vertically on mobile */
+  .flex-row {
+    @apply flex-col;
+  }
+
+  /* Reduce padding on mobile */
+  main {
+    @apply p-2 sm:p-3;
+  }
+
+  .card {
+    @apply p-2.5 sm:p-3;
+  }
+
+  /* Mobile-first grid */
+  .grid-cols-2 {
+    @apply grid-cols-1;
+  }
+
+  .grid-cols-3 {
+    @apply grid-cols-1 sm:grid-cols-2;
+  }
+
+  .grid-cols-4 {
+    @apply grid-cols-1 sm:grid-cols-2;
+  }
+
+  /* Hide desktop-only elements */
+  .hidden-mobile {
+    @apply hidden;
+  }
+
+  /* Full width modals on mobile */
+  .modal {
+    @apply h-screen rounded-none sm:rounded-xl;
+  }
+
+  /* Make buttons full width on mobile if needed */
+  .btn-mobile-full {
+    @apply w-full;
+  }
+
+  /* Adjust text sizes */
+  h1 {
+    @apply text-xl sm:text-2xl;
+  }
+
+  h2 {
+    @apply text-lg sm:text-xl;
+  }
+
+  h3 {
+    @apply text-base sm:text-lg;
+  }
+
+  /* Make input fields better for mobile */
+  input,
+  textarea,
+  select {
+    @apply text-base; /* Prevents zoom on iOS */
+  }
+
+  /* Improve tap targets */
+  button,
+  a {
+    @apply min-h-[44px] min-w-[44px]; /* Apple recommended touch target size */
+  }
+}

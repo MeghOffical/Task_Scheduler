@@ -262,18 +262,18 @@ export default function PomodoroPage() {
   };
 
   return (
-    <div className="flex flex-1 gap-8 p-8 overflow-hidden">
+    <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 p-3 sm:p-6 lg:p-8 overflow-hidden">
       
-      <section className="flex-1 glass-panel rounded-2xl p-12 flex flex-col text-gray-900 dark:text-white">
+      <section className="flex-1 glass-panel rounded-xl sm:rounded-2xl p-4 sm:p-8 lg:p-12 flex flex-col text-gray-900 dark:text-white">
         
-        <h1 className="text-3xl font-bold mb-8 text-center">Pomodoro Timer</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center">Pomodoro Timer</h1>
 
         {/* MODE TABS: Pomodoro / Short Break / Long Break */}
-        <div className="flex items-center justify-center gap-6 mb-10">
-          <div className="flex items-center gap-8 bg-sky-900/60 rounded-3xl px-8 py-3 text-white shadow-lg">
+        <div className="flex items-center justify-center gap-2 sm:gap-4 lg:gap-6 mb-6 sm:mb-10 overflow-x-auto">
+          <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 bg-sky-900/60 rounded-2xl sm:rounded-3xl px-2 sm:px-6 lg:px-8 py-2 sm:py-3 text-white shadow-lg whitespace-nowrap">
           <button
             onClick={selectPomodoro}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+            className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
               !isBreak ? 'bg-sky-500' : 'bg-transparent'
             }`}
           >
@@ -281,7 +281,7 @@ export default function PomodoroPage() {
           </button>
           <button
             onClick={selectShortBreak}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+            className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
               isBreak && !isLongBreak ? 'bg-sky-500' : 'bg-transparent'
             }`}
           >
@@ -289,7 +289,7 @@ export default function PomodoroPage() {
           </button>
           <button
             onClick={selectLongBreak}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+            className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
               isBreak && isLongBreak ? 'bg-sky-500' : 'bg-transparent'
             }`}
           >
@@ -298,9 +298,9 @@ export default function PomodoroPage() {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center gap-8">
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 sm:gap-6 lg:gap-8 py-4 sm:py-6">
 
-          <div className="text-xl font-light tracking-wide text-gray-500 dark:text-gray-300">
+          <div className="text-sm sm:text-lg lg:text-xl font-light tracking-wide text-gray-500 dark:text-gray-300">
             {isBreak ? (isLongBreak ? 'Long Break' : 'Short Break') : 'Focus Session'}
           </div>
 
@@ -309,39 +309,46 @@ export default function PomodoroPage() {
               ? (isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration) * 60
               : settings.workDuration * 60;
             const progress = Math.max(0, Math.min(1, timeLeft / totalSeconds));
-            const radius = 90;
+            const radius = 115;
+            const strokeWidth = 10;
             const circumference = 2 * Math.PI * radius;
             const strokeDashoffset = circumference * (1 - progress);
-            const ringColor = getTimerColor();
-            const trackColor = "#E5E7EB"; // light mode change
+            const trackColor = "#E5E7EB";
 
             return (
-              <div className="relative shadow-2xl shadow-cyan-500/40 rounded-full">
-                <svg width="240" height="240" viewBox="0 0 240 240" className="block drop-shadow-xl">
+              <div className="relative shadow-lg sm:shadow-xl lg:shadow-2xl shadow-cyan-500/40 lg:shadow-cyan-500/50 rounded-full">
+                <svg width="320" height="320" viewBox="0 0 320 320" className="block drop-shadow-md sm:drop-shadow-lg w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80">
+                  <defs>
+                    <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#06B6D4" stopOpacity="1" />
+                      <stop offset="50%" stopColor="#0891B2" stopOpacity="1" />
+                      <stop offset="100%" stopColor="#0E7490" stopOpacity="1" />
+                    </linearGradient>
+                  </defs>
                   <circle
-                    cx="120"
-                    cy="120"
+                    cx="160"
+                    cy="160"
                     r={radius}
                     fill="none"
                     stroke={trackColor}
-                    strokeWidth={10}
+                    strokeWidth={strokeWidth}
                   />
                   <circle
-                    cx="120"
-                    cy="120"
+                    cx="160"
+                    cy="160"
                     r={radius}
                     fill="none"
-                    stroke={ringColor}
-                    strokeWidth={10}
+                    stroke="url(#cyanGradient)"
+                    strokeWidth={strokeWidth}
                     strokeDasharray={circumference}
                     strokeDashoffset={strokeDashoffset}
                     strokeLinecap="round"
-                    transform="rotate(-90 120 120)"
+                    transform="rotate(-90 160 160)"
                     style={{ transition: 'stroke-dashoffset 1s linear' }}
                   />
-                  <foreignObject x="0" y="0" width="240" height="240">
-                    <div className="w-[240px] h-[240px] flex items-center justify-center">
-                      <div className="text-5xl font-bold font-mono text-gray-900 dark:text-white">
+                  <foreignObject x="0" y="0" width="320" height="320">
+                    <div className="w-[320px] h-[320px] flex items-center justify-center">
+                      <div className="text-3xl sm:text-4xl lg:text-5xl font-bold font-mono text-gray-900 dark:text-white">
                         {formatTime(timeLeft)}
                       </div>
                     </div>
@@ -351,14 +358,14 @@ export default function PomodoroPage() {
             );
           })()}
 
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-center flex-wrap">
 
             <button
               onClick={toggleTimer}
-              className="px-10 py-3 rounded-lg
+              className="px-6 sm:px-8 lg:px-10 py-2 sm:py-2.5 lg:py-3 rounded-lg
                 bg-cyan-500 hover:bg-cyan-600
                 text-white font-semibold transition-all duration-300
-                shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
+                shadow-lg hover:shadow-xl uppercase text-xs sm:text-sm tracking-wide"
             >
               {isRunning ? 'Pause' : 'Start'}
             </button>
@@ -366,43 +373,70 @@ export default function PomodoroPage() {
 
             <button
               onClick={resetTimer}
-              className="px-10 py-3 rounded-lg
+              className="px-6 sm:px-8 lg:px-10 py-2 sm:py-2.5 lg:py-3 rounded-lg
                 bg-gray-600 hover:bg-gray-700
                 text-white font-semibold transition-all duration-300
-                shadow-lg hover:shadow-xl uppercase text-sm tracking-wide"
+                shadow-lg hover:shadow-xl uppercase text-xs sm:text-sm tracking-wide"
             >
               Reset
+            </button>
+
+            <button
+              onClick={() => {
+                pauseTimer();
+                const wasBreak = isBreak;
+                if (wasBreak) {
+                  setIsLongBreak(false);
+                  setTimeLeft(settings.workDuration * 60);
+                  setIsBreak(false);
+                } else {
+                  const newSessionCount = sessionCount + 1;
+                  const isLongBreakNext = newSessionCount % settings.longBreakInterval === 0;
+                  const breakDuration = isLongBreakNext ? settings.longBreakDuration : settings.shortBreakDuration;
+                  setTimeLeft(breakDuration * 60);
+                  setIsLongBreak(isLongBreakNext);
+                  setSessionCount(newSessionCount);
+                  setIsBreak(true);
+                }
+              }}
+              className="px-6 sm:px-8 lg:px-10 py-2 sm:py-2.5 lg:py-3 rounded-lg
+                bg-amber-500 hover:bg-amber-600
+                text-white font-semibold transition-all duration-300
+                shadow-lg hover:shadow-xl uppercase text-xs sm:text-sm tracking-wide"
+            >
+              Skip
             </button>
 
           </div>
 
           <button
             onClick={() => setShowInstructions(true)}
-            className="px-4 py-2 rounded-lg mt-3 
+            className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg mt-2 sm:mt-3 
               bg-purple-500 hover:bg-purple-600 
-              text-white font-semibold"
+              text-white font-semibold text-xs sm:text-sm"
           >
             Activate Distraction Blocker
           </button>
 
-          <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
+          <div className="text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
             Session {sessionCount % settings.longBreakInterval || settings.longBreakInterval} of {settings.longBreakInterval}
           </div>
         </div>
 
-        <div className="mt-8">
-          <label htmlFor="taskSelect" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+        <div className="mt-4 sm:mt-6 lg:mt-8">
+          <label htmlFor="taskSelect" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
             Link to Task (optional)
           </label>
           <select
             id="taskSelect"
             value={selectedTaskId || ''}
             onChange={(e) => setSelectedTaskId(e.target.value || null)}
-            className="w-full p-3 border 
+            className="w-full p-2 sm:p-3 border 
               border-gray-200 dark:border-gray-600 
               rounded-lg 
               bg-violet-50 dark:bg-gray-700 
-              text-gray-900 dark:text-white 
+              text-gray-900 dark:text-white
+              text-xs sm:text-sm
               focus:border-violet-400 focus:outline-none transition-colors"
           >
             <option value="">No task selected</option>
@@ -415,8 +449,8 @@ export default function PomodoroPage() {
         </div>
       </section>
 
-      {/* SIDEBAR */}
-      <section className="w-80 glass-panel rounded-2xl p-8 flex flex-col text-gray-900 dark:text-white overflow-hidden">
+      {/* SIDEBAR - Hidden on mobile, shown on lg screens */}
+      <section className="hidden lg:flex w-80 glass-panel rounded-2xl p-8 flex-col text-gray-900 dark:text-white overflow-hidden">
 
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Activity Log & Insights</h2>
 
