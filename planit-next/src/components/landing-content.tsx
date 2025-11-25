@@ -254,7 +254,47 @@ export default function LandingContent() {
         </div>
       </section>
 
+      {/* FAQs Section */}
+      <section id="faqs" className="bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-white/10 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Quick answers to common questions so you can get started faster.</p>
+          </div>
 
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
+              <summary className="font-semibold cursor-pointer">How do I sign up?</summary>
+              <p className="mt-3 text-gray-600 dark:text-gray-300">Click the "Sign Up" button in the header, fill in your email and password, and confirm. No credit card required for the free tier.</p>
+            </details>
+
+            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
+              <summary className="font-semibold cursor-pointer">Is Plan-It free to use?</summary>
+              <p className="mt-3 text-gray-600 dark:text-gray-300">Yes. We offer a free plan that includes core features like task creation, Pomodoro timer, and basic analytics. Paid plans add advanced collaboration and integrations.</p>
+            </details>
+
+            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
+              <summary className="font-semibold cursor-pointer">What is the Pomodoro timer?</summary>
+              <p className="mt-3 text-gray-600 dark:text-gray-300">The Pomodoro timer helps you work in focused intervals (default 25 minutes) followed by short breaks. It improves focus and reduces burnout.</p>
+            </details>
+
+            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
+              <summary className="font-semibold cursor-pointer">Can I collaborate with a team?</summary>
+              <p className="mt-3 text-gray-600 dark:text-gray-300">Yes. Plan-It supports team workspaces, task assignments, and shared projects to help teams stay aligned.</p>
+            </details>
+
+            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
+              <summary className="font-semibold cursor-pointer">How is my data protected?</summary>
+              <p className="mt-3 text-gray-600 dark:text-gray-300">We follow standard security practices. For production deployments ensure HTTPS and secure storage of environment secrets.</p>
+            </details>
+
+            <details className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-white/10">
+              <summary className="font-semibold cursor-pointer">Where can I get help?</summary>
+              <p className="mt-3 text-gray-600 dark:text-gray-300">Visit the Docs page, contact support through the Contact page, or open an issue in the project's GitHub repository.</p>
+            </details>
+          </div>
+        </div>
+      </section>
 
       <footer className="bg-gray-50 dark:bg-slate-950 border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
