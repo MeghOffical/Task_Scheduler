@@ -386,4 +386,14 @@
   a {
     @apply min-h-[44px] min-w-[44px]; /* Apple recommended touch target size */
   }
+
+  /* Dark mode calendar icon styling - white in dark mode */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+  }
 }

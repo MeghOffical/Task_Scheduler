@@ -270,11 +270,11 @@ export default function PomodoroPage() {
 
         {/* MODE TABS: Pomodoro / Short Break / Long Break */}
         <div className="flex items-center justify-center gap-2 sm:gap-4 lg:gap-6 mb-6 sm:mb-10 overflow-x-auto">
-          <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 bg-sky-900/60 rounded-2xl sm:rounded-3xl px-2 sm:px-6 lg:px-8 py-2 sm:py-3 text-white shadow-lg whitespace-nowrap">
+          <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 bg-sky-100 dark:bg-sky-900/60 rounded-2xl sm:rounded-3xl px-2 sm:px-6 lg:px-8 py-2 sm:py-3 text-sky-900 dark:text-white shadow-lg whitespace-nowrap">
           <button
             onClick={selectPomodoro}
             className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
-              !isBreak ? 'bg-sky-500' : 'bg-transparent'
+              !isBreak ? 'bg-sky-500 text-white dark:bg-sky-500' : 'bg-transparent text-sky-900 dark:text-white'
             }`}
           >
             Pomodoro
@@ -282,7 +282,7 @@ export default function PomodoroPage() {
           <button
             onClick={selectShortBreak}
             className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
-              isBreak && !isLongBreak ? 'bg-sky-500' : 'bg-transparent'
+              isBreak && !isLongBreak ? 'bg-sky-500 text-white dark:bg-sky-500' : 'bg-transparent text-sky-900 dark:text-white'
             }`}
           >
             Short Break
@@ -290,7 +290,7 @@ export default function PomodoroPage() {
           <button
             onClick={selectLongBreak}
             className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
-              isBreak && isLongBreak ? 'bg-sky-500' : 'bg-transparent'
+              isBreak && isLongBreak ? 'bg-sky-500 text-white dark:bg-sky-500' : 'bg-transparent text-sky-900 dark:text-white'
             }`}
           >
             Long Break

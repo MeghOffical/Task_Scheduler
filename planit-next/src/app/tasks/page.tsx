@@ -4,6 +4,7 @@ import React from 'react';
 const { useState, useEffect } = React;
 import PageWrapper from '@/components/page-wrapper';
 import { createTask, updateTask, deleteTask } from '@/lib/tasks';
+import { DocumentArrowDownIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface Task {
   id: string;
@@ -242,25 +243,25 @@ export default function TasksPage() {
             <div className="flex gap-3">
               <button
                 onClick={exportToCSV}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
               >
-                <span>📊</span> Export CSV
+                <DocumentArrowDownIcon className="w-5 h-5" /> Export CSV
               </button>
               <button
                 onClick={() => {
                   resetForm();
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
               >
-                Add Task
+                <PlusIcon className="w-5 h-5" /> Add Task
               </button>
             </div>
           </div>
           {/* Search and Filters */}
-          <div className="glass-panel rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div>
-              <label htmlFor="search" className="block text-xs font-medium text-gray-700 mb-1">
+          <div className="glass-panel rounded-xl p-4 grid grid-cols-1 md:grid-cols-6 gap-3">
+            <div className="md:col-span-2">
+              <label htmlFor="search" className="block text-xs font-bold text-gray-700 dark:text-white mb-1">
                 Search
               </label>
               <input
@@ -272,8 +273,8 @@ export default function TasksPage() {
                 className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white dark:placeholder-gray-400"
               />
             </div>
-            <div>
-              <label htmlFor="statusFilter" className="block text-xs font-medium text-gray-700 mb-1">
+            <div className="md:col-span-1">
+              <label htmlFor="statusFilter" className="block text-xs font-bold text-gray-700 dark:text-white mb-1">
                 Status
               </label>
               <select
@@ -288,8 +289,8 @@ export default function TasksPage() {
                 <option value="completed">Completed</option>
               </select>
             </div>
-            <div>
-              <label htmlFor="priorityFilter" className="block text-xs font-medium text-gray-700 mb-1">
+            <div className="md:col-span-1">
+              <label htmlFor="priorityFilter" className="block text-xs font-bold text-gray-700 dark:text-white mb-1">
                 Priority
               </label>
               <select
@@ -304,31 +305,29 @@ export default function TasksPage() {
                 <option value="high">High</option>
               </select>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="dueFrom" className="block text-xs font-medium text-gray-700 mb-1">
-                  From
-                </label>
-                <input
-                  id="dueFrom"
-                  type="date"
-                  value={dueFrom}
-                  onChange={(e) => setDueFrom(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white"
-                />
-              </div>
-              <div>
-                <label htmlFor="dueTo" className="block text-xs font-medium text-gray-700 mb-1">
-                  To
-                </label>
-                <input
-                  id="dueTo"
-                  type="date"
-                  value={dueTo}
-                  onChange={(e) => setDueTo(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white"
-                />
-              </div>
+            <div className="md:col-span-1">
+              <label htmlFor="dueFrom" className="block text-xs font-bold text-gray-700 dark:text-white mb-1">
+                From
+              </label>
+              <input
+                id="dueFrom"
+                type="date"
+                value={dueFrom}
+                onChange={(e) => setDueFrom(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white dark:text-base"
+              />
+            </div>
+            <div className="md:col-span-1">
+              <label htmlFor="dueTo" className="block text-xs font-bold text-gray-700 dark:text-white mb-1">
+                To
+              </label>
+              <input
+                id="dueTo"
+                type="date"
+                value={dueTo}
+                onChange={(e) => setDueTo(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 dark:border-gray-600 dark:bg-[#111827] dark:text-white dark:text-base"
+              />
             </div>
           </div>
         </div>
@@ -380,15 +379,15 @@ export default function TasksPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEditModal(task)}
-                      className="text-gray-500 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
+                      className="text-gray-500 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
                   >
-                    ✏️
+                    <PencilIcon className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => handleDelete(task.id)}
                       className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
                   >
-                    🗑️
+                    <TrashIcon className="w-5 h-5" />
                   </button>
                 </div>
               </div>
