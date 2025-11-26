@@ -74,7 +74,7 @@ export default function DashboardPage() {
         return orderA - orderB;
       });
       
-      setRecentTasks(sortedTasks.slice(0, 10));
+      setRecentTasks(sortedTasks);
       setStats(statsData);
       setError(null);
     } catch (err) {
@@ -160,6 +160,8 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
   // Pagination logic for recent tasks
   const tasksPerPage = 5;
   const paginatedTasks = recentTasks.slice((taskPage - 1) * tasksPerPage, taskPage * tasksPerPage);
+  const startIndex = (taskPage - 1) * tasksPerPage + 1;
+  const endIndex = Math.min(taskPage * tasksPerPage, stats.totalTasks);
 
   return (
     <PageWrapper>
@@ -216,7 +218,7 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Tasks</h2>
                   <div className="text-sm text-gray-300 dark:text-gray-400">
-                    Showing {paginatedTasks.length} of {recentTasks.length} recent tasks (Page {taskPage} of {Math.ceil(recentTasks.length / tasksPerPage)})
+                    Showing {startIndex}–{endIndex} of {stats.totalTasks} tasks
                   </div>
                 </div>
                 <div className="space-y-4">
