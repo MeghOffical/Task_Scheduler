@@ -268,13 +268,6 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                   <div className="flex justify-center mt-4 space-x-2">
                     <button
                       className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      onClick={() => setTaskPage(1)}
-                      disabled={taskPage === 1}
-                    >
-                      First
-                    </button>
-                    <button
-                      className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={() => setTaskPage(taskPage - 1)}
                       disabled={taskPage === 1}
                     >
@@ -286,13 +279,6 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                       disabled={taskPage === Math.ceil(recentTasks.length / tasksPerPage)}
                     >
                       Next
-                    </button>
-                    <button
-                      className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === Math.ceil(recentTasks.length / tasksPerPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      onClick={() => setTaskPage(Math.ceil(recentTasks.length / tasksPerPage))}
-                      disabled={taskPage === Math.ceil(recentTasks.length / tasksPerPage)}
-                    >
-                      Last
                     </button>
                   </div>
                 )}
