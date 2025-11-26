@@ -270,27 +270,27 @@ export default function PomodoroPage() {
 
         {/* MODE TABS: Pomodoro / Short Break / Long Break */}
         <div className="flex items-center justify-center gap-2 sm:gap-4 lg:gap-6 mb-6 sm:mb-10 overflow-x-auto">
-          <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 bg-sky-100 dark:bg-sky-900/60 rounded-2xl sm:rounded-3xl px-2 sm:px-6 lg:px-8 py-2 sm:py-3 text-sky-900 dark:text-white shadow-lg whitespace-nowrap">
+          <div className="flex items-center gap-1 sm:gap-3 lg:gap-6 bg-sky-100 dark:bg-sky-900/60 rounded-lg sm:rounded-2xl lg:rounded-3xl px-2 sm:px-5 lg:px-8 py-1 sm:py-2 lg:py-3 text-sky-900 dark:text-white shadow-lg whitespace-nowrap">
           <button
             onClick={selectPomodoro}
-            className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
-              !isBreak ? 'bg-sky-500 text-white dark:bg-sky-500' : 'bg-transparent text-sky-900 dark:text-white'
+            className={`px-1.5 sm:px-3 lg:px-4 py-0.5 sm:py-1 lg:py-1.5 transition-colors text-xs sm:text-sm lg:font-semibold font-medium ${
+              !isBreak ? 'bg-sky-500 text-white dark:bg-sky-500 rounded-xl sm:rounded-2xl' : 'bg-transparent text-sky-900 dark:text-white rounded'
             }`}
           >
             Pomodoro
           </button>
           <button
             onClick={selectShortBreak}
-            className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
-              isBreak && !isLongBreak ? 'bg-sky-500 text-white dark:bg-sky-500' : 'bg-transparent text-sky-900 dark:text-white'
+            className={`px-1.5 sm:px-3 lg:px-4 py-0.5 sm:py-1 lg:py-1.5 transition-colors text-xs sm:text-sm lg:font-semibold font-medium ${
+              isBreak && !isLongBreak ? 'bg-sky-500 text-white dark:bg-sky-500 rounded-xl sm:rounded-2xl' : 'bg-transparent text-sky-900 dark:text-white rounded'
             }`}
           >
             Short Break
           </button>
           <button
             onClick={selectLongBreak}
-            className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors text-xs sm:text-sm ${
-              isBreak && isLongBreak ? 'bg-sky-500 text-white dark:bg-sky-500' : 'bg-transparent text-sky-900 dark:text-white'
+            className={`px-1.5 sm:px-3 lg:px-4 py-0.5 sm:py-1 lg:py-1.5 transition-colors text-xs sm:text-sm lg:font-semibold font-medium ${
+              isBreak && isLongBreak ? 'bg-sky-500 text-white dark:bg-sky-500 rounded-xl sm:rounded-2xl' : 'bg-transparent text-sky-900 dark:text-white rounded'
             }`}
           >
             Long Break

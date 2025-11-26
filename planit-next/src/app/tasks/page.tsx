@@ -4,7 +4,7 @@ import React from 'react';
 const { useState, useEffect } = React;
 import PageWrapper from '@/components/page-wrapper';
 import { createTask, updateTask, deleteTask } from '@/lib/tasks';
-import { DocumentArrowDownIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { DocumentArrowDownIcon, PlusIcon, PencilIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 interface Task {
   id: string;
@@ -273,12 +273,13 @@ export default function TasksPage() {
     <PageWrapper>
       <div className="space-y-6">
         <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center flex-wrap gap-4">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-2 items-center">
               <div>
-                <label className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 cursor-pointer">
-                  <span>📥</span> {importing ? 'Importing…' : 'Import CSV'}
+                <label className="flex px-3 sm:px-4 py-2 bg-slate-600 dark:bg-slate-700 text-white rounded-lg hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors items-center justify-center gap-2 cursor-pointer text-sm min-h-[40px] sm:min-h-auto">
+                  <DocumentArrowDownIcon className="w-5 h-5 flex-shrink-0" />
+                  <span className="hidden sm:inline">Import CSV</span>
                   <input
                     type="file"
                     accept=".csv,text/csv"
@@ -290,18 +291,20 @@ export default function TasksPage() {
               </div>
               <button
                 onClick={exportToCSV}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
+                className="flex px-3 sm:px-4 py-2 bg-cyan-600 dark:bg-cyan-700 text-white rounded-lg hover:bg-cyan-700 dark:hover:bg-cyan-600 transition-colors items-center gap-2 text-sm"
               >
-                <DocumentArrowDownIcon className="w-5 h-5" /> Export CSV
+                <ArrowDownTrayIcon className="w-5 h-5 flex-shrink-0" />
+                <span className="hidden sm:inline">Export CSV</span>
               </button>
               <button
                 onClick={() => {
                   resetForm();
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                className="flex px-3 sm:px-4 py-2 bg-emerald-600 dark:bg-emerald-700 text-white rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors items-center gap-2 text-sm"
               >
-                <PlusIcon className="w-5 h-5" /> Add Task
+                <PlusIcon className="w-5 h-5 flex-shrink-0" />
+                <span className="hidden sm:inline">Add Task</span>
               </button>
             </div>
           </div>
