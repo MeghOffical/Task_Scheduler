@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     await user.save();
 
     // Generate reset URL
-    const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const baseUrl = 'https://task-scheduler-01.vercel.app';
     const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
 
     // Send email via Nodemailer (SMTP)
