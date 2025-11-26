@@ -99,6 +99,63 @@ describe('Authentication Utilities', () => {
       expect(result).toHaveProperty('error');
       expect(result.error).toBeTruthy();
     });
+
+    it('should return error message on invalid token', async () => {
+      const result = await verifyToken('invalid');
+      
+      expect(result.message).toBe('Invalid token');
+      expect(result.error).toBe('Authentication failed');
+    });
+
+    it('should return token in response for valid token', async () => {
+      const payload = { id: '456', username: 'user456' };
+      const token = await createToken(payload);
+      const result = await verifyToken(token);
+      
+      expect(result.token).toBe(token);
+      expect(result.message).toBe('Token verified');
+    });
+
+    it('should handle token with minimal payload', async () => {
+      const payload = { id: 'minimal' };
+      const token = await createToken(payload);
+      const result = await verifyToken(token);
+      
+      expect('error' in result).toBe(false);
+      // Mock returns fixed id from jest setup, so just verify it exists
+      expect(result.id).toBeDefined();
+      expect(typeof result.id).toBe('string');
+    });
+
+    it('should catch and handle verification errors', async () => {
+      const invalidFormats = [
+        'abc',
+        'a.b.c',
+        '...',
+        'bearer token',
+        null as any,
+        undefined as any,
+      ];
+      
+      for (const invalid of invalidFormats) {
+        const result = await verifyToken(invalid);
+        expect(result).toHaveProperty('error');
+        expect(result.message).toBe('Invalid token');
+      }
+    });
+
+    it('should verify token structure includes all required fields', async () => {
+      const payload = { id: '789', username: 'verifytest' };
+      const token = await createToken(payload);
+      const result = await verifyToken(token);
+      
+      expect(result).toHaveProperty('message');
+      if (!('error' in result)) {
+        expect(result).toHaveProperty('token');
+        expect(result).toHaveProperty('id');
+        expect(result).toHaveProperty('username');
+      }
+    });
   });
 
   describe('hashPassword', () => {
@@ -130,6 +187,31 @@ describe('Authentication Utilities', () => {
     it('should handle special characters', async () => {
       const password = 'p@ssw0rd!#$%^&*()';
       const hashed = await hashPassword(password);
+      
+      expect(hashed).toBeDefined();
+      expect(typeof hashed).toBe('string');
+    });
+
+    it('should produce bcrypt hash format', async () => {
+      const password = 'testpass';
+      const hashed = await hashPassword(password);
+      
+      // Bcrypt hashes start with $2a$, $2b$, or $2y$
+      expect(hashed).toMatch(/^\$2[aby]\$/);
+      expect(hashed.length).toBeGreaterThanOrEqual(59);
+    });
+
+    it('should handle very long passwords', async () => {
+      const longPassword = 'a'.repeat(1000);
+      const hashed = await hashPassword(longPassword);
+      
+      expect(hashed).toBeDefined();
+      expect(typeof hashed).toBe('string');
+    });
+
+    it('should handle unicode characters', async () => {
+      const unicodePassword = '密码🔒test';
+      const hashed = await hashPassword(unicodePassword);
       
       expect(hashed).toBeDefined();
       expect(typeof hashed).toBe('string');
@@ -174,6 +256,67 @@ describe('Authentication Utilities', () => {
       
       expect(result1).toBe(true);
       expect(result2).toBe(false);
+    });
+
+    it('should return false for invalid hash format', async () => {
+      const password = 'testpassword';
+      const invalidHash = 'not-a-real-hash';
+      
+      const result = await comparePasswords(password, invalidHash);
+      
+      expect(result).toBe(false);
+    });
+
+    it('should handle empty hash', async () => {
+      const password = 'testpassword';
+      const emptyHash = '';
+      
+      const result = await comparePasswords(password, emptyHash);
+      
+      expect(result).toBe(false);
+    });
+
+    it('should return false when both password and hash are empty', async () => {
+      const result = await comparePasswords('', '');
+      
+      expect(result).toBe(false);
+    });
+
+    it('should handle special characters in password comparison', async () => {
+      const specialPassword = '!@#$%^&*()_+-={}[]|:;<>?,./`~';
+      const hashed = await hashPassword(specialPassword);
+      
+      const matchResult = await comparePasswords(specialPassword, hashed);
+      const noMatchResult = await comparePasswords('!@#$', hashed);
+      
+      expect(matchResult).toBe(true);
+      expect(noMatchResult).toBe(false);
+    });
+
+    it('should handle whitespace differences', async () => {
+      const password = 'password with spaces';
+      const hashed = await hashPassword(password);
+      
+      const exactMatch = await comparePasswords('password with spaces', hashed);
+      const differentSpaces = await comparePasswords('password  with  spaces', hashed);
+      const trimmed = await comparePasswords('passwordwithspaces', hashed);
+      
+      expect(exactMatch).toBe(true);
+      expect(differentSpaces).toBe(false);
+      expect(trimmed).toBe(false);
+    });
+
+    it('should consistently verify same password multiple times', async () => {
+      const password = 'consistent-test';
+      const hashed = await hashPassword(password);
+      
+      const result1 = await comparePasswords(password, hashed);
+      const result2 = await comparePasswords(password, hashed);
+      const result3 = await comparePasswords(password, hashed);
+      
+      expect(result1).toBe(true);
+      expect(result2).toBe(true);
+      expect(result3).toBe(true);
     });
   });
 
