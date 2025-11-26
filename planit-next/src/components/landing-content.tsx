@@ -1,20 +1,13 @@
-'use client';
+"use client";
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import MainHeader from '@/components/main-header';
+import faqsData from '@/app/faqs/faqs.json';
 
 export default function LandingContent() {
-  const [isDark, setIsDark] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-    
-    setIsDark(shouldBeDark);
-    document.documentElement.classList.toggle('dark', shouldBeDark);
-  }, []);
+  const [faqItems, setFaqItems] = useState<{ q: string; a: string }[]>([]);
 
   const testimonials = [
     {
@@ -44,60 +37,25 @@ export default function LandingContent() {
     return () => clearInterval(interval);
   }, [testimonials.length]);
 
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDark;
-    setIsDark(newDarkMode);
-    document.documentElement.classList.toggle('dark', newDarkMode);
-    localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
-  };
+  useEffect(() => {
+    // Load FAQ items from JSON (client-side safe - JSON is static)
+    try {
+      const items = (faqsData || []).map((f: any) => ({ q: f.question, a: f.answer }));
+      setFaqItems(items);
+    } catch (e) {
+      // fallback: basic inline items
+      setFaqItems([
+        { q: 'How do I sign up?', a: 'Click Sign Up in the header and follow the steps.' },
+      ]);
+    }
+  }, []);
+
+  // Dark mode is handled by the shared MainHeader component.
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300">
-      <header className="sticky top-0 z-50 border-b border-blue-100/50 dark:border-white/10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Plan-It</h1>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Smart Task Management</p>
-            </div>
-          </div>
-
-          <nav className="flex items-center gap-3">
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {isDark ? (
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-              )}
-            </button>
-            <Link
-              href="/login"
-              className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/register"
-              className="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
-            >
-              Sign Up
-            </Link>
-          </nav>
-        </div>
-      </header>
+      {/* Use shared header */}
+      <MainHeader />
 
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -311,7 +269,46 @@ export default function LandingContent() {
         </div>
       </section>
 
+      {/* FAQs Section */}
+      <section id="faqs" className="bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-white/10 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Quick answers to common questions so you can get started faster.</p>
+          </div>
 
+          <div className="max-w-4xl mx-auto">
+            <Accordion
+              items={[
+                {
+                  q: 'How do I sign up?',
+                  a: 'Click the "Sign Up" button in the header, fill in your email and password, and confirm. No credit card required for the free tier.'
+                },
+                {
+                  q: 'Is Plan-It free to use?',
+                  a: 'Yes. We offer a free plan that includes core features like task creation, Pomodoro timer, and basic analytics. Paid plans add advanced collaboration and integrations.'
+                },
+                {
+                  q: 'What is the Pomodoro timer?',
+                  a: 'The Pomodoro timer helps you work in focused intervals (default 25 minutes) followed by short breaks. It improves focus and reduces burnout.'
+                },
+                {
+                  q: 'Can I collaborate with a team?',
+                  a: 'Yes. Plan-It supports team workspaces, task assignments, and shared projects to help teams stay aligned.'
+                },
+                {
+                  q: 'How is my data protected?',
+                  a: 'We follow standard security practices. For production deployments ensure HTTPS and secure storage of environment secrets.'
+                },
+                {
+                  q: 'Where can I get help?',
+                  a: "Visit the Docs page, contact support through the Contact page, or open an issue in the project's GitHub repository."
+                }
+              ]}
+            />
+          </div>
+        </div>
+      </section>
 
       <footer className="bg-gray-50 dark:bg-slate-950 border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -319,6 +316,7 @@ export default function LandingContent() {
           <div className="flex items-center gap-6">
             <Link href="/status" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Status</Link>
             <Link href="/docs" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Docs</Link>
+            <Link href="/contact" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Contact</Link>
             <a href="https://github.com/MeghOffical/Task_Scheduler" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.833.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.447-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.919.678 1.852 0 1.337-.012 2.415-.012 2.743 0 .268.18.58.688.481A10.019 10.019 0 0022 12.017C22 6.484 17.523 2 12 2z" clipRule="evenodd"/></svg>
             </a>
@@ -372,6 +370,87 @@ function StepCard({ step, title, description, icon }: StepCardProps) {
           {description}
         </p>
       </div>
+    </div>
+  );
+}
+
+interface AccordionItem {
+  q: string;
+  a: string;
+}
+
+function Accordion({ items }: { items: AccordionItem[] }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const contentRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const focusButton = (index: number) => {
+    const btn = buttonRefs.current[index];
+    if (btn) btn.focus();
+  };
+
+  return (
+    <div className="grid md:grid-cols-2 gap-6">
+      {items.map((item, idx) => {
+        const isOpen = openIndex === idx;
+        return (
+          <div key={idx} className="overflow-hidden rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-slate-800 shadow-sm">
+            <button
+              ref={(el) => (buttonRefs.current[idx] = el)}
+              onClick={() => setOpenIndex(isOpen ? null : idx)}
+              onKeyDown={(e) => {
+                const key = e.key;
+                if (key === 'ArrowDown') {
+                  e.preventDefault();
+                  focusButton((idx + 1) % items.length);
+                } else if (key === 'ArrowUp') {
+                  e.preventDefault();
+                  focusButton((idx - 1 + items.length) % items.length);
+                } else if (key === 'Home') {
+                  e.preventDefault();
+                  focusButton(0);
+                } else if (key === 'End') {
+                  e.preventDefault();
+                  focusButton(items.length - 1);
+                } else if (key === 'Enter' || key === ' ') {
+                  e.preventDefault();
+                  setOpenIndex(isOpen ? null : idx);
+                }
+              }}
+              className="w-full flex items-center justify-between p-6 text-left"
+              aria-expanded={isOpen}
+              aria-controls={`faq-${idx}`}
+            >
+              <span className="font-semibold text-gray-900 dark:text-white">{item.q}</span>
+              <svg
+                className={`w-5 h-5 transition-transform duration-500 ease-out ${isOpen ? 'rotate-180 scale-110 text-blue-600' : 'rotate-0 scale-100 text-gray-500 dark:text-gray-300'}`}
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 8l4 4 4-4" />
+              </svg>
+            </button>
+
+            <div
+              id={`faq-${idx}`}
+              className="px-6 pb-6 text-gray-600 dark:text-gray-300 transition-all duration-500 ease-out"
+              style={{
+                maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx]!.scrollHeight}px` : '0px',
+                overflow: 'hidden'
+              }}
+            >
+              <div
+                ref={(el) => (contentRefs.current[idx] = el)}
+                className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-out`}
+              >
+                {item.a}
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -15,18 +15,20 @@ export async function GET() {
 
     await dbConnect();
 
-    // Get full user info from database
-    const user = await User.findById(userId).select('username email profession');
+  // Get full user info from database, including points and daily check-in timestamp
+  const user = await User.findById(userId).select('username email profession points lastDailyCheckinAt');
     
     if (!user) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json({
-      id: user._id.toString(),
-      username: user.username,
-      email: user.email,
-      profession: user.profession,
+  id: user._id.toString(),
+  username: user.username,
+  email: user.email,
+  profession: user.profession,
+  points: user.points ?? 0,
+  lastDailyCheckinAt: user.lastDailyCheckinAt,
     });
   } catch (error) {
     console.error('Error fetching user info:', error);

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { User } from '@/models';
+import { awardPoints } from '@/lib/points';
 import { hashPassword } from '@/lib/auth';
 import dbConnect from '@/lib/db';
 
@@ -31,12 +32,25 @@ export async function POST(request: Request) {
 
     // Hash password and create user
     const hashedPassword = await hashPassword(password);
-    await User.create({
+    const user = await User.create({
       username,
       email,
       password: hashedPassword,
       profession,
     });
+
+    // Award signup bonus points
+    try {
+      await awardPoints({
+        userId: user._id.toString(),
+        type: 'signup_bonus',
+        amount: 100,
+        description: 'Signup bonus',
+      });
+    } catch (pointsError) {
+      console.error('Error awarding signup bonus points:', pointsError);
+      // Do not fail registration if points awarding fails
+    }
 
     return NextResponse.json(
       { message: 'User registered successfully!' },

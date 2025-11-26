@@ -35,6 +35,17 @@ const UserSchema = new mongoose.Schema({
   profession: { 
     type: String 
   },
+  // Gamification: current points balance for the user
+  points: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  // Track when the user last claimed a daily check-in reward
+  lastDailyCheckinAt: {
+    type: Date,
+    default: null,
+  },
   pomodoroSettings: {
     workDuration: { type: Number, default: 25 }, // minutes
     shortBreakDuration: { type: Number, default: 5 }, // minutes
@@ -195,6 +206,38 @@ const TaskCompletionHistorySchema = new mongoose.Schema({
 TaskCompletionHistorySchema.index({ userId: 1, completedAt: -1 });
 TaskCompletionHistorySchema.index({ userId: 1, taskId: 1 }, { unique: true });
 
+// -----------------------------------------------------------------------------
+// Point Activity Schema - stores history of points earned/spent by users
+// -----------------------------------------------------------------------------
+
+const PointActivitySchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  // e.g. 'signup_bonus', 'daily_checkin', 'task_completed_on_time', 'missed_deadline'
+  type: {
+    type: String,
+    required: true,
+  },
+  // Positive for rewards, negative for penalties
+  amount: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+PointActivitySchema.index({ userId: 1, createdAt: -1 });
+
 // Clear model cache to ensure fresh schema
 if (mongoose.models.User) {
   delete mongoose.models.User;
@@ -208,8 +251,12 @@ if (mongoose.models.ChatThread) {
 if (mongoose.models.TaskCompletionHistory) {
   delete mongoose.models.TaskCompletionHistory;
 }
+if (mongoose.models.PointActivity) {
+  delete mongoose.models.PointActivity;
+}
 
 export const User = mongoose.model('User', UserSchema);
 export const Task = mongoose.model('Task', TaskSchema);
 export const ChatThread = mongoose.model('ChatThread', ChatThreadSchema);
 export const TaskCompletionHistory = mongoose.model('TaskCompletionHistory', TaskCompletionHistorySchema);
+export const PointActivity = mongoose.model('PointActivity', PointActivitySchema);

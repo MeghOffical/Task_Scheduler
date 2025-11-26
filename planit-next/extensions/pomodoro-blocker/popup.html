@@ -1,49 +1,50 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Pomodoro Blocker</title>
-    <style>
-      body {
-        font-family: 'Segoe UI', sans-serif;
-        width: 250px;
-        padding: 10px;
-      }
-      input, button {
-        width: 100%;
-        padding: 6px;
-        margin-top: 5px;
-        font-size: 14px;
-      }
-      ul {
-        list-style: none;
-        padding: 0;
-      }
-      li {
-        display: flex;
-        justify-content: space-between;
-        background: #f1f5f9;
-        margin-top: 4px;
-        padding: 4px 6px;
-        border-radius: 4px;
-      }
-      button.remove {
-        background: #ef4444;
-        border: none;
-        color: white;
-        padding: 2px 6px;
-        border-radius: 3px;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <h3>Blocked Sites</h3>
-    <input id="urlInput" type="text" placeholder="e.g. instagram.com" />
-    <button id="addBtn">Add Site</button>
+<head>
+  <meta charset="UTF-8" />
+  <title>Pomodoro Blocker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      width: 250px;
+      padding: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 6px;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      background: #f1f5f9;
+      margin-top: 4px;
+      padding: 4px 6px;
+      border-radius: 4px;
+    }
+    button.remove {
+      background: #ef4444;
+      border: none;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
 
-    <ul id="siteList"></ul>
+  <h3>Blocked Sites</h3>
+  <input id="urlInput" type="text" placeholder="e.g. instagram.com" />
+  <button id="addBtn">Add Site</button>
 
-    <script src="popup.js"></script>
-  </body>
+  <ul id="siteList"></ul>
+
+  <script src="popup.js"></script>
+</body>
 </html>
