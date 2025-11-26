@@ -442,7 +442,7 @@ function Accordion({ items }: { items: AccordionItem[] }) {
               }}
             >
               <div
-                ref={(el) => (contentRefs.current[idx] = el)}
+                ref={(el) => { contentRefs.current[idx] = el; }}
                 className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-out`}
               >
                 {item.a}
