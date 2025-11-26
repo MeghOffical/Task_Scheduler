@@ -396,7 +396,7 @@ function Accordion({ items }: { items: AccordionItem[] }) {
         return (
           <div key={idx} className="overflow-hidden rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-slate-800 shadow-sm">
             <button
-              ref={(el) => (buttonRefs.current[idx] = el)}
+              ref={(el) => { buttonRefs.current[idx] = el; }}
               onClick={() => setOpenIndex(isOpen ? null : idx)}
               onKeyDown={(e) => {
                 const key = e.key;
