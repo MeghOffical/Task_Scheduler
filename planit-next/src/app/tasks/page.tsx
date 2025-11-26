@@ -66,6 +66,7 @@ export default function TasksPage() {
   const [dueTo, setDueTo] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [formData, setFormData] = useState<TaskFormData>({
@@ -160,6 +161,40 @@ export default function TasksPage() {
     setShowModal(true);
   };
 
+  const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError(null);
+    setImporting(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/tasks/import', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        const message = data?.message || 'Failed to import tasks from CSV';
+        throw new Error(message);
+      }
+
+      await loadTasks();
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to import tasks from CSV';
+      setError(errorMessage);
+      console.error('Error importing tasks from CSV:', err);
+    } finally {
+      setImporting(false);
+      // Reset the input value so the same file can be selected again if needed
+      event.target.value = '';
+    }
+  };
+
   const exportToCSV = () => {
     // Header row
     const csvHeader = ['Title,Description,Due Date,Time (24h),Status,Priority'];
@@ -215,7 +250,19 @@ export default function TasksPage() {
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
+              <div>
+                <label className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 cursor-pointer">
+                  <span>📥</span> {importing ? 'Importing…' : 'Import CSV'}
+                  <input
+                    type="file"
+                    accept=".csv,text/csv"
+                    onChange={handleImportCSV}
+                    className="hidden"
+                    disabled={importing}
+                  />
+                </label>
+              </div>
               <button
                 onClick={exportToCSV}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
