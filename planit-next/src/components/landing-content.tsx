@@ -38,162 +38,158 @@ export default function LandingContent() {
   }, [testimonials.length]);
 
   useEffect(() => {
-    // Load FAQ items from JSON (client-side safe - JSON is static)
     try {
       const items = (faqsData || []).map((f: any) => ({ q: f.question, a: f.answer }));
       setFaqItems(items);
     } catch (e) {
-      // fallback: basic inline items
       setFaqItems([
         { q: 'How do I sign up?', a: 'Click Sign Up in the header and follow the steps.' },
       ]);
     }
   }, []);
 
-  // Dark mode is handled by the shared MainHeader component.
-
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300 font-sans text-gray-900 dark:text-gray-100">
+      
       {/* Use shared header */}
       <MainHeader />
 
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute top-40 right-10 w-96 h-96 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
-        </div>
-
+        {/* Blobs removed for cleaner look */}
+        
         <div className="relative text-center max-w-5xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-400 text-sm font-medium mb-8 backdrop-blur-sm">
+          {/* Badge: Solid background, subtle border */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium mb-8">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
             </span>
-            Built for productivity and focus
+            Built for productivity
           </div>
 
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-8 leading-tight">
-            Transform How You
-            <br />
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Work & Achieve
-            </span>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight leading-tight">
+            Transform How You <br className="hidden sm:block" />
+            {/* Removed gradient text for solid, readable text */}
+            <span className="text-gray-900 dark:text-white">Work & Achieve</span>
           </h1>
 
-          <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-10 leading-relaxed max-w-3xl mx-auto font-light">
-            The complete productivity platform with smart task management, Pomodoro technique, AI assistance, and powerful analytics—all in one beautiful interface.
+          <p className="text-xl text-gray-600 dark:text-gray-400 mb-10 leading-relaxed max-w-3xl mx-auto font-normal">
+            The complete productivity platform with smart task management, Pomodoro technique, AI assistance, and powerful analytics.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            {/* Button: Solid Blue, no gradient */}
             <Link
               href="/register"
-              className="group w-full sm:w-auto px-10 py-5 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-2xl hover:shadow-blue-500/50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+              className="group w-full sm:w-auto px-8 py-4 text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm"
             >
               Sign Up
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
+            {/* Button: White with Border */}
             <Link
               href="/login"
-              className="w-full sm:w-auto px-10 py-5 text-lg font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-white/10 border-2 border-gray-300 dark:border-white/20 rounded-2xl hover:border-blue-600 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 backdrop-blur-sm"
+              className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 shadow-sm"
             >
               Sign In
             </Link>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
           <FeatureCard
             icon={
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             }
-            title="Smart Task Management"
-            description="Create, organize, and prioritize tasks effortlessly. Set due dates, add descriptions, and track progress with an intuitive interface."
-            color="from-blue-500 to-cyan-500"
+            title="Smart Tasks"
+            description="Create, organize, and prioritize tasks effortlessly with due dates and tags."
+            color="bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
           />
 
           <FeatureCard
             icon={
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             }
             title="Pomodoro Timer"
-            description="Boost focus with the Pomodoro technique. Work in 25-minute sprints with scheduled breaks to maintain peak productivity."
-            color="from-indigo-500 to-purple-500"
+            description="Boost focus with 25-minute sprints and scheduled breaks."
+            color="bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
           />
 
           <FeatureCard
             icon={
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             }
-            title="Detailed Analytics"
-            description="Visualize your productivity with comprehensive dashboards. Track completion rates, time spent, and identify improvement areas."
-            color="from-purple-500 to-pink-500"
+            title="Analytics"
+            description="Visualize productivity trends and track completion rates."
+            color="bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400"
           />
 
           <FeatureCard
             icon={
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             }
             title="AI Assistant"
-            description="Intelligent chatbot powered by Google Gemini. Create and manage tasks with natural language—just ask and it's done."
-            color="from-pink-500 to-rose-500"
+            description="Manage tasks with natural language powered by Google Gemini."
+            color="bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400"
           />
 
           <FeatureCard
             icon={
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             }
-            title="Priority System"
-            description="Organize with smart priorities and status tags. Filter by Low, Medium, High urgency and track from Pending to Completed."
-            color="from-orange-500 to-amber-500"
+            title="Priorities"
+            description="Filter by Low, Medium, High urgency to stay on top of work."
+            color="bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400"
           />
 
           <FeatureCard
             icon={
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
               </svg>
             }
-            title="Fully Customizable"
-            description="Personalize your workspace with custom themes, Pomodoro durations, notification settings, and display preferences."
-            color="from-teal-500 to-emerald-500"
+            title="Customizable"
+            description="Personalize themes, notification settings, and preferences."
+            color="bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-400"
           />
         </div>
       </section>
 
-      <section className="bg-white dark:bg-slate-900 border-t border-blue-100 dark:border-white/10 transition-colors duration-300">
+      <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="max-w-4xl mx-auto mb-20">
-            <div className="relative bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-2xl border border-gray-100 dark:border-white/10">
-              <div className="absolute top-8 left-8 text-blue-600 dark:text-blue-400 opacity-50">
-                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+            {/* Testimonial Card - Sharper corners, solid bg */}
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl p-10 shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="absolute top-8 left-8 text-blue-500 dark:text-blue-400 opacity-30">
+                <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                 </svg>
               </div>
-              <div className="relative pt-8">
-                <p className="text-xl sm:text-2xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed italic">
+              <div className="relative pt-6">
+                <p className="text-xl text-gray-800 dark:text-gray-200 mb-8 leading-relaxed font-medium">
                   {testimonials[activeTestimonial].quote}
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-sm">
                     {testimonials[activeTestimonial].avatar}
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">
                       {testimonials[activeTestimonial].author}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {testimonials[activeTestimonial].role}
                     </p>
                   </div>
@@ -206,8 +202,8 @@ export default function LandingContent() {
                     onClick={() => setActiveTestimonial(index)}
                     className={`w-2 h-2 rounded-full transition-all duration-300 ${
                       index === activeTestimonial
-                        ? 'bg-blue-600 w-8'
-                        : 'bg-gray-300 dark:bg-gray-600'
+                        ? 'bg-blue-600 w-6'
+                        : 'bg-gray-300 dark:bg-gray-700'
                     }`}
                     aria-label={`Testimonial ${index + 1}`}
                   />
@@ -215,30 +211,29 @@ export default function LandingContent() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
-      <section className="bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
+      <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
               How Plan-It Works
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Get started in three simple steps
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
-            <div className="hidden md:block absolute top-24 left-1/4 right-1/4 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 z-0" style={{ transform: 'translateY(-50%)' }}></div>
+            {/* Removed the gradient line for cleaner look */}
             
             <StepCard
               step="1"
               title="Sign Up Free"
               description="Create your account in seconds. No credit card needed."
               icon={
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
               }
@@ -249,7 +244,7 @@ export default function LandingContent() {
               title="Add Your Tasks"
               description="Use the AI assistant or create tasks manually with smart features."
               icon={
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
               }
@@ -260,7 +255,7 @@ export default function LandingContent() {
               title="Get Things Done"
               description="Track progress, use Pomodoro, and achieve your goals efficiently."
               icon={
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               }
@@ -270,54 +265,38 @@ export default function LandingContent() {
       </section>
 
       {/* FAQs Section */}
-      <section id="faqs" className="bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-white/10 transition-colors duration-300">
+      <section id="faqs" className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Quick answers to common questions so you can get started faster.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">Frequently Asked Questions</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Quick answers to common questions.</p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             <Accordion
-              items={[
+              items={faqItems.length > 0 ? faqItems : [
                 {
                   q: 'How do I sign up?',
                   a: 'Click the "Sign Up" button in the header, fill in your email and password, and confirm. No credit card required for the free tier.'
                 },
                 {
-                  q: 'Is Plan-It free to use?',
-                  a: 'Yes. We offer a free plan that includes core features like task creation, Pomodoro timer, and basic analytics. Paid plans add advanced collaboration and integrations.'
+                   q: 'Is Plan-It free to use?',
+                   a: 'Yes. We offer a free plan that includes core features like task creation, Pomodoro timer, and basic analytics.'
                 },
-                {
-                  q: 'What is the Pomodoro timer?',
-                  a: 'The Pomodoro timer helps you work in focused intervals (default 25 minutes) followed by short breaks. It improves focus and reduces burnout.'
-                },
-                {
-                  q: 'Can I collaborate with a team?',
-                  a: 'Yes. Plan-It supports team workspaces, task assignments, and shared projects to help teams stay aligned.'
-                },
-                {
-                  q: 'How is my data protected?',
-                  a: 'We follow standard security practices. For production deployments ensure HTTPS and secure storage of environment secrets.'
-                },
-                {
-                  q: 'Where can I get help?',
-                  a: "Visit the Docs page, contact support through the Contact page, or open an issue in the project's GitHub repository."
-                }
               ]}
             />
           </div>
         </div>
       </section>
 
-      <footer className="bg-gray-50 dark:bg-slate-950 border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
+      <footer className="bg-gray-50 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">© 2025 Plan-It</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">© 2025 Plan-It</p>
           <div className="flex items-center gap-6">
-            <Link href="/status" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Status</Link>
-            <Link href="/docs" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Docs</Link>
-            <Link href="/contact" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Contact</Link>
-            <a href="https://github.com/MeghOffical/Task_Scheduler" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+            <Link href="/status" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Status</Link>
+            <Link href="/docs" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Docs</Link>
+            <Link href="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</Link>
+            <a href="https://github.com/MeghOffical/Task_Scheduler" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.833.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.447-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.919.678 1.852 0 1.337-.012 2.415-.012 2.743 0 .268.18.58.688.481A10.019 10.019 0 0022 12.017C22 6.484 17.523 2 12 2z" clipRule="evenodd"/></svg>
             </a>
           </div>
@@ -327,6 +306,7 @@ export default function LandingContent() {
   );
 }
 
+// Flat Feature Card (No gradient, tighter corners)
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
@@ -336,16 +316,17 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description, color }: FeatureCardProps) {
   return (
-    <div className="group relative bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-white/10 hover:border-blue-200 dark:hover:border-blue-500/50 hover:-translate-y-1">
-      <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${color} text-white mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+    <div className="group relative bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
+      <div className={`inline-flex p-3 rounded-lg ${color} mb-4`}>
         {icon}
       </div>
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{title}</h3>
-      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
     </div>
   );
 }
 
+// Flat Step Card
 interface StepCardProps {
   step: string;
   title: string;
@@ -355,18 +336,18 @@ interface StepCardProps {
 
 function StepCard({ step, title, description, icon }: StepCardProps) {
   return (
-    <div className="relative z-10 text-center">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-2xl font-bold mb-6 shadow-lg">
+    <div className="text-center">
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white text-lg font-bold mb-6 shadow-sm">
         {step}
       </div>
-      <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-white/10 hover:shadow-xl transition-all duration-300">
-        <div className="inline-flex p-4 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
+        <div className="inline-flex p-3 rounded-lg bg-gray-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 mb-4">
           {icon}
         </div>
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
           {title}
         </h3>
-        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
           {description}
         </p>
       </div>
@@ -379,6 +360,7 @@ interface AccordionItem {
   a: string;
 }
 
+// Flat Accordion
 function Accordion({ items }: { items: AccordionItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const contentRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -390,11 +372,11 @@ function Accordion({ items }: { items: AccordionItem[] }) {
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="space-y-4">
       {items.map((item, idx) => {
         const isOpen = openIndex === idx;
         return (
-          <div key={idx} className="overflow-hidden rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-slate-800 shadow-sm">
+          <div key={idx} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             <button
               ref={(el) => { buttonRefs.current[idx] = el; }}
               onClick={() => setOpenIndex(isOpen ? null : idx)}
@@ -417,13 +399,13 @@ function Accordion({ items }: { items: AccordionItem[] }) {
                   setOpenIndex(isOpen ? null : idx);
                 }
               }}
-              className="w-full flex items-center justify-between p-6 text-left"
+              className="w-full flex items-center justify-between p-5 text-left"
               aria-expanded={isOpen}
               aria-controls={`faq-${idx}`}
             >
-              <span className="font-semibold text-gray-900 dark:text-white">{item.q}</span>
+              <span className="font-medium text-gray-900 dark:text-white">{item.q}</span>
               <svg
-                className={`w-5 h-5 transition-transform duration-500 ease-out ${isOpen ? 'rotate-180 scale-110 text-blue-600' : 'rotate-0 scale-100 text-gray-500 dark:text-gray-300'}`}
+                className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180 text-gray-500' : 'rotate-0 text-gray-400'}`}
                 viewBox="0 0 20 20"
                 fill="none"
                 stroke="currentColor"
@@ -435,7 +417,7 @@ function Accordion({ items }: { items: AccordionItem[] }) {
 
             <div
               id={`faq-${idx}`}
-              className="px-6 pb-6 text-gray-600 dark:text-gray-300 transition-all duration-500 ease-out"
+              className="px-5 pb-5 text-gray-600 dark:text-gray-400 transition-all duration-300 ease-in-out"
               style={{
                 maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx]!.scrollHeight}px` : '0px',
                 overflow: 'hidden'
@@ -443,7 +425,7 @@ function Accordion({ items }: { items: AccordionItem[] }) {
             >
               <div
                 ref={(el) => { contentRefs.current[idx] = el; }}
-                className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-out`}
+                className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
               >
                 {item.a}
               </div>
