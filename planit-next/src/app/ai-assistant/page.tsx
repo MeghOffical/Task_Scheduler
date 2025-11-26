@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import PageWrapper from '@/components/page-wrapper';
 import { PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import ChatInput from "@/components/ChatInput";
 
 type Message = {
   id: string;
