@@ -11,7 +11,8 @@
 - Basic Task Viewing  
 
 ###  Sprint 1 Sequence Diagram
-![Sprint 1 Sequence Diagram](./Sprint_1.drawio.png)
+![Sprint 1 Sequence Diagram]<img width="880" height="654" alt="sprint1 drawio" src="https://github.com/user-attachments/assets/e0230f90-aff5-417b-9001-05ffdc382653" />
+
 
 ---
 
@@ -24,7 +25,8 @@
 - Improved UI/UX  
 
 ###  Sprint 2 Sequence Diagram
-![Sprint 2 Sequence Diagram](./Sprint_2.drawio.png)
+![Sprint 2 Sequence Diagram]<img width="1296" height="719" alt="sprint2 drawio" src="https://github.com/user-attachments/assets/11434ae7-fb35-4bcd-84a2-f55ee10333ec" />
+
 
 ---
 
@@ -37,5 +39,6 @@
 - Testing & Final Documentation  
 
 ###  Sprint 3 Sequence Diagram
-![Sprint 3 Sequence Diagram](./Sprint_3.drawio.png)
+![Sprint 3 Sequence Diagram]<img width="1475" height="886" alt="sprint3 drawio" src="https://github.com/user-attachments/assets/4a11d169-8236-48ae-a4cb-d5f86d45b4b3" />
+
 
