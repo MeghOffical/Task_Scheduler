@@ -425,9 +425,11 @@ function Accordion({ items }: { items: AccordionItem[] }) {
             >
               <div
                 ref={(el) => { contentRefs.current[idx] = el; }}
-                className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                className={`pt-2 pb-6 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
               >
-                {item.a}
+                <p className="leading-relaxed">
+                  {item.a}
+                </p>
               </div>
             </div>
           </div>
