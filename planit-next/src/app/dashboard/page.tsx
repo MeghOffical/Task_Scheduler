@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import PageWrapper from '@/components/page-wrapper';
 import { Task } from '@/types';
 import { StatCard, TaskCard, PriorityItem } from './components';
@@ -27,6 +27,7 @@ function LoadingSpinner() {
 
 export default function DashboardPage() {
     const [taskPage, setTaskPage] = useState(1);
+  const [sortOption, setSortOption] = useState<'default' | 'priority' | 'date'>('default');
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +41,7 @@ export default function DashboardPage() {
     mediumPriority: 0,
     lowPriority: 0,
   });
-  const [recentTasks, setRecentTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -66,15 +67,7 @@ export default function DashboardPage() {
       console.log('Fetched tasks:', tasksData);
       console.log('Fetched stats:', statsData);
 
-      // Sort tasks by status: pending first, then in-progress, then completed
-      const statusOrder = { 'pending': 1, 'in-progress': 2, 'completed': 3 };
-      const sortedTasks = [...tasksData].sort((a, b) => {
-        const orderA = statusOrder[a.status as keyof typeof statusOrder] || 999;
-        const orderB = statusOrder[b.status as keyof typeof statusOrder] || 999;
-        return orderA - orderB;
-      });
-      
-      setRecentTasks(sortedTasks);
+      setTasks(tasksData);
       setStats(statsData);
       setError(null);
     } catch (err) {
@@ -139,6 +132,58 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
     };
   }, [fetchDashboardData]);
 
+  useEffect(() => {
+    setTaskPage(1);
+  }, [sortOption]);
+
+  const sortedTasks = useMemo(() => {
+    const byStatus = { pending: 1, 'in-progress': 2, completed: 3 } as const;
+    const byPriority = { high: 1, medium: 2, low: 3 } as const;
+
+    const normalized = [...tasks];
+
+    if (sortOption === 'priority') {
+      return normalized.sort((a, b) => {
+        const priorityA = byPriority[a.priority as keyof typeof byPriority] ?? 99;
+        const priorityB = byPriority[b.priority as keyof typeof byPriority] ?? 99;
+        if (priorityA !== priorityB) {
+          return priorityA - priorityB;
+        }
+
+        const statusA = byStatus[a.status as keyof typeof byStatus] ?? 99;
+        const statusB = byStatus[b.status as keyof typeof byStatus] ?? 99;
+        if (statusA !== statusB) {
+          return statusA - statusB;
+        }
+
+        return new Date(b.updatedAt ?? b.createdAt ?? 0).getTime() - new Date(a.updatedAt ?? a.createdAt ?? 0).getTime();
+      });
+    }
+
+    if (sortOption === 'date') {
+      return normalized.sort((a, b) => {
+        const dateA = new Date(a.updatedAt ?? a.createdAt ?? a.dueDate ?? 0).getTime();
+        const dateB = new Date(b.updatedAt ?? b.createdAt ?? b.dueDate ?? 0).getTime();
+        return dateB - dateA;
+      });
+    }
+
+    return normalized.sort((a, b) => {
+      const statusA = byStatus[a.status as keyof typeof byStatus] ?? 99;
+      const statusB = byStatus[b.status as keyof typeof byStatus] ?? 99;
+      if (statusA === statusB) {
+        return new Date(b.updatedAt ?? b.createdAt ?? 0).getTime() - new Date(a.updatedAt ?? a.createdAt ?? 0).getTime();
+      }
+      return statusA - statusB;
+    });
+  }, [tasks, sortOption]);
+
+  const tasksPerPage = 5;
+  const totalSortedTasks = sortedTasks.length;
+  const paginatedTasks = sortedTasks.slice((taskPage - 1) * tasksPerPage, taskPage * tasksPerPage);
+  const startIndex = totalSortedTasks ? (taskPage - 1) * tasksPerPage + 1 : 0;
+  const endIndex = totalSortedTasks ? Math.min(taskPage * tasksPerPage, totalSortedTasks) : 0;
+
   if (loading && !stats.totalTasks) {
     return (
       <PageWrapper>
@@ -156,12 +201,6 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
       </PageWrapper>
     );
   }
-
-  // Pagination logic for recent tasks
-  const tasksPerPage = 5;
-  const paginatedTasks = recentTasks.slice((taskPage - 1) * tasksPerPage, taskPage * tasksPerPage);
-  const startIndex = (taskPage - 1) * tasksPerPage + 1;
-  const endIndex = Math.min(taskPage * tasksPerPage, stats.totalTasks);
 
   return (
     <PageWrapper>
@@ -215,10 +254,24 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
             <div className="lg:col-span-2 relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative glass-panel rounded-2xl p-6">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-wrap gap-3 justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Tasks</h2>
-                  <div className="text-sm text-gray-300 dark:text-gray-400">
-                    Showing {startIndex}–{endIndex} of {stats.totalTasks} tasks
+                  <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-300">
+                    <span className="hidden sm:inline">
+                      {totalSortedTasks ? `Showing ${startIndex}–${endIndex} of ${totalSortedTasks} tasks` : 'No tasks'}
+                    </span>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wide">Sort by</span>
+                      <select
+                        value={sortOption}
+                        onChange={(event) => setSortOption(event.target.value as 'default' | 'priority' | 'date')}
+                        className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="default">Default</option>
+                        <option value="priority">Priority (High → Low)</option>
+                        <option value="date">Date (Newest)</option>
+                      </select>
+                    </label>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -266,7 +319,7 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                   )}
                 </div>
                 {/* Pagination Controls */}
-                {recentTasks.length > tasksPerPage && (
+                {totalSortedTasks > tasksPerPage && (
                   <div className="flex justify-center mt-4 space-x-2">
                     <button
                       className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -276,9 +329,9 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                       Previous
                     </button>
                     <button
-                      className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === Math.ceil(recentTasks.length / tasksPerPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${taskPage === Math.ceil(totalSortedTasks / tasksPerPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={() => setTaskPage(taskPage + 1)}
-                      disabled={taskPage === Math.ceil(recentTasks.length / tasksPerPage)}
+                      disabled={taskPage === Math.ceil(totalSortedTasks / tasksPerPage)}
                     >
                       Next
                     </button>
