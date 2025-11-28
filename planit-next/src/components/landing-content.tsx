@@ -54,11 +54,12 @@ export default function LandingContent() {
       {/* Use shared header */}
       <MainHeader />
 
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
-        {/* Blobs removed for cleaner look */}
+      {/* SECTION 1: Hero & Features */}
+      {/* Reduced bottom padding (pb-24/32 -> pb-12/20) and top padding slightly */}
+      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 lg:pb-20">
         
-        <div className="relative text-center max-w-5xl mx-auto mb-20">
-          {/* Badge: Solid background, subtle border */}
+        {/* Reduced margin bottom (mb-24 -> mb-16) */}
+        <div className="relative text-center max-w-5xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium mb-8">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
@@ -69,7 +70,6 @@ export default function LandingContent() {
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight leading-tight">
             Transform How You <br className="hidden sm:block" />
-            {/* Removed gradient text for solid, readable text */}
             <span className="text-gray-900 dark:text-white">Work & Achieve</span>
           </h1>
 
@@ -78,7 +78,6 @@ export default function LandingContent() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            {/* Button: Solid Blue, no gradient */}
             <Link
               href="/register"
               className="group w-full sm:w-auto px-8 py-4 text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm"
@@ -88,7 +87,6 @@ export default function LandingContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
-            {/* Button: White with Border */}
             <Link
               href="/login"
               className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 shadow-sm"
@@ -124,7 +122,7 @@ export default function LandingContent() {
           <FeatureCard
             icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             }
             title="Analytics"
@@ -167,10 +165,22 @@ export default function LandingContent() {
         </div>
       </section>
 
+      {/* SECTION 2: Testimonials */}
+      {/* Reduced py-24/32 -> py-16/20 */}
       <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          <div className="max-w-4xl mx-auto mb-20">
-            {/* Testimonial Card - Sharper corners, solid bg */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          
+          {/* Reduced mb-16 -> mb-10 */}
+          <div className="text-center mb-10">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
+              Testimonials
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Trusted by professionals worldwide
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
             <div className="relative bg-white dark:bg-gray-800 rounded-xl p-10 shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="absolute top-8 left-8 text-blue-500 dark:text-blue-400 opacity-30">
                 <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
@@ -214,9 +224,11 @@ export default function LandingContent() {
         </div>
       </section>
 
+      {/* SECTION 3: How It Works */}
+      {/* Reduced py-24/32 -> py-16/20 */}
       <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          <div className="text-center mb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
               How Plan-It Works
             </h2>
@@ -226,8 +238,6 @@ export default function LandingContent() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Removed the gradient line for cleaner look */}
-            
             <StepCard
               step="1"
               title="Sign Up Free"
@@ -264,10 +274,11 @@ export default function LandingContent() {
         </div>
       </section>
 
-      {/* FAQs Section */}
+      {/* SECTION 4: FAQs */}
+      {/* Reduced py-24/32 -> py-16/20 */}
       <section id="faqs" className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          <div className="text-center mb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">Frequently Asked Questions</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Quick answers to common questions.</p>
           </div>
