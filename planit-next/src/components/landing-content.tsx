@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
-import MainHeader from '@/components/main-header';
 import faqsData from '@/app/faqs/faqs.json';
 
 export default function LandingContent() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [faqItems, setFaqItems] = useState<{ q: string; a: string }[]>([]);
+  
+  // THEME STATE
+  const [isDark, setIsDark] = useState(false);
 
   const testimonials = [
     {
@@ -30,6 +32,33 @@ export default function LandingContent() {
     }
   ];
 
+  // Initialize Theme
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const shouldBeDark = savedTheme === 'dark' || (!savedTheme && systemDark);
+    
+    setIsDark(shouldBeDark);
+    if (shouldBeDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newMode = !isDark;
+    setIsDark(newMode);
+    
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -51,14 +80,80 @@ export default function LandingContent() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300 font-sans text-gray-900 dark:text-gray-100">
       
-      {/* Use shared header */}
-      <MainHeader />
+      {/* HEADER */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-[#11141A]/90 backdrop-blur-md border-b border-gray-200 dark:border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          
+          {/* 1. Left: Logo (Dashboard Style) */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
+                viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+                className="w-6 h-6 sm:w-7 sm:h-7">
+                <path strokeLinecap="round" strokeLinejoin="round"
+                  d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Z" />
+              </svg>
+            </div>
+            <span className="uppercase tracking-[0.16em] text-lg sm:text-xl font-black text-blue-900 dark:text-white">Plan-It</span>
+          </Link>
 
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
-        {/* Blobs removed for cleaner look */}
+          {/* 2. Right: Actions */}
+          <div className="flex items-center gap-4">
+            
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors"
+              aria-label="Toggle Dark Mode"
+            >
+              {isDark ? (
+                // Sun Icon
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                // Moon Icon
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
+
+            {/* About Us Link */}
+            <Link href="/about" className="hidden sm:block text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+              About Us
+            </Link>
+
+            {/* Vertical Divider */}
+            <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
+
+            {/* Sign Up Button (Blue with Arrow) - MOVED FIRST */}
+            <Link 
+              href="/register" 
+              className="group flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              Sign Up
+              <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+
+            {/* Sign In Button (Bordered) - MOVED SECOND */}
+            <Link 
+              href="/login" 
+              className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
+            >
+              Sign In
+            </Link>
+
+          </div>
+        </div>
+      </header>
+
+      {/* SECTION 1: Hero & Features */}
+      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-36 pb-12 lg:pb-20">
         
-        <div className="relative text-center max-w-5xl mx-auto mb-20">
-          {/* Badge: Solid background, subtle border */}
+        <div className="relative text-center max-w-5xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium mb-8">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
@@ -69,7 +164,6 @@ export default function LandingContent() {
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight leading-tight">
             Transform How You <br className="hidden sm:block" />
-            {/* Removed gradient text for solid, readable text */}
             <span className="text-gray-900 dark:text-white">Work & Achieve</span>
           </h1>
 
@@ -78,7 +172,6 @@ export default function LandingContent() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            {/* Button: Solid Blue, no gradient */}
             <Link
               href="/register"
               className="group w-full sm:w-auto px-8 py-4 text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm"
@@ -88,7 +181,6 @@ export default function LandingContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
-            {/* Button: White with Border */}
             <Link
               href="/login"
               className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 shadow-sm"
@@ -124,7 +216,7 @@ export default function LandingContent() {
           <FeatureCard
             icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             }
             title="Analytics"
@@ -167,10 +259,20 @@ export default function LandingContent() {
         </div>
       </section>
 
+      {/* SECTION 2: Testimonials */}
       <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          <div className="max-w-4xl mx-auto mb-20">
-            {/* Testimonial Card - Sharper corners, solid bg */}
+          
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
+              Testimonials
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Trusted by professionals worldwide
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
             <div className="relative bg-white dark:bg-gray-800 rounded-xl p-10 shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="absolute top-8 left-8 text-blue-500 dark:text-blue-400 opacity-30">
                 <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
@@ -214,6 +316,7 @@ export default function LandingContent() {
         </div>
       </section>
 
+      {/* SECTION 3: How It Works */}
       <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center mb-16">
@@ -226,8 +329,6 @@ export default function LandingContent() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Removed the gradient line for cleaner look */}
-            
             <StepCard
               step="1"
               title="Sign Up Free"
@@ -264,7 +365,7 @@ export default function LandingContent() {
         </div>
       </section>
 
-      {/* FAQs Section */}
+      {/* SECTION 4: FAQs */}
       <section id="faqs" className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center mb-12">
@@ -295,6 +396,7 @@ export default function LandingContent() {
           <div className="flex items-center gap-6">
             <Link href="/status" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Status</Link>
             <Link href="/docs" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Docs</Link>
+            <Link href="/about" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About Us</Link>
             <Link href="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</Link>
             <a href="https://github.com/MeghOffical/Task_Scheduler" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.833.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.447-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.919.678 1.852 0 1.337-.012 2.415-.012 2.743 0 .268.18.58.688.481A10.019 10.019 0 0022 12.017C22 6.484 17.523 2 12 2z" clipRule="evenodd"/></svg>
@@ -363,8 +465,10 @@ interface AccordionItem {
 // Flat Accordion
 function Accordion({ items }: { items: AccordionItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const contentRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  
+  // FIXED: Changed to any[] to resolve the TypeScript strictness error
+  const contentRefs = useRef<any[]>([]);
+  const buttonRefs = useRef<any[]>([]);
 
   const focusButton = (index: number) => {
     const btn = buttonRefs.current[index];
@@ -419,17 +523,15 @@ function Accordion({ items }: { items: AccordionItem[] }) {
               id={`faq-${idx}`}
               className="px-5 pb-5 text-gray-600 dark:text-gray-400 transition-all duration-300 ease-in-out"
               style={{
-                maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx]!.scrollHeight}px` : '0px',
+                maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx].scrollHeight}px` : '0px',
                 overflow: 'hidden'
               }}
             >
               <div
                 ref={(el) => { contentRefs.current[idx] = el; }}
-                className={`pt-2 pb-6 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
               >
-                <p className="leading-relaxed">
-                  {item.a}
-                </p>
+                {item.a}
               </div>
             </div>
           </div>
