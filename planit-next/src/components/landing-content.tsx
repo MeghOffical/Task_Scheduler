@@ -2,12 +2,15 @@
 
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
-import MainHeader from '@/components/main-header';
 import faqsData from '@/app/faqs/faqs.json';
+import MainHeader from './main-header';
 
 export default function LandingContent() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [faqItems, setFaqItems] = useState<{ q: string; a: string }[]>([]);
+  
+  // THEME STATE
+  const [isDark, setIsDark] = useState(false);
 
   const testimonials = [
     {
@@ -29,6 +32,33 @@ export default function LandingContent() {
       avatar: "ER"
     }
   ];
+
+  // Initialize Theme
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const shouldBeDark = savedTheme === 'dark' || (!savedTheme && systemDark);
+    
+    setIsDark(shouldBeDark);
+    if (shouldBeDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newMode = !isDark;
+    setIsDark(newMode);
+    
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -122,6 +152,7 @@ export default function LandingContent() {
           <FeatureCard
             icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             }
@@ -306,6 +337,7 @@ export default function LandingContent() {
           <div className="flex items-center gap-6">
             <Link href="/status" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Status</Link>
             <Link href="/docs" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Docs</Link>
+            <Link href="/about" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About Us</Link>
             <Link href="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</Link>
             <a href="https://github.com/MeghOffical/Task_Scheduler" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.833.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.447-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.919.678 1.852 0 1.337-.012 2.415-.012 2.743 0 .268.18.58.688.481A10.019 10.019 0 0022 12.017C22 6.484 17.523 2 12 2z" clipRule="evenodd"/></svg>
@@ -374,8 +406,10 @@ interface AccordionItem {
 // Flat Accordion
 function Accordion({ items }: { items: AccordionItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const contentRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  
+  // FIXED: Changed to any[] to resolve the TypeScript strictness error
+  const contentRefs = useRef<any[]>([]);
+  const buttonRefs = useRef<any[]>([]);
 
   const focusButton = (index: number) => {
     const btn = buttonRefs.current[index];
@@ -430,17 +464,15 @@ function Accordion({ items }: { items: AccordionItem[] }) {
               id={`faq-${idx}`}
               className="px-5 pb-5 text-gray-600 dark:text-gray-400 transition-all duration-300 ease-in-out"
               style={{
-                maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx]!.scrollHeight}px` : '0px',
+                maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx].scrollHeight}px` : '0px',
                 overflow: 'hidden'
               }}
             >
               <div
                 ref={(el) => { contentRefs.current[idx] = el; }}
-                className={`pt-2 pb-6 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
               >
-                <p className="leading-relaxed">
-                  {item.a}
-                </p>
+                {item.a}
               </div>
             </div>
           </div>

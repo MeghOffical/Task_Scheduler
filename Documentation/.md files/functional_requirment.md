@@ -182,33 +182,73 @@ Task observation, stakeholder and user questionnaires.
 
 ------------------------------------------------------------------------
 
-## FR-15 - AI Chatbot Assistant
+# FR-15 – AI Chatbot Assistant
 
-Description:  
-An in-app conversational assistant helps users manage tasks via natural language: create/update/delete tasks, set reminders, query upcoming/overdue tasks, suggest priority or scheduling, and answer simple how-to questions about the app.
-
-Acceptance:  
-AI assists users in managing tasks efficiently.
-
-Identified by:  
-Brainstorming, interviews, prototyping.
+The AI chatbot helps users manage tasks and provides guidance using natural language. Its functionality is divided into the following sub-requirements:
 
 ------------------------------------------------------------------------
 
-## FR-16 - Local Data Persistence (Local DB)
+## FR-15a – Chatbot Task Management (CRUD)
 
-Description:  
-All user data is stored locally (SQLite or equivalent) and survives app restarts.
+**Description:**  
+The chatbot can **create, read, update, and delete tasks** based on user input in natural language.
 
-Acceptance:  
-No data loss occurs across restarts or OS sleep/wake cycles; there is a migration path for database schema changes.
+**Acceptance Criteria:**  
+- Users can create new tasks via the chatbot  
+- Users can update task details through the chatbot  
+- Users can delete tasks with proper confirmation  
+- Task changes are immediately reflected in the task list
 
-Identified by:  
-PDF priority (explicit), JAD, risk analysis.
+**Identified by:**  
+Brainstorming, interviews, prototyping
 
 ------------------------------------------------------------------------
 
-## FR-17 - Logout
+## FR-15b – Chatbot Subtask & Re-Task Management
+
+**Description:**  
+The chatbot can manage **subtasks**, allow **reassigning or re-scheduling tasks**, and track task dependencies.
+
+**Acceptance Criteria:**  
+- Users can create subtasks under a parent task  
+- Users can reassign or duplicate tasks for later execution  
+- Task dependencies are respected in reminders and scheduling
+
+**Identified by:**  
+Brainstorming, interviews, prototyping
+
+------------------------------------------------------------------------
+
+## FR-15c – Chatbot Advanced Scheduling & Suggestions
+
+**Description:**  
+The chatbot provides **priority suggestions, task ordering, and scheduling algorithms** to optimize task management.
+
+**Acceptance Criteria:**  
+- Chatbot suggests task priority based on deadlines and user preferences  
+- Chatbot proposes an optimal task order or schedule  
+- Users receive reminders and notifications based on the schedule
+
+**Identified by:**  
+Brainstorming, interviews, prototyping
+
+------------------------------------------------------------------------
+
+## FR-15d – Chatbot Task Query & Help
+
+**Description:**  
+The chatbot can answer queries about tasks (upcoming, overdue, completed) and provide **how-to guidance** about using the app.
+
+**Acceptance Criteria:**  
+- Users can query tasks quickly using natural language  
+- Users receive instructions or guidance about app features from the chatbot
+
+**Identified by:**  
+Brainstorming, interviews, prototyping
+
+------------------------------------------------------------------------
+
+## FR-16 - Logout
 
 Description:  
 Logged-in users can log out from the system at any time.

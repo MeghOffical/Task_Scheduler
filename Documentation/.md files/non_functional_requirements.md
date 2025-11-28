@@ -1,169 +1,169 @@
 # Non-Functional Requirements (NFR)
 
-## NFR-01 - Reliability / Data integrity 
+## NFR-01 - Reliability / Data integrity
 
 **Requirement:**
-No silent data loss\
-Atomic writes to local DB\
-Example: Either the whole task is done or not\
-Provide ability to Backup/Export data.
+No data should ever be lost silently.
+Every write to the local database must be atomic.
+Example: A task should be either fully completed or not done at all — no partial updates.
+The system must allow users to back up or export their data.
 
 **Measurable:**
-0% reported data loss in testing\
-DB transactions for task create/update/delete.
+0% data loss during testing.
+All task create, update, and delete actions must use database transactions.
 
 **Identified by:**
-Risk analysis and Survey. 
+Found through risk analysis and user surveys.
 
 ---
 
-## NFR-02 - Performance / Responsiveness  
+## NFR-02 - Performance / Responsiveness
 
 **Requirement:**
-UI interactions (create/update/delete/filter) should respond within ~1s on typical laptop datasets.
+UI actions (create, update, delete, filter) should respond in about 1 second on a normal laptop with typical data.
 
 **Measurable:**
-95% of interactions < 1s.
+95% of actions should take less than 1 second.
 
 **Identified by:**
-Use cases, prototyping, surveys(expectation of “fast, simple”). 
+Based on use cases, early prototypes, and surveys (users expect the app to feel "fast and simple").
 
 ---
 
-## NFR-03 - Usability / Learnability  
+## NFR-03 - Usability / Learnability
 
 **Requirement:**
-Minimal UI complexity; new users can create a task in under ~10 seconds (goal).
+The UI should be simple, and new users should be able to create a task in about 10 seconds (goal).
 
 **Measurable:**
-Time-to-create task metric measured in usability tests.
+The time it takes to create a task will be measured during usability tests.
 
 **Identified by:**
- surveys, prototyping.
+Surveys and prototypes.
 
 ---
 
 ## NFR-04 - OS and Installation Support
 
 **Requirement:**
-Deliver installers/packages for Windows and macOS and possibly linux (desktop app).
+Provide installers/packages for Windows, macOS, and possibly Linux (for the desktop app).
 
 **Measurable:**
-Verified install and run on targeted OSes.
+Confirmed that the app installs and runs on all target operating systems.
 
 **Identified by:**
-Stakeholder analysis, studying documentation.
+Stakeholder analysis and reviewing documentation.
 
 ---
 
 ## NFR-05 – Maintainability / Modularity
- 
-**Requirement:**  
-The codebase should be modular with a clear separation of concerns (UI, data, persistence).  
-Core logic should have unit tests to ensure correctness.  
 
-**Measurable:**  
-Unit test coverage & success rate for core logic.  
-*(i.e., how much of the code is tested = coverage, and how many tests pass = success rate).*  
+**Requirement:**
+The code should be modular, with clear separation between UI, data handling, and storage.
+Core logic should have unit tests to make sure it works correctly.
 
-**Identified by:**  
-Risk analysis.  
+**Measurable:**
+Unit test coverage and success rate for the core logic.
+(Coverage = how much of the code is tested; Success rate = how many tests pass.)
+
+**Identified by:**
+Risk analysis.
 
 ---
 
-## NFR-06 – Extensibility / Scalability 
+## NFR-06 – Extensibility / Scalability
 
-**Requirement:**  
-The architecture should allow adding future features like cloud sync, calendar API integrations, or gamification without major rewrites.  
+**Requirement:**
+The system's design should make it easy to add future features like cloud sync, calendar API support, or gamification without needing large code changes.
 
-**Measurable:**  
-Existence of a clear adapter/service layer *(so base layer talks to the middle layer, not directly to the DB)* and documented integration points.  
+**Measurable:**
+There should be a clear adapter/service layer (so the main app talks to the middle layer instead of directly to the database) and well-documented places where new features can be added.
 
-**Identified by:**  
-Interviews *(users wanted their tasks synced across devices, i.e., cloud sync)* and brainstorming sessions.  
+**Identified by:**
+Interviews (users wanted their tasks to sync across devices — cloud sync) and brainstorming sessions.
 
 ---
 
 ## NFR-07 – Startup & Resource Footprint
 
-**Requirement:**  
-The app should start quickly and use low memory so that it runs smoothly on laptops.  
+**Requirement:**
+The app should start fast and use low memory so it runs smoothly on laptops.
 
-**Measurable:**  
-Startup time < 5s on target hardware.  
-Memory usage remains reasonable during idle state.  
+**Measurable:**
+Startup time should be under 5 seconds on the target hardware.
+Memory usage should stay low when the app is idle.
 
-**Identified by:**  
-Usability expectations and survey feedback.  
+**Identified by:**
+User expectations and survey feedback.
 
 ---
 
 ## NFR-08 – Testability (for QA)
 
-**Requirement:**  
-The system should provide test hooks (e.g., debug mode, mock API) and proper logging (e.g., “Task created successfully at 12:05 PM”).  
+**Requirement:**
+The system should offer test hooks (like debug mode or mock APIs) and clear logs (for example: "Task created successfully at 12:05 PM").
 
-**Measurable:**  
-QA can run automated scenarios for core flows and verify outcomes consistently.  
+**Measurable:**
+QA should be able to run automated tests for the main features and get consistent results.
 
-**Identified by:**  
-QA stakeholder analysis and group meetings (brainstorming). 
+**Identified by:**
+QA stakeholder analysis and group brainstorming meetings.
 
 ---
 
 ## NFR-09 – AI Privacy & Data Handling (MUST, for chatbot feature)
 
-**Requirement:**  
-Chatbot interactions must default to privacy-preserving behaviour.  
-Users must explicitly opt in to any cloud-based processing, with local-only processing preferred where possible.  
-All data handling should be transparent and described in a short in-app privacy notice.  
+**Requirement:**
+The chatbot must follow privacy-friendly behavior by default.
+Users must clearly choose (opt in) if they want any cloud-based processing, and local processing should be used whenever possible.
+All data handling must be clear and explained in a short in-app privacy notice.
 
-**Measurable:**  
-- Opt-in toggle present.  
-- Telemetry or transcripts are only collected with consent.  
-- No personal data is shared without explicit consent.  
+**Measurable:**
+⦁ An opt-in toggle is available.
+⦁ Telemetry or chat transcripts are collected only if the user gives consent.
+⦁ No personal data is shared without explicit user consent.
 
-**Elicited by:**  
-Risk analysis, interviews, stakeholder analysis (legal/privacy stakeholders).  
+**Elicited by:**
+Risk analysis, interviews, and discussions with legal/privacy stakeholders.
 
 ---
 
-## NFR-10 – Chatbot Response Accuracy & Safety 
+## NFR-10 – Chatbot Response Accuracy & Safety
 
-**Requirement:**  
-Chatbot should provide clear confidence indicators and safe fallbacks.  
-For example: *“I’m not sure – would you like me to create a draft task for you to review?”*  
-The chatbot must avoid making irreversible changes without user confirmation.  
+**Requirement:**
+The chatbot should show clear confidence levels and provide safe fallback options.
+For example: "I'm not sure – would you like me to create a draft task for you to review?"
+It must not make irreversible changes without asking the user first.
 
-**Measurable:**  
-In pilot testing, fewer than 5% of chatbot-suggested task creations are reverted by users.  
+**Measurable:**
+In pilot tests, less than 5% of chatbot-suggested task creations are undone by users.
 
-**Elicited by:**  
-Pilot testing, prototyping, competitive analysis. 
+**Elicited by:**
+Pilot testing, prototypes, and competitive analysis.
 
 ---
 
 ## NFR-11 – Chatbot Latency & Availability
 
-**Requirement:**  
-Chat responses should return within a few seconds for a smooth conversational feel.  
-If external services are unavailable, the system should detect this and gracefully fall back to offline help or local parsing.  
+**Requirement:**
+Chat responses should come back within a few seconds for a smooth conversation.
+If external services are unavailable, the system should detect this and safely fall back to offline help or local processing.
 
-**Measurable:**  
-90% of responses return in under 3 seconds during pilot (when cloud services are used).  
+**Measurable:**
+90% of responses should return in under 3 seconds during pilot tests when cloud services are used.
 
-**Elicited by:**  
-Prototyping and use-case expectations.  
+**Elicited by:**
+Prototypes and expected use cases.
 
 ---
 
-## NFR-12 – Maintainability (Chatbot Models / Rules) 
+## NFR-12 – Maintainability (Chatbot Models / Rules)
 
-**Requirement:**  
-The chatbot must be designed as a modular layer so that rules, prompts, or models can be updated without breaking the core app.  
+**Requirement:**
+The chatbot should be modular so that rules, prompts, or models can be updated without affecting the main app.
 
-**Measurable:**  
-Integration points are documented, and updates can be applied in a non-disruptive way.  
+**Measurable:**
+Integration points are documented, and updates can be made without disrupting the system.
 
-**Elicited by:**  
-Brainstorming and competitive analysis. 
+**Elicited by:**
+Brainstorming and competitive analysis.
