@@ -31,6 +31,12 @@ export default function SettingsPage() {
   const [editUsername, setEditUsername] = useState(false);
   const [newUsername, setNewUsername] = useState('');
   const [usernameError, setUsernameError] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordChangeStatus, setPasswordChangeStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [passwordChangeMessage, setPasswordChangeMessage] = useState('');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -132,6 +138,21 @@ export default function SettingsPage() {
     }
   };
 
+  const openPasswordModal = () => {
+    setPasswordChangeStatus('idle');
+    setPasswordChangeMessage('');
+    setShowPasswordModal(true);
+  };
+
+  const closePasswordModal = () => {
+    setShowPasswordModal(false);
+    setPasswordChangeStatus('idle');
+    setPasswordChangeMessage('');
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
   const handleInputChange = (field: keyof PomodoroSettings, value: string) => {
     const numValue = parseInt(value, 10);
     if (isNaN(numValue)) return;
@@ -156,6 +177,59 @@ export default function SettingsPage() {
   const cancelUsernameEdit = () => {
     setEditUsername(false);
     setUsernameError('');
+  };
+
+  const handlePasswordChange = async () => {
+    if (!user) return;
+
+    setPasswordChangeMessage('');
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordChangeStatus('error');
+      setPasswordChangeMessage('Please fill in all password fields.');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordChangeStatus('error');
+      setPasswordChangeMessage('New password must be at least 8 characters long.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordChangeStatus('error');
+      setPasswordChangeMessage('New passwords do not match.');
+      return;
+    }
+
+    setPasswordChangeStatus('loading');
+
+    try {
+      const response = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update password');
+      }
+
+      setPasswordChangeStatus('success');
+      setPasswordChangeMessage(data.message || 'Password updated successfully.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      setPasswordChangeStatus('error');
+      setPasswordChangeMessage(
+        error instanceof Error ? error.message : 'Failed to update password'
+      );
+    }
   };
 
   return (
@@ -226,6 +300,21 @@ export default function SettingsPage() {
                 Email cannot be changed
               </p>
             </div>
+          </div>
+        </div>
+        <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-base font-medium text-gray-900 dark:text-gray-100">Password</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Keep your account secure by updating your password regularly.</p>
+            </div>
+            <button
+              type="button"
+              onClick={openPasswordModal}
+              className="self-start md:self-auto px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm"
+            >
+              Reset
+            </button>
           </div>
         </div>
       </section>
@@ -307,6 +396,81 @@ export default function SettingsPage() {
           )}
         </div>
       </section>
+
+      {showPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 bg-black/60 backdrop-blur-sm">
+          <div className="glass-panel w-full max-w-lg p-6 relative">
+            <button
+              type="button"
+              onClick={closePasswordModal}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              aria-label="Close password modal"
+            >
+              ✕
+            </button>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Update password</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              Enter your current password and choose a new one with at least 8 characters.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className='text-sm font-medium text-gray-700 dark:text-gray-300'>Current password</label>
+                <input
+                  type='password'
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                  placeholder='Enter current password'
+                />
+              </div>
+              <div>
+                <label className='text-sm font-medium text-gray-700 dark:text-gray-300'>New password</label>
+                <input
+                  type='password'
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                  placeholder='At least 8 characters'
+                />
+              </div>
+              <div>
+                <label className='text-sm font-medium text-gray-700 dark:text-gray-300'>Confirm new password</label>
+                <input
+                  type='password'
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                  placeholder='Re-enter new password'
+                />
+              </div>
+              {(passwordChangeStatus === 'success' || passwordChangeStatus === 'error') && (
+                <p className={`text-sm ${passwordChangeStatus === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                  {passwordChangeMessage}
+                </p>
+              )}
+              <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant='outline'
+                  className='w-full sm:w-auto'
+                  onClick={closePasswordModal}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  className='w-full sm:w-auto bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+                  isLoading={passwordChangeStatus === 'loading'}
+                  loadingText='Updating...'
+                  onClick={handlePasswordChange}
+                >
+                  Update password
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
