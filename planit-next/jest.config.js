@@ -11,6 +11,8 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@heroicons/react/24/outline$': '<rootDir>/__mocks__/@heroicons/react/24/outline.js',
+    '@heroicons/react/24/outline/esm/(.*)': '<rootDir>/__mocks__/@heroicons/react/24/outline.js',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(jose)/)',
@@ -41,7 +43,6 @@ const customJestConfig = {
     '/.stryker-tmp/',
     // Temporarily skip tests with mongoose/bson/next-auth issues
     'src/models/index.test.ts',
-    'src/lib/auth/config.test.ts',
     'src/app/api/tasks/\\[id\\]/route.test.ts',
     'src/app/api/tasks/route.test.ts',
     'src/app/api/auth/register/route.test.ts',

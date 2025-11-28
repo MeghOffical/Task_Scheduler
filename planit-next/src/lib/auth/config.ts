@@ -4,6 +4,13 @@ import GoogleProvider from 'next-auth/providers/google';
 import dbConnect from '@/lib/db';
 import { User } from '@/models';
 import { comparePasswords } from '@/lib/auth';
+import {
+  getCookieName,
+  getCookieOptions,
+  buildOAuthUserData,
+  getRedirectUrl,
+  hasValidCredentials,
+} from './config-helpers';
 
 export const authConfig: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || 'your-secret-key-123',
@@ -18,7 +25,7 @@ export const authConfig: AuthOptions = {
         try {
           await dbConnect();
           
-          if (!credentials?.email || !credentials?.password) {
+          if (!hasValidCredentials(credentials)) {
             return null;
           }
 
@@ -67,52 +74,24 @@ export const authConfig: AuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        // Cookie maxAge left unset to use NextAuth default (follows session.maxAge)
-      },
+      name: getCookieName('next-auth.session-token'),
+      options: getCookieOptions(),
     },
     callbackUrl: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.callback-url`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
+      name: getCookieName('next-auth.callback-url'),
+      options: getCookieOptions(),
     },
     csrfToken: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Host-' : ''}next-auth.csrf-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
+      name: getCookieName('next-auth.csrf-token', 'host'),
+      options: getCookieOptions(),
     },
     pkceCodeVerifier: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.pkce.code_verifier`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 15, // 15 minutes
-      },
+      name: getCookieName('next-auth.pkce.code_verifier'),
+      options: getCookieOptions(60 * 15), // 15 minutes
     },
     state: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.state`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 15, // 15 minutes
-      },
+      name: getCookieName('next-auth.state'),
+      options: getCookieOptions(60 * 15), // 15 minutes
     },
   },
   useSecureCookies: process.env.NODE_ENV === 'production',
@@ -128,14 +107,13 @@ export const authConfig: AuthOptions = {
           
           if (!existingUser) {
             // Create new user from Google OAuth (password not needed for OAuth users)
-            const userData: any = {
-              email: user.email!,
-              name: user.name,
-              image: user.image,
-              provider: 'google',
-              providerId: account.providerAccountId,
-              username: user.email!.split('@')[0] + '_' + Date.now(), // Generate unique username
-            };
+            const userData = buildOAuthUserData(
+              user.email!,
+              user.name,
+              user.image,
+              'google',
+              account.providerAccountId
+            );
             // Don't include password field for OAuth users
             const newUser = await User.create(userData);
             user.id = newUser._id.toString();
@@ -179,26 +157,7 @@ export const authConfig: AuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      try {
-        // After successful OAuth, redirect to dashboard
-        if (url === baseUrl || url === `${baseUrl}/` || url.includes('/login') || url.includes('/register')) {
-          return `${baseUrl}/dashboard`;
-        }
-        // Allow relative callback URLs
-        if (url.startsWith('/')) {
-          return `${baseUrl}${url}`;
-        }
-        // Allow same-origin URLs
-        const urlObj = new URL(url);
-        const baseUrlObj = new URL(baseUrl);
-        if (urlObj.origin === baseUrlObj.origin) {
-          return url;
-        }
-        return `${baseUrl}/dashboard`;
-      } catch (error) {
-        console.error('Redirect error:', error);
-        return `${baseUrl}/dashboard`;
-      }
+      return getRedirectUrl(url, baseUrl);
     }
   }
 };
