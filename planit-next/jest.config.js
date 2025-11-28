@@ -11,7 +11,8 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^@heroicons/react/24/outline(/.*)?$': '<rootDir>/__mocks__/@heroicons/react/24/outline.js',
+    '^@heroicons/react/24/outline$': '<rootDir>/__mocks__/@heroicons/react/24/outline/index.tsx',
+    '^@heroicons/react/24/outline/(.*)$': '<rootDir>/__mocks__/@heroicons/react/24/outline/index.tsx',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(jose)/)',

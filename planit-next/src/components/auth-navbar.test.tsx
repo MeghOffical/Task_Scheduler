@@ -61,4 +61,74 @@ describe('AuthNavbar Component', () => {
     expect(faqLink).toBeInTheDocument();
     expect(faqLink).toHaveAttribute('href', '/faqs');
   });
+
+  it('should have white text color', () => {
+    render(<AuthNavbar />);
+    const logo = screen.getByRole('link', { name: 'Plan-it' });
+    expect(logo).toHaveClass('text-white');
+  });
+
+  it('should have hover effects on logo', () => {
+    render(<AuthNavbar />);
+    const logo = screen.getByRole('link', { name: 'Plan-it' });
+    expect(logo).toHaveClass('hover:text-blue-100', 'transition-colors');
+  });
+
+  it('should have hover effects on FAQ link', () => {
+    render(<AuthNavbar />);
+    const faqLink = screen.getByRole('link', { name: 'FAQs' });
+    expect(faqLink).toHaveClass('hover:text-blue-100', 'transition-colors');
+  });
+
+  it('should have proper font styling on logo', () => {
+    render(<AuthNavbar />);
+    const logo = screen.getByRole('link', { name: 'Plan-it' });
+    expect(logo).toHaveClass('text-3xl', 'font-bold');
+  });
+
+  it('should have space between links', () => {
+    const { container } = render(<AuthNavbar />);
+    const linkContainer = container.querySelector('.space-x-4');
+    expect(linkContainer).toBeInTheDocument();
+  });
+
+  it('should have flex layout for alignment', () => {
+    const { container } = render(<AuthNavbar />);
+    const innerDiv = container.querySelector('.max-w-7xl');
+    expect(innerDiv).toHaveClass('flex', 'items-center', 'justify-between');
+  });
+
+  it('should render as nav element', () => {
+    const { container } = render(<AuthNavbar />);
+    const nav = container.querySelector('nav');
+    expect(nav).toBeInTheDocument();
+  });
+
+  it('should have inline-block display for logo', () => {
+    render(<AuthNavbar />);
+    const logo = screen.getByRole('link', { name: 'Plan-it' });
+    expect(logo).toHaveClass('inline-block');
+  });
+
+  it('should have accessible link text', () => {
+    render(<AuthNavbar />);
+    const links = screen.getAllByRole('link');
+    links.forEach(link => {
+      expect(link.textContent).toBeTruthy();
+    });
+  });
+
+  it('should have proper gradient colors', () => {
+    const { container } = render(<AuthNavbar />);
+    const nav = container.querySelector('nav');
+    expect(nav?.className).toContain('from-blue-600');
+    expect(nav?.className).toContain('to-blue-500');
+  });
+
+  it('should not have any console errors', () => {
+    const consoleSpy = jest.spyOn(console, 'error');
+    render(<AuthNavbar />);
+    expect(consoleSpy).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
 });
