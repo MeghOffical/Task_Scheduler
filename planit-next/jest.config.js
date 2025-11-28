@@ -43,12 +43,6 @@ const customJestConfig = {
     // Temporarily skip tests with mongoose/bson/next-auth issues
     'src/models/index.test.ts',
     'src/lib/auth/config.test.ts',
-    'src/app/api/tasks/\\[id\\]/route.test.ts',
-    'src/app/api/tasks/route.test.ts',
-    'src/app/api/auth/register/route.test.ts',
-    'src/app/api/auth/login/route.test.ts',
-    'src/app/api/settings/route.test.ts',
-    'src/app/api/user/me/route.test.ts',
     'src/app/api/chatbot-python/threads/route.early.test',
     'src/middleware.test.ts',
   ],
