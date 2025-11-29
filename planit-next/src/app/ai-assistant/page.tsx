@@ -831,7 +831,7 @@ Return ONLY valid JSON, nothing else.`
         }
         
         if (type === 'select_status' && tasks) {
-          let task = null;
+          let task: any = null;
           
           // Try to find by number first
           if (!isNaN(num) && num > 0 && num <= tasks.length) {
