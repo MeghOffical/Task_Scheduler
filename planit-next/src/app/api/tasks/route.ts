@@ -38,7 +38,7 @@ export async function GET(request: Request) {
       try {
         await awardPoints({
           userId: userId.toString(),
-          type: 'task_overdue',
+          type: 'missed_deadline',
           amount: -5,
           description: `Missed deadline: ${task.title}`,
         });
