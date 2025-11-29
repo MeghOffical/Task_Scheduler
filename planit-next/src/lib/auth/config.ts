@@ -29,7 +29,7 @@ export const authConfig: AuthOptions = {
             return null;
           }
 
-          const user = await User.findOne({ email: credentials.email });
+          const user = await User.findOne({ email: credentials!.email });
           if (!user) {
             return null;
           }
@@ -41,7 +41,7 @@ export const authConfig: AuthOptions = {
           }
 
           // 2. Use non-null assertion (!) because we've confirmed it exists.
-          const isValid = await comparePasswords(credentials.password, user.password!);
+          const isValid = await comparePasswords(credentials!.password, user.password!);
           // --- END FIX ---
           
           if (!isValid) {
