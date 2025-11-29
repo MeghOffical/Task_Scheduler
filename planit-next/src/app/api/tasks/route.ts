@@ -20,30 +20,51 @@ export async function GET(request: Request) {
     await dbConnect();
 
     // Check and update overdue tasks before fetching
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const now = new Date();
     
-    // Find all tasks that are past due but not completed or already overdue
-    const overdueTasks = await Task.find({
+    // Find all tasks that are not completed or already overdue
+    const potentiallyOverdueTasks = await Task.find({
       userId,
-      dueDate: { $lt: today },
       status: { $nin: ['completed', 'overdue'] }
     });
 
-    // Update each overdue task and deduct points
-    for (const task of overdueTasks) {
-      await Task.findByIdAndUpdate(task._id, { status: 'overdue' });
+    // Check each task to see if it's overdue based on date and time
+    for (const task of potentiallyOverdueTasks) {
+      let isOverdue = false;
       
-      // Deduct 5 coins for missing deadline
-      try {
-        await awardPoints({
-          userId: userId.toString(),
-          type: 'missed_deadline',
-          amount: -5,
-          description: `Missed deadline: ${task.title}`,
-        });
-      } catch (e) {
-        console.error('Error applying missed deadline penalty:', e);
+      if (task.dueDate) {
+        const dueDate = new Date(task.dueDate);
+        
+        if (task.endTime) {
+          // Parse endTime (format: "HH:mm") and combine with dueDate
+          const [hours, minutes] = task.endTime.split(':').map(Number);
+          const dueDateTime = new Date(dueDate);
+          dueDateTime.setHours(hours, minutes, 0, 0);
+          
+          // Task is overdue if current time is past the due date + end time
+          isOverdue = now > dueDateTime;
+        } else {
+          // No end time specified, consider overdue after the due date (at midnight)
+          const dueDateMidnight = new Date(dueDate);
+          dueDateMidnight.setHours(23, 59, 59, 999);
+          isOverdue = now > dueDateMidnight;
+        }
+      }
+      
+      if (isOverdue) {
+        await Task.findByIdAndUpdate(task._id, { status: 'overdue' });
+        
+        // Deduct 5 coins for missing deadline
+        try {
+          await awardPoints({
+            userId: userId.toString(),
+            type: 'missed_deadline',
+            amount: -5,
+            description: `Missed deadline: ${task.title}`,
+          });
+        } catch (e) {
+          console.error('Error applying missed deadline penalty:', e);
+        }
       }
     }
 
