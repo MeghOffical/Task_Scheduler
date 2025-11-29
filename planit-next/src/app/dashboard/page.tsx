@@ -162,9 +162,15 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
 
     if (sortOption === 'date') {
       return normalized.sort((a, b) => {
-        const dateA = new Date(a.updatedAt ?? a.createdAt ?? a.dueDate ?? 0).getTime();
-        const dateB = new Date(b.updatedAt ?? b.createdAt ?? b.dueDate ?? 0).getTime();
-        return dateB - dateA;
+        const dueA = a.dueDate ? new Date(a.dueDate).getTime() : null;
+        const dueB = b.dueDate ? new Date(b.dueDate).getTime() : null;
+
+        if (dueA === null && dueB === null) {
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        }
+        if (dueA === null) return 1;
+        if (dueB === null) return -1;
+        return dueA - dueB;
       });
     }
 
@@ -269,7 +275,7 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                       >
                         <option value="default">Default</option>
                         <option value="priority">Priority (High → Low)</option>
-                        <option value="date">Date (Newest)</option>
+                        <option value="date">Date</option>
                       </select>
                     </label>
                   </div>
