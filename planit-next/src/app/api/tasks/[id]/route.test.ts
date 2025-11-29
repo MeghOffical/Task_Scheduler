@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { NextRequest } from 'next/server';
 import { DELETE, PUT, PATCH } from './route';
 import { Task } from '@/models';

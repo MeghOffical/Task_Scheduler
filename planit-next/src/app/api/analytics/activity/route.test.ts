@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { TaskCompletionHistory } from '@/models';

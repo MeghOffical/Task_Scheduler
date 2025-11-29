@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { NextRequest } from 'next/server';
 import { GET, PUT } from './route';
 import { getServerSession } from 'next-auth';

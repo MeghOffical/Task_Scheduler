@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { GET } from './route';
 import { getAuthenticatedUserId } from '@/lib/auth-utils';
 import { User } from '@/models';
