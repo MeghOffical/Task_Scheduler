@@ -1,5 +1,12 @@
-<img src="https://capsule-render.vercel.app/api?type=venom&height=200&color=gradient&text=PlanIt-TaskScheduler&textBg=false&fontColor=FFFFFF&stroke=000000&animation=twinkling">
-</div>https://github.com/MeghOffical/Task_Scheduler/blob/main/README.md
+<p align="center">
+  <img 
+    src="https://github.com/user-attachments/assets/e3a2f4a5-eac0-4c5e-8dbe-5bbd387d2f4d" 
+    alt="PlanIT-Logo/Banner"
+    width="684"
+    height="194"
+  />
+</p>
+
 
 
 ---
@@ -8,13 +15,12 @@
 
 In today's fast-paced world, managing daily tasks can be overwhelming. **PlanIt** is a desktop task scheduler app designed for **students, working professionals, and freelancers** who need a simple yet powerful tool to manage their to-do lists.
 
-Our goal is to create a distraction-free tool that helps you focus on what truly matters. With PlanIt, your tasks are stored securely on your local machine, ensuring your data remains private and accessible anytime.
+Our goal is to create a distraction-free tool that helps you focus on what truly matters. 
 
 ### Why PlanIt?
 * **Simple & Intuitive:** A clean interface that's easy to navigate.
-* **Privacy-Focused:** All your tasks are stored locally on your device.
 * **Lightweight & Fast:** Built to be responsive and not hog your system's resources.
-* **Smart & Efficient:** An optional AI assistant to make task management faster than ever.
+* **Smart & Efficient:** An built-in AI assistant to make task management faster than ever.
 
 ---
 
@@ -25,14 +31,11 @@ PlanIt is packed with features to enhance your productivity..
 ### Core Functionality
 * **CRUD Operations:** Easily **C**reate, **R**ead, **U**pdate, and **D**elete tasks.
 * **Task Completion:** Mark tasks as complete to track your progress.
-* **Local Database Storage:** Your tasks are saved securely on your local machine and persist between sessions.
 * **Embedded AI Assistant:** Launch the Chatbot sidebar/page inside the Next.js dashboard, create multiple conversations, and get Gemini-powered productivity guidance retained per thread.
-
-### Planned Features
-* ⏰ **Reminders & Notifications:** Set custom reminders so you never miss a deadline.
-* 🔍 **Task Filtering & Sorting:** Quickly find tasks by date, priority, or status.
-* 📊 **Progress Tracking:** Visualize your productivity with simple stats and charts.
-* 📤 **Data Export:** Export your task lists to common formats like CSV or TXT.
+* **Task Filtering & Sorting:** Quickly find tasks by date, priority, or status.
+* **Reminders & Notifications:** Set custom reminders so you never miss a deadline.
+* **Progress Tracking:** Visualize your productivity with simple stats and charts.
+* **Data Export:** Export your task lists to CSV.
 
 ---
 
@@ -56,7 +59,6 @@ Our development focuses on meeting key functional and non-functional requirement
     * Easy data export capabilities.
 * **Non-Functional Needs:**
     * **Speed:** A snappy and responsive user experience.
-    * **Privacy:** Ensuring all user data is stored locally and securely.
     * **Accessibility:** Building an app that is usable by a wide range of users.
 
 ---
