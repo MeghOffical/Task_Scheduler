@@ -110,8 +110,8 @@ export async function PUT(
         { upsert: true, new: true }
       );
 
-      // Award points for on-time completion (completedAt <= end of due date)
-      if (dueDateEndOfDay && updateData.completedAt <= dueDateEndOfDay) {
+      // Award points for on-time completion (completedAt <= end of due date AND task was not already overdue)
+      if (dueDateEndOfDay && updateData.completedAt <= dueDateEndOfDay && task.status !== 'overdue') {
         try {
           await awardPoints({
             userId: userId.toString(),
@@ -226,8 +226,8 @@ export async function PATCH(
         { upsert: true, new: true }
       );
 
-      // Award points for on-time completion (completedAt <= end of due date)
-      if (dueDateEndOfDay && updateData.completedAt <= dueDateEndOfDay) {
+      // Award points for on-time completion (completedAt <= end of due date AND task was not already overdue)
+      if (dueDateEndOfDay && updateData.completedAt <= dueDateEndOfDay && task.status !== 'overdue') {
         try {
           await awardPoints({
             userId: userId.toString(),
