@@ -16,10 +16,7 @@
   },
   "coverageAnalysis": "off",
   "mutate": [
-    "src/lib/events.ts",
-    "src/lib/task-utils.ts",
-    "src/lib/auth.ts",
-    "src/lib/db.ts"
+    "src/app/pomodoro/page.tsx"
   ],
   "comment": "Add more files here as you write tests for them. Avoid files with complex dependencies or TypeScript errors.",
   "thresholds": {
