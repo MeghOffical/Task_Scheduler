@@ -6,9 +6,8 @@ The architecture is designed to be **modular, secure, scalable**, and easy to ma
 
 ---
 
-### System Architecture Diagram
-
-<img width="920" alt="system_design_diagram" src="https://raw.githubusercontent.com/MeghOffical/Task_Scheduler/8cd0a9cebad6aeba910c085d3dede27dbf0df1cc/Documentation/SystemDesign.png" />
+### System Architecture Diagram  
+<img width="2940" height="689" alt="SystemDesign drawio" src="https://github.com/user-attachments/assets/8ca0b2dd-d424-4d82-ba6e-5cbba9b0198f" />
 
 ---
 
