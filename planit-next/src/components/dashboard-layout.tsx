@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -45,25 +45,57 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen }: { isMobileMenuOpen: b
     delta: number;
     message: string;
   } | null>(null);
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const latestPointsRef = useRef<number>(0);
+
+  const showPointToast = useCallback(
+    (message: string, delta: number) => {
+      setPointsToast({
+        delta,
+        message,
+      });
+
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+
+      toastTimeoutRef.current = setTimeout(() => setPointsToast(null), 3500);
+    },
+    [setPointsToast]
+  );
+
+  useEffect(() => {
+    if (typeof userInfo?.points === 'number') {
+      latestPointsRef.current = userInfo.points;
+    }
+  }, [userInfo?.points]);
 
   // Expose a simple global helper so other client components (e.g. Tasks page)
   // can trigger a points toast without prop drilling. This attaches once on
   // mount and is safe in the browser.
   useEffect(() => {
-    (window as any).showPointsToast = (message: string, isPositive: boolean) => {
-      setPointsToast({
-        delta: isPositive ? 1 : -1,
-        message,
-      });
-      setTimeout(() => setPointsToast(null), 3500);
+    const globalToastHandler = (message: string, delta: number) => {
+      showPointToast(message, delta);
+
+      const currentPoints = latestPointsRef.current ?? 0;
+      const nextPoints = Math.max(0, currentPoints + delta);
+      latestPointsRef.current = nextPoints;
+
+      setUserInfo(prev => (prev ? { ...prev, points: nextPoints } : prev));
+      setLastPoints(nextPoints);
     };
 
+    (window as any).showPointsToast = globalToastHandler;
+
     return () => {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
       if ((window as any).showPointsToast) {
         delete (window as any).showPointsToast;
       }
     };
-  }, []);
+  }, [showPointToast]);
 
   const fetchUserInfo = async () => {
     try {
@@ -80,15 +112,12 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen }: { isMobileMenuOpen: b
 
           const delta = nextPoints - prev;
           if (delta !== 0) {
-            setPointsToast({
-              delta,
-              message:
-                delta > 0
-                  ? `You earned +${delta} points`
-                  : `You lost ${Math.abs(delta)} points`,
-            });
-
-            setTimeout(() => setPointsToast(null), 3500);
+            showPointToast(
+              delta > 0
+                ? `You earned +${delta} points`
+                : `You lost ${Math.abs(delta)} points`,
+              delta
+            );
           }
 
           return nextPoints;
@@ -120,7 +149,7 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen }: { isMobileMenuOpen: b
 
               (window as any).showPointsToast?.(
                 'Daily login bonus! You earned +1 point.',
-                true
+                1
               );
             }
           }
@@ -279,17 +308,41 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen }: { isMobileMenuOpen: b
       <div className="flex items-center gap-1.5 sm:gap-3">
         {/* Points toast */}
         {pointsToast && (
-          <div className="fixed bottom-6 right-6 z-50 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-3 sm:px-4 py-2 sm:py-3 shadow-lg flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-emerald-200">
-            <span className={`h-2 w-2 rounded-full ${pointsToast.delta >= 0 ? 'bg-emerald-400' : 'bg-red-400'} shadow-[0_0_10px_rgba(52,211,153,0.9)]`} />
-            <div>
-              <p className="font-semibold">
-                {pointsToast.message}
-              </p>
-              <p className="text-[10px] sm:text-xs text-emerald-200/80">
-                Check your points in the profile menu.
-              </p>
-            </div>
-          </div>
+          (() => {
+            const delta = pointsToast.delta;
+            const isPenalty = delta < 0;
+            const themeClasses = delta < 0
+              ? {
+                  wrapper: 'border-rose-400/30 bg-rose-500/10 text-rose-100 shadow-[0_0_25px_rgba(244,63,94,0.35)]',
+                  dot: 'bg-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.55)]',
+                  subtext: 'text-rose-100/80',
+                }
+              : delta === 1
+                ? {
+                    wrapper: 'border-amber-300/30 bg-amber-500/10 text-amber-100 shadow-[0_0_25px_rgba(251,191,36,0.35)]',
+                    dot: 'bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.6)]',
+                    subtext: 'text-amber-100/80',
+                  }
+                : {
+                    wrapper: 'border-emerald-400/30 bg-emerald-500/10 text-emerald-100 shadow-[0_0_25px_rgba(16,185,129,0.35)]',
+                    dot: 'bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.6)]',
+                    subtext: 'text-emerald-100/80',
+                  };
+
+            return (
+              <div className={`fixed top-6 right-6 z-50 flex max-w-xs items-start gap-3 rounded-2xl border px-4 py-3 text-xs sm:text-sm backdrop-blur-lg ${themeClasses.wrapper}`}>
+                <span className={`mt-1 inline-flex h-2.5 w-2.5 rounded-full ${themeClasses.dot}`} />
+                <div>
+                  <p className="font-semibold leading-snug">
+                    {pointsToast.message}
+                  </p>
+                  <p className={`text-[10px] sm:text-xs ${themeClasses.subtext}`}>
+                    {isPenalty ? 'Keep an eye on upcoming deadlines.' : 'Nice! Your points were updated.'}
+                  </p>
+                </div>
+              </div>
+            );
+          })()
         )}
 
         {/* Notifications */}

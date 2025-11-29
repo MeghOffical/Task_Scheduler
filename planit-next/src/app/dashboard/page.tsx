@@ -43,6 +43,15 @@ export default function DashboardPage() {
   });
   const [tasks, setTasks] = useState<Task[]>([]);
 
+  const triggerTaskCompletionToast = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    (window as any).showPointsToast?.(
+      'Task completed! You earned +10 points.',
+      10
+    );
+  }, []);
+
   const fetchDashboardData = useCallback(async () => {
     try {
       // Add timestamp to prevent caching
@@ -296,13 +305,17 @@ const pollInterval = setInterval(performPolling, POLLING_DELAY_MS);
                         task={task} 
                         onComplete={async (taskId) => {
                           try {
-                            await fetch(`/api/tasks/${taskId}`, {
+                            const response = await fetch(`/api/tasks/${taskId}`, {
                               method: 'PUT',
                               headers: {
                                 'Content-Type': 'application/json',
                               },
                               body: JSON.stringify({ status: 'completed' }),
                             });
+                            if (!response.ok) {
+                              throw new Error('Failed to mark task as completed');
+                            }
+                            triggerTaskCompletionToast();
                             fetchDashboardData();
                           } catch (error) {
                             console.error('Failed to complete task:', error);

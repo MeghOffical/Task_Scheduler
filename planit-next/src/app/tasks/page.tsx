@@ -154,13 +154,13 @@ export default function TasksPage() {
           if (newStatus === 'completed' && previousStatus !== 'completed' && now <= due) {
             (window as any).showPointsToast?.(
               'Task completed on time! You earned +10 points.',
-              true
+              10
             );
           } else if (newStatus === 'pending' && previousStatus !== 'pending' && now > due) {
             // If you mark a past-due task as pending, treat it as missed deadline in UI
             (window as any).showPointsToast?.(
               'Deadline missed. You lost 5 points.',
-              false
+              -5
             );
           }
         }
