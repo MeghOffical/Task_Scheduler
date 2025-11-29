@@ -251,7 +251,7 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen }: { isMobileMenuOpen: b
   };
 
   return (
-  <header className="w-full sticky top-0 z-40 bg-white border-b border-slate-200 backdrop-blur flex justify-between items-center px-2 sm:px-6 py-2.5 sm:py-3 dark:bg-[#11141A]/95 dark:border-white/5 relative">
+  <header className="w-full fixed top-0 inset-x-0 z-40 bg-white border-b border-slate-200 backdrop-blur flex justify-between items-center px-2 sm:px-6 py-2.5 sm:py-3 dark:bg-[#11141A]/95 dark:border-white/5">
       
       {/* Mobile Menu Button - Inside Header */}
       <button
@@ -500,9 +500,9 @@ export const Sidebar = ({
   return (
     <>
       {/* Desktop Sidebar - Always Expanded */}
-      <aside className="hidden md:flex w-64 h-full bg-slate-50 border-r border-slate-200 flex-col dark:bg-[#0F1218] dark:border-white/5 transition-all duration-300 relative flex-shrink-0 rounded-tr-3xl rounded-br-3xl">
+      <aside className="hidden md:flex w-64 md:h-screen h-full bg-slate-50 border-r border-slate-200 flex-col dark:bg-[#0F1218] dark:border-white/5 transition-all duration-300 relative md:fixed md:top-0 md:left-0 md:bottom-0 md:z-30 flex-shrink-0 rounded-br-3xl">
         
-        <nav className="py-6 px-2 flex-1 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
+        <nav className="py-6 md:pt-[90px] px-2 flex-1 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
 
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -530,6 +530,9 @@ export const Sidebar = ({
 
         </nav>
       </aside>
+
+      {/* Desktop placeholder to preserve layout space when sidebar is fixed */}
+      <div className="hidden md:block w-64 flex-shrink-0" aria-hidden="true" />
 
       {/* Mobile Sidebar - Slide from left */}
       <div className={`md:hidden fixed inset-y-0 left-0 w-64 bg-blue-200 border-r border-blue-300 flex flex-col dark:bg-[#0F1218] dark:border-white/5 z-40 transform transition-transform duration-300 rounded-r-3xl ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -686,6 +689,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen flex flex-col bg-blue-50 text-slate-900 transition-colors dark:bg-[#16191F] dark:text-slate-50">
       <Header isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+      <div className="h-[73px]" aria-hidden="true" />
 
       <div className="flex flex-1 overflow-hidden h-[calc(100vh-73px)]">
         <Sidebar
