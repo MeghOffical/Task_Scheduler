@@ -1,0 +1,37 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "Mutation testing configuration for register module",
+  "packageManager": "npm",
+  "reporters": [
+    "html",
+    "clear-text",
+    "progress"
+  ],
+  "testRunner": "command",
+  "commandRunner": {
+    "command": "npm test -- src/app/register/page.test.tsx"
+  },
+  "coverageAnalysis": "off",
+  "mutate": [
+    "src/app/register/page.tsx"
+  ],
+  "disableTypeChecks": false,
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": 40
+  },
+  "tempDirName": "testing/mutation/stryker-tmp-register",
+  "htmlReporter": {
+    "fileName": "testing/mutation/reports/register-mutation-report.html"
+  },
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    "dist",
+    "build",
+    "testing"
+  ],
+  "timeoutMS": 60000,
+  "timeoutFactor": 2
+}
