@@ -89,12 +89,6 @@ describe('LandingContent Component', () => {
       expect(screen.getByText('Customizable')).toBeInTheDocument();
     });
 
-    it('should render testimonials section', () => {
-      render(<LandingContent />);
-      expect(screen.getByText('Testimonials')).toBeInTheDocument();
-      expect(screen.getByText(/Trusted by professionals worldwide/i)).toBeInTheDocument();
-    });
-
     it('should render How It Works section', () => {
       render(<LandingContent />);
       expect(screen.getByText('How Plan-It Works')).toBeInTheDocument();
@@ -113,49 +107,7 @@ describe('LandingContent Component', () => {
       expect(screen.getByText('© 2025 Plan-It')).toBeInTheDocument();
       expect(screen.getByText('Status')).toBeInTheDocument();
       expect(screen.getByText('Docs')).toBeInTheDocument();
-      expect(screen.getByText('About Us')).toBeInTheDocument();
       expect(screen.getByText('Contact')).toBeInTheDocument();
-    });
-  });
-
-  describe('Testimonials Carousel', () => {
-    it('should display first testimonial initially', () => {
-      render(<LandingContent />);
-      expect(screen.getByText(/Plan-It has completely transformed/i)).toBeInTheDocument();
-      expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
-    });
-
-    it('should have navigation dots for testimonials', () => {
-      render(<LandingContent />);
-      const dots = screen.getAllByRole('button', { name: /Testimonial \d+/i });
-      expect(dots).toHaveLength(3);
-    });
-
-    it('should change testimonial when clicking navigation dot', async () => {
-      render(<LandingContent />);
-      const dots = screen.getAllByRole('button', { name: /Testimonial \d+/i });
-      
-      fireEvent.click(dots[1]);
-      
-      await waitFor(() => {
-        expect(screen.getByText(/The Pomodoro timer integration/i)).toBeInTheDocument();
-        expect(screen.getByText('Michael Chen')).toBeInTheDocument();
-      });
-    });
-
-    it('should auto-rotate testimonials', async () => {
-      jest.useFakeTimers();
-      render(<LandingContent />);
-      
-      expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
-      
-      jest.advanceTimersByTime(5000);
-      
-      await waitFor(() => {
-        expect(screen.getByText('Michael Chen')).toBeInTheDocument();
-      });
-      
-      jest.useRealTimers();
     });
   });
 
@@ -194,21 +146,6 @@ describe('LandingContent Component', () => {
       });
     });
 
-    it('should handle keyboard navigation in accordion', async () => {
-      render(<LandingContent />);
-      const faqButtons = screen.getAllByRole('button');
-      const firstFaq = faqButtons.find(btn => btn.textContent?.includes('How do I sign up?'));
-      
-      if (firstFaq) {
-        firstFaq.focus();
-        fireEvent.keyDown(firstFaq, { key: 'ArrowDown' });
-        
-        await waitFor(() => {
-          expect(document.activeElement).not.toBe(firstFaq);
-        });
-      }
-    });
-
     it('should handle Enter key to toggle FAQ', async () => {
       render(<LandingContent />);
       const faqButton = screen.getByText('How do I sign up?');
@@ -231,40 +168,42 @@ describe('LandingContent Component', () => {
       });
     });
 
+    it('should handle keyboard navigation in accordion', async () => {
+      render(<LandingContent />);
+      const faqButton = screen.getByText('How do I sign up?');
+      faqButton.focus();
+      fireEvent.keyDown(faqButton, { key: 'ArrowDown' });
+      await waitFor(() => {
+        expect(document.activeElement).not.toBe(faqButton);
+      });
+    });
+
     it('should handle Home key to focus first FAQ', async () => {
       render(<LandingContent />);
-      const faqButtons = screen.getAllByRole('button');
-      // Filter to get only FAQ buttons (not testimonial navigation buttons)
-      const faqOnlyButtons = faqButtons.filter(btn => 
+      const faqButtons = screen.getAllByRole('button').filter(btn => 
         btn.textContent?.includes('How do I sign up?') || btn.textContent?.includes('Is Plan-It free?')
       );
-      
-      if (faqOnlyButtons.length > 0) {
-        const lastFaq = faqOnlyButtons[faqOnlyButtons.length - 1];
+      if (faqButtons.length > 1) {
+        const lastFaq = faqButtons[faqButtons.length - 1];
         lastFaq.focus();
         fireEvent.keyDown(lastFaq, { key: 'Home' });
-        
         await waitFor(() => {
-          expect(document.activeElement).toBe(faqOnlyButtons[0]);
+          expect(document.activeElement).toBe(faqButtons[0]);
         });
       }
     });
 
     it('should handle End key to focus last FAQ', async () => {
       render(<LandingContent />);
-      const faqButtons = screen.getAllByRole('button');
-      // Filter to get only FAQ buttons (not testimonial navigation buttons)
-      const faqOnlyButtons = faqButtons.filter(btn => 
+      const faqButtons = screen.getAllByRole('button').filter(btn => 
         btn.textContent?.includes('How do I sign up?') || btn.textContent?.includes('Is Plan-It free?')
       );
-      
-      if (faqOnlyButtons.length > 0) {
-        const firstFaq = faqOnlyButtons[0];
+      if (faqButtons.length > 1) {
+        const firstFaq = faqButtons[0];
         firstFaq.focus();
         fireEvent.keyDown(firstFaq, { key: 'End' });
-        
         await waitFor(() => {
-          expect(document.activeElement).toBe(faqOnlyButtons[faqOnlyButtons.length - 1]);
+          expect(document.activeElement).toBe(faqButtons[faqButtons.length - 1]);
         });
       }
     });
@@ -357,7 +296,6 @@ describe('LandingContent Component', () => {
       render(<LandingContent />);
       expect(screen.getByText('Status').closest('a')).toHaveAttribute('href', '/status');
       expect(screen.getByText('Docs').closest('a')).toHaveAttribute('href', '/docs');
-      expect(screen.getByText('About Us').closest('a')).toHaveAttribute('href', '/about');
       expect(screen.getByText('Contact').closest('a')).toHaveAttribute('href', '/contact');
     });
 
@@ -384,13 +322,6 @@ describe('LandingContent Component', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA labels for testimonial navigation', () => {
-      render(<LandingContent />);
-      expect(screen.getByLabelText('Testimonial 1')).toBeInTheDocument();
-      expect(screen.getByLabelText('Testimonial 2')).toBeInTheDocument();
-      expect(screen.getByLabelText('Testimonial 3')).toBeInTheDocument();
-    });
-
     it('should have proper ARIA attributes for accordion', () => {
       render(<LandingContent />);
       const faqButtons = screen.getAllByRole('button');

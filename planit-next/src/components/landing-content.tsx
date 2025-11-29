@@ -6,32 +6,11 @@ import faqsData from '@/app/faqs/faqs.json';
 import MainHeader from './main-header';
 
 export default function LandingContent() {
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [faqItems, setFaqItems] = useState<{ q: string; a: string }[]>([]);
   
   // THEME STATE
   const [isDark, setIsDark] = useState(false);
 
-  const testimonials = [
-    {
-      quote: "Plan-It has completely transformed how I manage my daily tasks. The AI assistant is a game-changer!",
-      author: "Sarah Johnson",
-      role: "Product Manager",
-      avatar: "SJ"
-    },
-    {
-      quote: "The Pomodoro timer integration is brilliant. I'm 3x more productive than before.",
-      author: "Michael Chen",
-      role: "Software Developer",
-      avatar: "MC"
-    },
-    {
-      quote: "Finally, a task manager that understands natural language. Creating tasks feels effortless.",
-      author: "Emily Rodriguez",
-      role: "Entrepreneur",
-      avatar: "ER"
-    }
-  ];
 
   // Initialize Theme
   useEffect(() => {
@@ -60,12 +39,6 @@ export default function LandingContent() {
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [testimonials.length]);
 
   useEffect(() => {
     try {
@@ -196,65 +169,6 @@ export default function LandingContent() {
         </div>
       </section>
 
-      {/* SECTION 2: Testimonials */}
-      {/* Reduced py-24/32 -> py-16/20 */}
-      <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-          
-          {/* Reduced mb-16 -> mb-10 */}
-          <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
-              Testimonials
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Trusted by professionals worldwide
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="relative bg-white dark:bg-gray-800 rounded-xl p-10 shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="absolute top-8 left-8 text-blue-500 dark:text-blue-400 opacity-30">
-                <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-              </div>
-              <div className="relative pt-6">
-                <p className="text-xl text-gray-800 dark:text-gray-200 mb-8 leading-relaxed font-medium">
-                  {testimonials[activeTestimonial].quote}
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-sm">
-                    {testimonials[activeTestimonial].avatar}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">
-                      {testimonials[activeTestimonial].author}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {testimonials[activeTestimonial].role}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-center gap-2 mt-8">
-                {testimonials.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveTestimonial(index)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === activeTestimonial
-                        ? 'bg-blue-600 w-6'
-                        : 'bg-gray-300 dark:bg-gray-700'
-                    }`}
-                    aria-label={`Testimonial ${index + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* SECTION 3: How It Works */}
       {/* Reduced py-24/32 -> py-16/20 */}
       <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
@@ -337,7 +251,6 @@ export default function LandingContent() {
           <div className="flex items-center gap-6">
             <Link href="/status" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Status</Link>
             <Link href="/docs" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Docs</Link>
-            <Link href="/about" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About Us</Link>
             <Link href="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</Link>
             <a href="https://github.com/MeghOffical/Task_Scheduler" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.833.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.447-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.919.678 1.852 0 1.337-.012 2.415-.012 2.743 0 .268.18.58.688.481A10.019 10.019 0 0022 12.017C22 6.484 17.523 2 12 2z" clipRule="evenodd"/></svg>
@@ -417,11 +330,11 @@ function Accordion({ items }: { items: AccordionItem[] }) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5 sm:space-y-6">
       {items.map((item, idx) => {
         const isOpen = openIndex === idx;
         return (
-          <div key={idx} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div key={idx} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
             <button
               ref={(el) => { buttonRefs.current[idx] = el; }}
               onClick={() => setOpenIndex(isOpen ? null : idx)}
@@ -444,13 +357,17 @@ function Accordion({ items }: { items: AccordionItem[] }) {
                   setOpenIndex(isOpen ? null : idx);
                 }
               }}
-              className="w-full flex items-center justify-between p-5 text-left"
+              className={`w-full flex items-center justify-between px-5 sm:px-6 text-left transition-[padding] duration-200 ${
+                isOpen ? 'pt-4 pb-3 sm:pt-5 sm:pb-3.5' : 'py-4 sm:py-5'
+              }`}
               aria-expanded={isOpen}
               aria-controls={`faq-${idx}`}
             >
-              <span className="font-medium text-gray-900 dark:text-white">{item.q}</span>
+              <span className="font-medium text-gray-900 dark:text-white pr-6 text-base sm:text-lg leading-snug flex-1">
+                {item.q}
+              </span>
               <svg
-                className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180 text-gray-500' : 'rotate-0 text-gray-400'}`}
+                className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 text-gray-500' : 'rotate-0 text-gray-400'}`}
                 viewBox="0 0 20 20"
                 fill="none"
                 stroke="currentColor"
@@ -462,15 +379,17 @@ function Accordion({ items }: { items: AccordionItem[] }) {
 
             <div
               id={`faq-${idx}`}
-              className="px-5 pb-5 text-gray-600 dark:text-gray-400 transition-all duration-300 ease-in-out"
+              className="px-5 sm:px-6 text-gray-600 dark:text-gray-400 transition-all duration-300 ease-in-out"
               style={{
                 maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx].scrollHeight}px` : '0px',
+                paddingBottom: isOpen ? '1rem' : '0',
+                paddingTop: isOpen ? '0' : '0',
                 overflow: 'hidden'
               }}
             >
               <div
                 ref={(el) => { contentRefs.current[idx] = el; }}
-                className={`pt-2 ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                className={`pt-2 sm:pt-3 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'} transition-all duration-300 leading-relaxed text-base`}
               >
                 {item.a}
               </div>

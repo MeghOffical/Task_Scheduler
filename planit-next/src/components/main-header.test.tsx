@@ -74,13 +74,6 @@ describe('MainHeader Component', () => {
   });
 
   describe('navigation links', () => {
-    it('should render About Us link', () => {
-      render(<MainHeader />);
-      const aboutLink = screen.getByRole('link', { name: /about us/i });
-      expect(aboutLink).toBeInTheDocument();
-      expect(aboutLink).toHaveAttribute('href', '/about');
-    });
-
     it('should render Sign In link', () => {
       render(<MainHeader />);
       const signInLink = screen.getByRole('link', { name: /sign in/i });
@@ -194,8 +187,8 @@ describe('MainHeader Component', () => {
 
     it('should have proper spacing', () => {
       const { container } = render(<MainHeader />);
-      const header = container.querySelector('header');
-      expect(header).toHaveClass('px-3', 'sm:px-6', 'lg:px-8');
+      const contentWrapper = container.querySelector('header > div');
+      expect(contentWrapper).toHaveClass('px-3', 'sm:px-6', 'lg:px-8');
     });
 
     it('should have shadow', () => {
@@ -234,12 +227,6 @@ describe('MainHeader Component', () => {
       render(<MainHeader />);
       const subtitle = screen.getByText('Smart Task Management').parentElement;
       expect(subtitle).toHaveClass('hidden', 'sm:block');
-    });
-
-    it('should hide About Us link on small screens', () => {
-      render(<MainHeader />);
-      const aboutLink = screen.getByRole('link', { name: /about us/i });
-      expect(aboutLink).toHaveClass('hidden', 'sm:inline-flex');
     });
 
     it('should hide Sign In link on small screens', () => {
@@ -294,8 +281,8 @@ describe('MainHeader Component', () => {
 
     it('should have hover effect on navigation links', () => {
       render(<MainHeader />);
-      const aboutLink = screen.getByRole('link', { name: /about us/i });
-      expect(aboutLink).toHaveClass('hover:text-blue-600', 'dark:hover:text-blue-400');
+      const signInLink = screen.getByRole('link', { name: /sign in/i });
+      expect(signInLink).toHaveClass('hover:text-blue-600', 'dark:hover:text-blue-400');
     });
   });
 
@@ -406,8 +393,8 @@ describe('MainHeader Component', () => {
 
     it('should have transition on navigation links', () => {
       render(<MainHeader />);
-      const aboutLink = screen.getByRole('link', { name: /about us/i });
-      expect(aboutLink).toHaveClass('transition-colors');
+      const signInLink = screen.getByRole('link', { name: /sign in/i });
+      expect(signInLink).toHaveClass('transition-colors');
     });
   });
 
