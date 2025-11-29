@@ -32,7 +32,7 @@ export default function MainHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-blue-100/50 dark:border-white/10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm transition-colors duration-300">
+    <header className="sticky top-0 z-50 border-b border-slate-200 dark:border-white/5 bg-white dark:bg-[#11141A]/95 backdrop-blur shadow-sm transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold tracking-tight text-slate-900 dark:text-white flex-shrink-0 hover:opacity-85 transition-opacity">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md">

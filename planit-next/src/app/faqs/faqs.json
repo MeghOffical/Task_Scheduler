@@ -14,5 +14,9 @@
   {
     "question": "How do I change notification preferences?",
     "answer": "Open Settings → Notifications to enable or disable reminder and desktop notifications."
+  },
+  {
+    "question": "How does the points system work?",
+    "answer": "Earn points as you use Plan-It! You get +100 points when you register, +10 points for each task you complete, +1 point for daily login, and lose -5 points when you miss a deadline. Keep completing tasks to build your score!"
   }
 ]

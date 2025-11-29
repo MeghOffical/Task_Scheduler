@@ -52,17 +52,15 @@ export default function LandingContent() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300 font-sans text-gray-900 dark:text-gray-100">
+    <main className="min-h-screen bg-blue-50 dark:bg-[#16191F] transition-colors duration-300 font-sans text-gray-900 dark:text-gray-100">
       
       {/* Use shared header */}
       <MainHeader />
 
       {/* SECTION 1: Hero & Features */}
-      {/* Reduced bottom padding (pb-24/32 -> pb-12/20) and top padding slightly */}
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 lg:pb-20">
+      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 lg:pb-20">
         
-        {/* Reduced margin bottom (mb-24 -> mb-16) */}
-        <div className="relative text-center max-w-5xl mx-auto mb-16">
+        <div className="relative text-center max-w-5xl mx-auto mb-20">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium mb-8">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
@@ -170,9 +168,8 @@ export default function LandingContent() {
       </section>
 
       {/* SECTION 3: How It Works */}
-      {/* Reduced py-24/32 -> py-16/20 */}
-      <section className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      <section className="bg-white dark:bg-[#11141A] border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
               How Plan-It Works
@@ -220,10 +217,9 @@ export default function LandingContent() {
       </section>
 
       {/* SECTION 4: FAQs */}
-      {/* Reduced py-24/32 -> py-16/20 */}
-      <section id="faqs" className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-          <div className="text-center mb-10">
+      <section id="faqs" className="bg-white dark:bg-[#11141A] border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
+          <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">Frequently Asked Questions</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Quick answers to common questions.</p>
           </div>
@@ -245,8 +241,8 @@ export default function LandingContent() {
         </div>
       </section>
 
-      <footer className="bg-gray-50 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
-        <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="bg-white dark:bg-[#11141A] border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
+        <div className="max-w-5xl mx-auto px-4 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500 dark:text-gray-400">© 2025 Plan-It</p>
           <div className="flex items-center gap-6">
             <Link href="/status" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Status</Link>
@@ -272,11 +268,11 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description, color }: FeatureCardProps) {
   return (
-    <div className="group relative bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
+    <div className="group relative glass-panel rounded-2xl p-7 shadow-lg border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <div className={`inline-flex p-3 rounded-lg ${color} mb-4`}>
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">{title}</h3>
       <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
     </div>
   );
@@ -293,14 +289,14 @@ interface StepCardProps {
 function StepCard({ step, title, description, icon }: StepCardProps) {
   return (
     <div className="text-center">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white text-lg font-bold mb-6 shadow-sm">
+      <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-lg font-bold mb-6 shadow-lg">
         {step}
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
-        <div className="inline-flex p-3 rounded-lg bg-gray-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 mb-4">
+      <div className="glass-panel rounded-2xl p-7 shadow-lg border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 transition-all duration-300 hover:shadow-xl">
+        <div className="inline-flex p-3 rounded-lg bg-gray-50 dark:bg-[#151922] text-blue-600 dark:text-blue-400 mb-4">
           {icon}
         </div>
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
           {title}
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -330,11 +326,11 @@ function Accordion({ items }: { items: AccordionItem[] }) {
   };
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="space-y-4">
       {items.map((item, idx) => {
         const isOpen = openIndex === idx;
         return (
-          <div key={idx} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+          <div key={idx} className="rounded-2xl border border-gray-200 dark:border-white/5 glass-panel shadow-lg overflow-hidden">
             <button
               ref={(el) => { buttonRefs.current[idx] = el; }}
               onClick={() => setOpenIndex(isOpen ? null : idx)}
@@ -381,15 +377,15 @@ function Accordion({ items }: { items: AccordionItem[] }) {
               id={`faq-${idx}`}
               className="px-5 sm:px-6 text-gray-600 dark:text-gray-400 transition-all duration-300 ease-in-out"
               style={{
-                maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx].scrollHeight}px` : '0px',
-                paddingBottom: isOpen ? '1rem' : '0',
-                paddingTop: isOpen ? '0' : '0',
+                maxHeight: isOpen && contentRefs.current[idx] ? `${contentRefs.current[idx].scrollHeight + 32}px` : '0px',
+                paddingBottom: isOpen ? '1.5rem' : '0',
+                paddingTop: isOpen ? '0.75rem' : '0',
                 overflow: 'hidden'
               }}
             >
               <div
                 ref={(el) => { contentRefs.current[idx] = el; }}
-                className={`pt-2 sm:pt-3 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'} transition-all duration-300 leading-relaxed text-base`}
+                className={`pb-2 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'} transition-all duration-300 leading-relaxed text-base`}
               >
                 {item.a}
               </div>
