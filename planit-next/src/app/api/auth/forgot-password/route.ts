@@ -85,7 +85,8 @@ export async function POST(request: Request) {
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .button { display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .button { display: inline-block; padding: 12px 24px; background-color: #2563EB; color: #FFFFFF !important; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: 600; }
+            .button:hover { background-color: #1D4ED8; }
             .footer { margin-top: 30px; font-size: 12px; color: #666; }
           </style>
         </head>
@@ -95,9 +96,9 @@ export async function POST(request: Request) {
             <p>Hi ${userName},</p>
             <p>You requested to reset your password for your Plan-it account.</p>
             <p>Click the button below to reset your password:</p>
-            <a href="${resetUrl}" class="button">Reset Password</a>
+            <a href="${resetUrl}" class="button" style="color: #FFFFFF;">Reset Password</a>
             <p>Or copy and paste this link into your browser:</p>
-            <p style="word-break: break-all; color: #4F46E5;">${resetUrl}</p>
+            <p style="word-break: break-all; color: #2563EB;">${resetUrl}</p>
             <p>This link will expire in 1 hour.</p>
             <p>If you didn't request this, please ignore this email.</p>
             <div class="footer">
