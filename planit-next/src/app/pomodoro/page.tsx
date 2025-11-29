@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Task } from '@/types';
+import { useMusic } from "@/components/music/MusicPlayerProvider";
+import MusicFilePicker from "@/components/music/MusicFilePicker";
+
 
 declare global {
   interface Window {
@@ -26,6 +29,22 @@ interface PomodoroSession {
 }
 
 export default function PomodoroPage() {
+  const {
+    loadPlaylist,
+    playCurrent,
+    pauseMusic,
+    resumeMusic,
+    stopMusic,
+    nextSong,
+    prevSong,
+    selectSong,
+    isPlaying,
+    fileName,
+    playlist,
+    currentIndex,
+    audioRef,
+  } = useMusic();
+  
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
@@ -267,6 +286,7 @@ export default function PomodoroPage() {
       <section className="flex-1 glass-panel rounded-xl sm:rounded-2xl p-4 sm:p-8 lg:p-12 flex flex-col text-gray-900 dark:text-white">
         
         <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center">Pomodoro Timer</h1>
+        
 
         {/* MODE TABS: Pomodoro / Short Break / Long Break */}
         <div className="flex items-center justify-center gap-2 sm:gap-4 lg:gap-6 mb-6 sm:mb-10 overflow-x-auto">
@@ -446,8 +466,159 @@ export default function PomodoroPage() {
               </option>
             ))}
           </select>
+          {/* MUSIC PLAYER SECTION */}
+<div className="w-full mt-6 mb-8">
+  <div className="glass-panel rounded-xl sm:rounded-2xl p-4 sm:p-6 text-gray-900 dark:text-white shadow-lg">
+
+    <h2 className="text-lg sm:text-xl font-bold mb-4 text-center flex items-center justify-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
+      </svg>
+      Music Player
+    </h2>
+
+    <div className="flex flex-col items-center justify-center gap-4">
+
+      {/* File Picker Button */}
+      <div>
+        <MusicFilePicker />
+      </div>
+
+      {/* Song Selection Dropdown */}
+      {(() => {
+        if (playlist.length > 0) {
+          return (
+            <div className="w-full max-w-md">
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Select Song:
+              </label>
+              <select
+                value={currentIndex}
+                onChange={(e) => {
+                  const newIndex = parseInt(e.target.value);
+                  selectSong(newIndex);
+                }}
+                className="w-full p-2 sm:p-3 border 
+                  border-gray-200 dark:border-gray-600 
+                  rounded-lg 
+                  bg-violet-50 dark:bg-gray-700 
+                  text-gray-900 dark:text-white
+                  text-xs sm:text-sm
+                  focus:border-violet-400 focus:outline-none transition-colors"
+              >
+                {playlist.map((file, idx) => (
+                  <option key={idx} value={idx}>
+                    {file.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          );
+        }
+        return null;
+      })()}
+
+      {/* Playback Controls */}
+      <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+        
+        {/* Previous Button */}
+        <button
+          onClick={prevSong}
+          disabled={!fileName}
+          className="p-2 sm:p-3 rounded-lg font-semibold transition
+            bg-purple-500 hover:bg-purple-600 text-white
+            disabled:bg-gray-500 disabled:cursor-not-allowed
+            flex items-center justify-center"
+          title="Previous Song"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 16.811c0 .864-.933 1.405-1.683.977l-7.108-4.062a1.125 1.125 0 010-1.953l7.108-4.062A1.125 1.125 0 0121 8.688v8.123zM11.25 16.811c0 .864-.933 1.405-1.683.977l-7.108-4.062a1.125 1.125 0 010-1.953L9.567 7.71a1.125 1.125 0 011.683.977v8.123z" />
+          </svg>
+        </button>
+
+        {/* Play/Pause Button */}
+        <button
+          onClick={isPlaying ? pauseMusic : resumeMusic}
+          disabled={!fileName}
+          className={`
+            px-5 py-2.5 rounded-lg font-semibold transition
+            ${isPlaying
+              ? "bg-red-500 hover:bg-red-600 text-white"
+              : "bg-green-500 hover:bg-green-600 text-white"
+            }
+            disabled:bg-gray-500 disabled:cursor-not-allowed
+            flex items-center gap-2
+          `}
+        >
+          {isPlaying ? (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+              </svg>
+              Pause
+            </>
+          ) : (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+              </svg>
+              Play
+            </>
+          )}
+        </button>
+
+        {/* Next Button */}
+        <button
+          onClick={nextSong}
+          disabled={!fileName}
+          className="p-2 sm:p-3 rounded-lg font-semibold transition
+            bg-purple-500 hover:bg-purple-600 text-white
+            disabled:bg-gray-500 disabled:cursor-not-allowed
+            flex items-center justify-center"
+          title="Next Song"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062A1.125 1.125 0 013 16.81V8.688zM12.75 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062a1.125 1.125 0 01-1.683-.977V8.688z" />
+          </svg>
+        </button>
+
+        {/* Reset/Restart Song Button */}
+        <button
+          onClick={() => {
+            if (audioRef.current) {
+              audioRef.current.currentTime = 0;
+              if (!isPlaying) {
+                resumeMusic();
+              }
+            }
+          }}
+          disabled={!fileName}
+          className="p-2 sm:p-3 rounded-lg font-semibold transition
+            bg-orange-500 hover:bg-orange-600 text-white
+            disabled:bg-gray-500 disabled:cursor-not-allowed
+            flex items-center justify-center"
+          title="Restart Song"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    {/* Now Playing Display */}
+    {fileName && (
+      <p className="text-xs sm:text-sm text-center mt-4 text-gray-500 dark:text-gray-400">
+        Now Playing: <span className="font-medium text-gray-800 dark:text-gray-200">{fileName}</span>
+      </p>
+    )}
+  </div>
+  
+</div>
         </div>
       </section>
+
+
 
       {/* SIDEBAR - Hidden on mobile, shown on lg screens */}
       <section className="hidden lg:flex w-80 glass-panel rounded-2xl p-8 flex-col text-gray-900 dark:text-white overflow-hidden">
