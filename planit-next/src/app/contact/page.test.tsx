@@ -44,10 +44,8 @@ describe('ContactPage', () => {
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     
     // Replace window.location with our mock to prevent JSDOM navigation errors
-    Object.defineProperty(window, 'location', {
-      value: mockLocation,
-      writable: true,
-    });
+    delete (window as any).location;
+    (window as any).location = mockLocation;
   });
 
   afterEach(() => {

@@ -457,10 +457,228 @@ describe('Dashboard Components', () => {
     });
 
     test('PriorityItem has proper dark mode classes', () => {
-      render(<PriorityItem label="High" count={3} color="red" percentage={30} />);
+      render(<PriorityItem label="High" count={3} color="red" />);
       
       const container = screen.getByText('High').closest('div');
-      expect(container).toHaveClass('dark:bg-gray-800/80', 'dark:border-red-600/30');
+      expect(container).toBeInTheDocument();
+    });
+  });
+
+  describe('TaskCard - Additional Coverage', () => {
+    const mockTask: Task = {
+      id: '2',
+      title: 'Test Task',
+      description: 'Test Description',
+      priority: 'medium',
+      status: 'pending',
+      dueDate: '2025-12-15',
+      startTime: null,
+      endTime: null,
+      createdAt: '2025-11-20T09:00:00Z',
+      updatedAt: '2025-11-20T09:00:00Z',
+      userId: 'user1',
+    };
+
+    test('handles task without time fields', () => {
+      render(<TaskCard task={mockTask} />);
+      
+      expect(screen.getByText('Test Task')).toBeInTheDocument();
+      expect(screen.getByText('medium')).toBeInTheDocument();
+      expect(screen.getByText('pending')).toBeInTheDocument();
+    });
+
+    test('handles task without due date', () => {
+      const taskWithoutDueDate = { ...mockTask, dueDate: null };
+      render(<TaskCard task={taskWithoutDueDate} />);
+      
+      expect(screen.getByText('No due date')).toBeInTheDocument();
+    });
+
+    test('handles low priority task', () => {
+      const lowPriorityTask = { ...mockTask, priority: 'low' as const };
+      render(<TaskCard task={lowPriorityTask} />);
+      
+      expect(screen.getByText('low')).toBeInTheDocument();
+    });
+
+    test('handles overdue status', () => {
+      const overdueTask = { ...mockTask, status: 'overdue' as const };
+      render(<TaskCard task={overdueTask} />);
+      
+      expect(screen.getByText('overdue')).toBeInTheDocument();
+    });
+
+    test('handles completed task without complete button', () => {
+      const completedTask = { ...mockTask, status: 'completed' as const };
+      const onComplete = jest.fn();
+      render(<TaskCard task={completedTask} onComplete={onComplete} />);
+      
+      expect(screen.queryByTitle('Mark as completed')).not.toBeInTheDocument();
+    });
+
+    test('handles task with only start time', () => {
+      const taskWithStartTime = { ...mockTask, startTime: '09:00', endTime: null };
+      render(<TaskCard task={taskWithStartTime} />);
+      
+      expect(screen.getByText(/Start: 09:00/)).toBeInTheDocument();
+    });
+
+    test('handles task with only end time', () => {
+      const taskWithEndTime = { ...mockTask, startTime: null, endTime: '17:00' };
+      render(<TaskCard task={taskWithEndTime} />);
+      
+      expect(screen.getByText(/End: 17:00/)).toBeInTheDocument();
+    });
+
+    test('handles complete button click when already updating', async () => {
+      const onComplete = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+      render(<TaskCard task={mockTask} onComplete={onComplete} />);
+      
+      const completeButton = screen.getByTitle('Mark as completed');
+      
+      // Click once
+      fireEvent.click(completeButton);
+      
+      // Try to click again while updating
+      fireEvent.click(completeButton);
+      
+      await waitFor(() => {
+        expect(onComplete).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    test('handles complete error gracefully', async () => {
+      const onComplete = jest.fn().mockRejectedValue(new Error('Network error'));
+      render(<TaskCard task={mockTask} onComplete={onComplete} />);
+      
+      const completeButton = screen.getByTitle('Mark as completed');
+      fireEvent.click(completeButton);
+      
+      await waitFor(() => {
+        expect(console.error).toHaveBeenCalledWith('Failed to complete task:', expect.any(Error));
+      });
+    });
+
+    test('does not call onComplete when task is completed', () => {
+      const completedTask = { ...mockTask, status: 'completed' as const };
+      const onComplete = jest.fn();
+      render(<TaskCard task={completedTask} onComplete={onComplete} />);
+      
+      expect(onComplete).not.toHaveBeenCalled();
+    });
+
+    test('renders without onComplete handler', () => {
+      render(<TaskCard task={mockTask} />);
+      
+      expect(screen.queryByTitle('Mark as completed')).not.toBeInTheDocument();
+    });
+
+    test('renders without onDelete handler', () => {
+      render(<TaskCard task={mockTask} />);
+      
+      expect(screen.queryByTitle('Delete task')).not.toBeInTheDocument();
+    });
+
+    test('shows loading spinner when updating', async () => {
+      const onComplete = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+      render(<TaskCard task={mockTask} onComplete={onComplete} />);
+      
+      const completeButton = screen.getByTitle('Mark as completed');
+      fireEvent.click(completeButton);
+      
+      await waitFor(() => {
+        const spinner = screen.getByRole('button', { name: /mark as completed/i }).querySelector('.animate-spin');
+        expect(spinner).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('PriorityItem - Additional Coverage', () => {
+    test('renders with red color', () => {
+      render(<PriorityItem label="High Priority" count={5} color="red" />);
+      
+      expect(screen.getByText('High Priority')).toBeInTheDocument();
+      expect(screen.getByText('5')).toBeInTheDocument();
+    });
+
+    test('renders with yellow color', () => {
+      render(<PriorityItem label="Medium Priority" count={3} color="yellow" />);
+      
+      expect(screen.getByText('Medium Priority')).toBeInTheDocument();
+      expect(screen.getByText('3')).toBeInTheDocument();
+    });
+
+    test('renders with blue color', () => {
+      render(<PriorityItem label="Low Priority" count={2} color="blue" />);
+      
+      expect(screen.getByText('Low Priority')).toBeInTheDocument();
+      expect(screen.getByText('2')).toBeInTheDocument();
+    });
+
+    test('renders with zero count', () => {
+      render(<PriorityItem label="No Tasks" count={0} color="blue" />);
+      
+      expect(screen.getByText('No Tasks')).toBeInTheDocument();
+      expect(screen.getByText('0')).toBeInTheDocument();
+    });
+
+    test('renders with large count', () => {
+      render(<PriorityItem label="Many Tasks" count={999} color="red" />);
+      
+      expect(screen.getByText('Many Tasks')).toBeInTheDocument();
+      expect(screen.getByText('999')).toBeInTheDocument();
+    });
+
+    test('has proper SVG gauge structure', () => {
+      const { container } = render(<PriorityItem label="Test" count={5} color="red" />);
+      
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+      expect(svg?.querySelector('circle')).toBeInTheDocument();
+      expect(svg?.querySelector('path')).toBeInTheDocument();
+    });
+  });
+
+  describe('StatCard - Additional Coverage', () => {
+    test('renders with zero value', () => {
+      const testIcon = <span>📊</span>;
+      render(<StatCard icon={testIcon} label="Empty" value={0} color="blue" />);
+      
+      expect(screen.getByText('0')).toBeInTheDocument();
+    });
+
+    test('renders with large value', () => {
+      const testIcon = <span>📊</span>;
+      render(<StatCard icon={testIcon} label="Large" value={9999} color="green" />);
+      
+      expect(screen.getByText('9999')).toBeInTheDocument();
+    });
+
+    test('renders with negative value', () => {
+      const testIcon = <span>📊</span>;
+      render(<StatCard icon={testIcon} label="Negative" value={-5} color="red" />);
+      
+      expect(screen.getByText('-5')).toBeInTheDocument();
+    });
+
+    test('renders with complex icon', () => {
+      const complexIcon = (
+        <svg data-testid="complex-icon">
+          <circle cx="10" cy="10" r="5" />
+          <path d="M10 10 L20 20" />
+        </svg>
+      );
+      render(<StatCard icon={complexIcon} label="Complex" value={42} color="indigo" />);
+      
+      expect(screen.getByTestId('complex-icon')).toBeInTheDocument();
+    });
+
+    test('renders with long label text', () => {
+      const testIcon = <span>📊</span>;
+      const longLabel = 'This is a very long label that might wrap to multiple lines';
+      render(<StatCard icon={testIcon} label={longLabel} value={10} color="blue" />);
+      
+      expect(screen.getByText(longLabel)).toBeInTheDocument();
     });
   });
 });

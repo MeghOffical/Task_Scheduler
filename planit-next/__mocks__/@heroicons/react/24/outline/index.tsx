@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Create functional component mocks for all heroicons
-export const BellIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const BellIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} data-testid="bell-icon" />
 );
 
@@ -99,4 +99,8 @@ export const MagnifyingGlassIcon: React.FC<React.SVGProps<SVGSVGElement>> = (pro
 
 export const FunnelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg {...props} data-testid="funnel-icon" />
+);
+
+export const PaperAirplaneIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg {...props} data-testid="paper-airplane-icon" />
 );

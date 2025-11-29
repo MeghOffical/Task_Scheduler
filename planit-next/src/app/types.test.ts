@@ -78,4 +78,80 @@ describe('app/types utility functions', () => {
       expect(taskData.endTime).toBeUndefined();
     });
   });
+
+  describe('Edge Cases', () => {
+    it('should handle null for invalid priority', () => {
+      const result = getPriorityClass(null as any);
+      expect(result).toBe('bg-gray-100 text-gray-700');
+    });
+
+    it('should handle undefined for invalid priority', () => {
+      const result = getPriorityClass(undefined as any);
+      expect(result).toBe('bg-gray-100 text-gray-700');
+    });
+
+    it('should handle null for invalid status', () => {
+      const result = getStatusClass(null as any);
+      expect(result).toBe('bg-gray-100 text-gray-700');
+    });
+
+    it('should handle undefined for invalid status', () => {
+      const result = getStatusClass(undefined as any);
+      expect(result).toBe('bg-gray-100 text-gray-700');
+    });
+
+    it('should handle random string for priority', () => {
+      const result = getPriorityClass('urgent' as any);
+      expect(result).toBe('bg-gray-100 text-gray-700');
+    });
+
+    it('should handle random string for status', () => {
+      const result = getStatusClass('archived' as any);
+      expect(result).toBe('bg-gray-100 text-gray-700');
+    });
+  });
+
+  describe('Return Value Consistency', () => {
+    it('should always return a string from getPriorityClass', () => {
+      const priorities = ['low', 'medium', 'high', '', null, undefined, 'invalid'];
+      priorities.forEach(priority => {
+        const result = getPriorityClass(priority as any);
+        expect(typeof result).toBe('string');
+        expect(result.length).toBeGreaterThan(0);
+      });
+    });
+
+    it('should always return a string from getStatusClass', () => {
+      const statuses = ['pending', 'in-progress', 'completed', '', null, undefined, 'invalid'];
+      statuses.forEach(status => {
+        const result = getStatusClass(status as any);
+        expect(typeof result).toBe('string');
+        expect(result.length).toBeGreaterThan(0);
+      });
+    });
+
+    it('should return Tailwind CSS classes', () => {
+      const priorityResult = getPriorityClass('high');
+      const statusResult = getStatusClass('completed');
+
+      expect(priorityResult).toMatch(/^bg-\w+-\d+ text-\w+-\d+$/);
+      expect(statusResult).toMatch(/^bg-\w+-\d+ text-\w+-\d+$/);
+    });
+
+    it('should handle all valid priority values', () => {
+      const priorities: Array<'low' | 'medium' | 'high'> = ['low', 'medium', 'high'];
+      priorities.forEach(priority => {
+        const result = getPriorityClass(priority);
+        expect(result).not.toBe('bg-gray-100 text-gray-700');
+      });
+    });
+
+    it('should handle all valid status values', () => {
+      const statuses: Array<'pending' | 'in-progress' | 'completed'> = ['pending', 'in-progress', 'completed'];
+      statuses.forEach(status => {
+        const result = getStatusClass(status);
+        expect(result).not.toBe('bg-gray-100 text-gray-700');
+      });
+    });
+  });
 });

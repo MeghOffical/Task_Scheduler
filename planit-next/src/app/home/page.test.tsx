@@ -739,8 +739,11 @@ describe('HomePage', () => {
 
       await waitFor(() => {
         expect(consoleSpy).toHaveBeenCalled();
+      }, { timeout: 3000 });
+
+      await waitFor(() => {
         expect(screen.getByText(/Sorry, I encountered an error/)).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
 
       consoleSpy.mockRestore();
     });
@@ -762,8 +765,11 @@ describe('HomePage', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Test message')).toBeInTheDocument();
+      }, { timeout: 3000 });
+
+      await waitFor(() => {
         expect(screen.getByText(/Sorry, I encountered an error/)).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
 
       consoleSpy.mockRestore();
     });
@@ -817,8 +823,12 @@ describe('HomePage', () => {
       await user.click(sendButton);
 
       await waitFor(() => {
+        expect(screen.getByText('Sure!')).toBeInTheDocument();
+      }, { timeout: 3000 });
+
+      await waitFor(() => {
         expect(screen.getByText('My Task')).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
 
       const completeButton = screen.getByText('Mark Complete');
       await user.click(completeButton);
@@ -831,8 +841,11 @@ describe('HomePage', () => {
             body: JSON.stringify({ status: 'completed' })
           })
         );
+      }, { timeout: 3000 });
+
+      await waitFor(() => {
         expect(screen.getByText(/I've marked "My Task" as completed/)).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should handle task deletion failure', async () => {
@@ -859,8 +872,12 @@ describe('HomePage', () => {
       await user.click(sendButton);
 
       await waitFor(() => {
+        expect(screen.getByText('OK')).toBeInTheDocument();
+      }, { timeout: 3000 });
+
+      await waitFor(() => {
         expect(screen.getByText('Task To Delete')).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
 
       const deleteButton = screen.getByText('Delete');
       await user.click(deleteButton);
@@ -896,15 +913,19 @@ describe('HomePage', () => {
       await user.click(sendButton);
 
       await waitFor(() => {
+        expect(screen.getByText('OK')).toBeInTheDocument();
+      }, { timeout: 3000 });
+
+      await waitFor(() => {
         expect(screen.getByText('Task To Complete')).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
 
       const completeButton = screen.getByText('Mark Complete');
       await user.click(completeButton);
 
       await waitFor(() => {
         expect(screen.getByText(/Sorry, I encountered an error/)).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
 
       consoleSpy.mockRestore();
     });
@@ -930,10 +951,14 @@ describe('HomePage', () => {
       await user.click(sendButton);
 
       await waitFor(() => {
+        expect(screen.getByText('Which task to update?')).toBeInTheDocument();
+      }, { timeout: 3000 });
+
+      await waitFor(() => {
         expect(screen.getByText('Update This')).toBeInTheDocument();
         // Update action defaults to showing delete button
         expect(screen.getByText('Delete')).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should handle empty savedMessages in localStorage', () => {

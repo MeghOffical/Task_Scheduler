@@ -107,10 +107,11 @@ describe('DashboardPage', () => {
   // Initial Render and Loading Tests
   describe('Initial Render and Loading', () => {
     test('renders dashboard with loading spinner initially', () => {
-      render(<DashboardPage />);
+      const { container } = render(<DashboardPage />);
       
       expect(screen.getByTestId('page-wrapper')).toBeInTheDocument();
-      expect(screen.getByRole('generic')).toHaveClass('animate-spin');
+      const spinner = container.querySelector('.animate-spin');
+      expect(spinner).toBeInTheDocument();
     });
 
     test('renders dashboard title and welcome message', async () => {
@@ -465,9 +466,10 @@ describe('DashboardPage', () => {
     });
 
     test('loading spinner has proper attributes', () => {
-      render(<DashboardPage />);
+      const { container } = render(<DashboardPage />);
       
-      const spinner = screen.getByRole('generic');
+      const spinner = container.querySelector('.animate-spin');
+      expect(spinner).toBeInTheDocument();
       expect(spinner).toHaveClass('animate-spin');
     });
   });

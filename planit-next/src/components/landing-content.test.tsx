@@ -1,32 +1,33 @@
+/**
+ * Unit tests for LandingContent component
+ */
+
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LandingContent from './landing-content';
 
 // Mock next/link
 jest.mock('next/link', () => {
-  return ({ children, href, ...props }: any) => {
-    return <a href={href} {...props}>{children}</a>;
+  return ({ children, href }: { children: React.ReactNode; href: string }) => {
+    return <a href={href}>{children}</a>;
   };
 });
 
-// Mock MainHeader
-jest.mock('./main-header', () => {
-  return function MockMainHeader() {
-    return <div data-testid="main-header">Main Header</div>;
-  };
-});
+// Mock main-header
+jest.mock('./main-header', () => ({
+  __esModule: true,
+  default: () => <header data-testid="main-header">Main Header</header>,
+}));
 
-// Mock FAQ data
+// Mock FAQs data
 jest.mock('@/app/faqs/faqs.json', () => [
-  { question: 'How do I sign up?', answer: 'Click Sign Up in the header and follow the steps.' },
-  { question: 'Is Plan-It free to use?', answer: 'Yes. We offer a free plan.' },
+  { question: 'How do I sign up?', answer: 'Click Sign Up in the header.' },
+  { question: 'Is Plan-It free?', answer: 'Yes, we offer a free plan.' },
 ]);
 
 describe('LandingContent Component', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
-    
     // Mock localStorage
     Object.defineProperty(window, 'localStorage', {
       value: {
@@ -55,44 +56,31 @@ describe('LandingContent Component', () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
     jest.clearAllMocks();
   });
 
-  describe('basic rendering', () => {
-    it('should render main header', () => {
+  describe('Rendering', () => {
+    it('should render without crashing', () => {
       render(<LandingContent />);
       expect(screen.getByTestId('main-header')).toBeInTheDocument();
     });
 
-    it('should render hero section', () => {
+    it('should render hero section with main heading', () => {
       render(<LandingContent />);
       expect(screen.getByText(/Transform How You/i)).toBeInTheDocument();
       expect(screen.getByText(/Work & Achieve/i)).toBeInTheDocument();
     });
 
-    it('should render hero description', () => {
+    it('should render Sign Up and Sign In buttons', () => {
       render(<LandingContent />);
-      expect(screen.getByText(/The complete productivity platform/i)).toBeInTheDocument();
+      const signUpLinks = screen.getAllByText('Sign Up');
+      const signInLinks = screen.getAllByText('Sign In');
+      expect(signUpLinks.length).toBeGreaterThan(0);
+      expect(signInLinks.length).toBeGreaterThan(0);
     });
 
-    it('should render CTA buttons', () => {
-      render(<LandingContent />);
-      expect(screen.getByRole('link', { name: /sign up/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /sign in/i })).toBeInTheDocument();
-    });
-
-    it('should have correct button links', () => {
-      render(<LandingContent />);
-      expect(screen.getByRole('link', { name: /sign up/i })).toHaveAttribute('href', '/register');
-      expect(screen.getByRole('link', { name: /sign in/i })).toHaveAttribute('href', '/login');
-    });
-  });
-
-  describe('feature cards', () => {
     it('should render all feature cards', () => {
       render(<LandingContent />);
-      
       expect(screen.getByText('Smart Tasks')).toBeInTheDocument();
       expect(screen.getByText('Pomodoro Timer')).toBeInTheDocument();
       expect(screen.getByText('Analytics')).toBeInTheDocument();
@@ -101,415 +89,321 @@ describe('LandingContent Component', () => {
       expect(screen.getByText('Customizable')).toBeInTheDocument();
     });
 
-    it('should render feature descriptions', () => {
-      render(<LandingContent />);
-      
-      expect(screen.getByText(/Create, organize, and prioritize tasks/i)).toBeInTheDocument();
-      expect(screen.getByText(/Boost focus with 25-minute sprints/i)).toBeInTheDocument();
-    });
-
-    it('should have proper styling classes', () => {
-      const { container } = render(<LandingContent />);
-      
-      const featureCards = container.querySelectorAll('.group');
-      expect(featureCards.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('testimonials section', () => {
-    it('should render testimonials heading', () => {
+    it('should render testimonials section', () => {
       render(<LandingContent />);
       expect(screen.getByText('Testimonials')).toBeInTheDocument();
+      expect(screen.getByText(/Trusted by professionals worldwide/i)).toBeInTheDocument();
     });
 
-    it('should render testimonial content', () => {
-      render(<LandingContent />);
-      expect(screen.getByText(/Plan-It has completely transformed/i)).toBeInTheDocument();
-    });
-
-    it('should show author information', () => {
-      render(<LandingContent />);
-      expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
-      expect(screen.getByText('Product Manager')).toBeInTheDocument();
-    });
-
-    it('should auto-rotate testimonials', async () => {
-      const { rerender } = render(<LandingContent />);
-      
-      expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
-      
-      await act(async () => {
-        jest.advanceTimersByTime(5000);
-      });
-      
-      await waitFor(() => {
-        expect(screen.getByText('Michael Chen')).toBeInTheDocument();
-      });
-    });
-
-    it('should allow manual testimonial navigation', async () => {
-      render(<LandingContent />);
-      
-      const buttons = screen.getAllByRole('button').filter(btn => 
-        btn.getAttribute('aria-label')?.includes('Testimonial')
-      );
-      
-      if (buttons.length > 1) {
-        fireEvent.click(buttons[1]);
-        await waitFor(() => {
-          expect(screen.getByText('Michael Chen')).toBeInTheDocument();
-        });
-      }
-    });
-
-    it('should display navigation dots', () => {
-      render(<LandingContent />);
-      
-      const navButtons = screen.getAllByRole('button').filter(btn => 
-        btn.getAttribute('aria-label')?.includes('Testimonial')
-      );
-      
-      expect(navButtons.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('How It Works section', () => {
-    it('should render section heading', () => {
+    it('should render How It Works section', () => {
       render(<LandingContent />);
       expect(screen.getByText('How Plan-It Works')).toBeInTheDocument();
-    });
-
-    it('should render all step cards', () => {
-      render(<LandingContent />);
-      
       expect(screen.getByText('Sign Up Free')).toBeInTheDocument();
       expect(screen.getByText('Add Your Tasks')).toBeInTheDocument();
       expect(screen.getByText('Get Things Done')).toBeInTheDocument();
     });
 
-    it('should render step descriptions', () => {
-      render(<LandingContent />);
-      
-      expect(screen.getByText(/Create your account in seconds/i)).toBeInTheDocument();
-      expect(screen.getByText(/Use the AI assistant or create tasks manually/i)).toBeInTheDocument();
-      expect(screen.getByText(/Track progress, use Pomodoro/i)).toBeInTheDocument();
-    });
-
-    it('should display step numbers', () => {
-      render(<LandingContent />);
-      
-      expect(screen.getByText('1')).toBeInTheDocument();
-      expect(screen.getByText('2')).toBeInTheDocument();
-      expect(screen.getByText('3')).toBeInTheDocument();
-    });
-  });
-
-  describe('FAQ section', () => {
-    it('should render FAQ heading', () => {
+    it('should render FAQs section', () => {
       render(<LandingContent />);
       expect(screen.getByText('Frequently Asked Questions')).toBeInTheDocument();
     });
 
-    it('should render FAQ items from JSON', () => {
+    it('should render footer with links', () => {
       render(<LandingContent />);
-      expect(screen.getByText('How do I sign up?')).toBeInTheDocument();
-      expect(screen.getByText('Is Plan-It free to use?')).toBeInTheDocument();
+      expect(screen.getByText('© 2025 Plan-It')).toBeInTheDocument();
+      expect(screen.getByText('Status')).toBeInTheDocument();
+      expect(screen.getByText('Docs')).toBeInTheDocument();
+      expect(screen.getByText('About Us')).toBeInTheDocument();
+      expect(screen.getByText('Contact')).toBeInTheDocument();
+    });
+  });
+
+  describe('Testimonials Carousel', () => {
+    it('should display first testimonial initially', () => {
+      render(<LandingContent />);
+      expect(screen.getByText(/Plan-It has completely transformed/i)).toBeInTheDocument();
+      expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
     });
 
-    it('should expand FAQ on click', async () => {
+    it('should have navigation dots for testimonials', () => {
       render(<LandingContent />);
+      const dots = screen.getAllByRole('button', { name: /Testimonial \d+/i });
+      expect(dots).toHaveLength(3);
+    });
+
+    it('should change testimonial when clicking navigation dot', async () => {
+      render(<LandingContent />);
+      const dots = screen.getAllByRole('button', { name: /Testimonial \d+/i });
       
-      const faqButton = screen.getByText('How do I sign up?');
-      fireEvent.click(faqButton);
+      fireEvent.click(dots[1]);
       
       await waitFor(() => {
-        expect(screen.getByText(/Click Sign Up in the header/i)).toBeInTheDocument();
+        expect(screen.getByText(/The Pomodoro timer integration/i)).toBeInTheDocument();
+        expect(screen.getByText('Michael Chen')).toBeInTheDocument();
       });
     });
 
-    it('should collapse FAQ when clicked again', () => {
+    it('should auto-rotate testimonials', async () => {
+      jest.useFakeTimers();
       render(<LandingContent />);
       
-      const faqButtons = screen.getAllByRole('button').filter(btn => 
-        btn.textContent?.includes('How do I sign up?')
-      );
-      const faqButton = faqButtons[0];
+      expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
       
-      fireEvent.click(faqButton);
+      jest.advanceTimersByTime(5000);
       
-      // Verify it's open
-      expect(faqButton).toHaveAttribute('aria-expanded', 'true');
+      await waitFor(() => {
+        expect(screen.getByText('Michael Chen')).toBeInTheDocument();
+      });
       
-      fireEvent.click(faqButton);
-      
-      // Verify it's closed
-      expect(faqButton).toHaveAttribute('aria-expanded', 'false');
+      jest.useRealTimers();
+    });
+  });
+
+  describe('FAQ Accordion', () => {
+    it('should render FAQ items from JSON', () => {
+      render(<LandingContent />);
+      expect(screen.getByText('How do I sign up?')).toBeInTheDocument();
+      expect(screen.getByText('Is Plan-It free?')).toBeInTheDocument();
     });
 
-    it('should handle keyboard navigation', () => {
+    it('should expand FAQ when clicked', async () => {
       render(<LandingContent />);
+      const faqButton = screen.getByText('How do I sign up?');
       
-      const faqButtons = screen.getAllByRole('button').filter(btn => 
-        btn.textContent?.includes('How do I sign up?')
-      );
-      const faqButton = faqButtons[0];
+      fireEvent.click(faqButton);
       
-      // Initial state should be closed
-      expect(faqButton).toHaveAttribute('aria-expanded', 'false');
+      await waitFor(() => {
+        expect(screen.getByText(/Click Sign Up in the header/i)).toBeVisible();
+      });
+    });
+
+    it('should collapse FAQ when clicked again', async () => {
+      render(<LandingContent />);
+      const faqButton = screen.getByText('How do I sign up?');
       
-      // Test Enter key
+      fireEvent.click(faqButton);
+      await waitFor(() => {
+        expect(screen.getByText(/Click Sign Up in the header/i)).toBeVisible();
+      });
+      
+      fireEvent.click(faqButton);
+      // FAQ should collapse - the answer should no longer be visible
+      await waitFor(() => {
+        const answer = screen.getByText(/Click Sign Up in the header/i);
+        expect(answer.parentElement).toHaveStyle({ overflow: 'hidden' });
+      });
+    });
+
+    it('should handle keyboard navigation in accordion', async () => {
+      render(<LandingContent />);
+      const faqButtons = screen.getAllByRole('button');
+      const firstFaq = faqButtons.find(btn => btn.textContent?.includes('How do I sign up?'));
+      
+      if (firstFaq) {
+        firstFaq.focus();
+        fireEvent.keyDown(firstFaq, { key: 'ArrowDown' });
+        
+        await waitFor(() => {
+          expect(document.activeElement).not.toBe(firstFaq);
+        });
+      }
+    });
+
+    it('should handle Enter key to toggle FAQ', async () => {
+      render(<LandingContent />);
+      const faqButton = screen.getByText('How do I sign up?');
+      
       fireEvent.keyDown(faqButton, { key: 'Enter' });
       
-      // Should now be expanded
-      expect(faqButton).toHaveAttribute('aria-expanded', 'true');
+      await waitFor(() => {
+        expect(screen.getByText(/Click Sign Up in the header/i)).toBeVisible();
+      });
     });
 
-    it('should navigate with arrow keys', () => {
+    it('should handle Space key to toggle FAQ', async () => {
       render(<LandingContent />);
+      const faqButton = screen.getByText('How do I sign up?');
       
-      const faqButtons = screen.getAllByRole('button').filter(btn => 
-        btn.textContent?.includes('?')
+      fireEvent.keyDown(faqButton, { key: ' ' });
+      
+      await waitFor(() => {
+        expect(screen.getByText(/Click Sign Up in the header/i)).toBeVisible();
+      });
+    });
+
+    it('should handle Home key to focus first FAQ', async () => {
+      render(<LandingContent />);
+      const faqButtons = screen.getAllByRole('button');
+      // Filter to get only FAQ buttons (not testimonial navigation buttons)
+      const faqOnlyButtons = faqButtons.filter(btn => 
+        btn.textContent?.includes('How do I sign up?') || btn.textContent?.includes('Is Plan-It free?')
       );
       
-      if (faqButtons.length > 0) {
-        fireEvent.keyDown(faqButtons[0], { key: 'ArrowDown' });
-        // Should focus next FAQ
+      if (faqOnlyButtons.length > 0) {
+        const lastFaq = faqOnlyButtons[faqOnlyButtons.length - 1];
+        lastFaq.focus();
+        fireEvent.keyDown(lastFaq, { key: 'Home' });
+        
+        await waitFor(() => {
+          expect(document.activeElement).toBe(faqOnlyButtons[0]);
+        });
       }
     });
 
-    it('should navigate to first with Home key', () => {
+    it('should handle End key to focus last FAQ', async () => {
       render(<LandingContent />);
-      
-      const faqButtons = screen.getAllByRole('button').filter(btn => 
-        btn.textContent?.includes('?')
+      const faqButtons = screen.getAllByRole('button');
+      // Filter to get only FAQ buttons (not testimonial navigation buttons)
+      const faqOnlyButtons = faqButtons.filter(btn => 
+        btn.textContent?.includes('How do I sign up?') || btn.textContent?.includes('Is Plan-It free?')
       );
       
-      if (faqButtons.length > 0) {
-        fireEvent.keyDown(faqButtons[0], { key: 'Home' });
-      }
-    });
-
-    it('should navigate to last with End key', () => {
-      render(<LandingContent />);
-      
-      const faqButtons = screen.getAllByRole('button').filter(btn => 
-        btn.textContent?.includes('?')
-      );
-      
-      if (faqButtons.length > 0) {
-        fireEvent.keyDown(faqButtons[0], { key: 'End' });
+      if (faqOnlyButtons.length > 0) {
+        const firstFaq = faqOnlyButtons[0];
+        firstFaq.focus();
+        fireEvent.keyDown(firstFaq, { key: 'End' });
+        
+        await waitFor(() => {
+          expect(document.activeElement).toBe(faqOnlyButtons[faqOnlyButtons.length - 1]);
+        });
       }
     });
   });
 
-  describe('footer', () => {
-    it('should render footer', () => {
-      const { container } = render(<LandingContent />);
-      const footer = container.querySelector('footer');
-      expect(footer).toBeInTheDocument();
-    });
-
-    it('should render copyright notice', () => {
-      render(<LandingContent />);
-      expect(screen.getByText(/© 2025 Plan-It/i)).toBeInTheDocument();
-    });
-
-    it('should render footer links', () => {
+  describe('Theme Toggle', () => {
+    it('should initialize theme from localStorage', async () => {
+      (window.localStorage.getItem as jest.Mock).mockReturnValue('dark');
       render(<LandingContent />);
       
-      expect(screen.getByRole('link', { name: /status/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /docs/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /about us/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /contact/i })).toBeInTheDocument();
+      await waitFor(() => {
+        expect(document.documentElement.classList.contains('dark')).toBe(true);
+      });
     });
 
-    it('should have GitHub link', () => {
+    it('should initialize theme from system preference when no localStorage value', async () => {
+      (window.localStorage.getItem as jest.Mock).mockReturnValue(null);
+      Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: query === '(prefers-color-scheme: dark)',
+          media: query,
+          onchange: null,
+          addListener: jest.fn(),
+          removeListener: jest.fn(),
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        })),
+      });
+      
       render(<LandingContent />);
       
-      const githubLink = screen.getByRole('link', { name: /github/i });
+      await waitFor(() => {
+        expect(document.documentElement.classList.contains('dark')).toBe(true);
+      });
+    });
+
+    it('should default to light theme when no preference', async () => {
+      (window.localStorage.getItem as jest.Mock).mockReturnValue(null);
+      render(<LandingContent />);
+      
+      await waitFor(() => {
+        expect(document.documentElement.classList.contains('dark')).toBe(false);
+      });
+    });
+  });
+
+  describe('Feature Cards', () => {
+    it('should render feature card descriptions', () => {
+      render(<LandingContent />);
+      expect(screen.getByText(/Create, organize, and prioritize tasks/i)).toBeInTheDocument();
+      expect(screen.getByText(/Boost focus with 25-minute sprints/i)).toBeInTheDocument();
+      expect(screen.getByText(/Visualize productivity trends/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Step Cards', () => {
+    it('should render step numbers', () => {
+      render(<LandingContent />);
+      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getByText('3')).toBeInTheDocument();
+    });
+
+    it('should render step descriptions', () => {
+      render(<LandingContent />);
+      expect(screen.getByText(/Create your account in seconds/i)).toBeInTheDocument();
+      expect(screen.getByText(/Use the AI assistant or create tasks manually/i)).toBeInTheDocument();
+      expect(screen.getByText(/Track progress, use Pomodoro/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Links', () => {
+    it('should have correct href for Sign Up button', () => {
+      render(<LandingContent />);
+      const signUpLinks = screen.getAllByText('Sign Up');
+      const signUpLink = signUpLinks[0].closest('a');
+      expect(signUpLink).toHaveAttribute('href', '/register');
+    });
+
+    it('should have correct href for Sign In button', () => {
+      render(<LandingContent />);
+      const signInLinks = screen.getAllByText('Sign In');
+      const signInLink = signInLinks[0].closest('a');
+      expect(signInLink).toHaveAttribute('href', '/login');
+    });
+
+    it('should have correct href for footer links', () => {
+      render(<LandingContent />);
+      expect(screen.getByText('Status').closest('a')).toHaveAttribute('href', '/status');
+      expect(screen.getByText('Docs').closest('a')).toHaveAttribute('href', '/docs');
+      expect(screen.getByText('About Us').closest('a')).toHaveAttribute('href', '/about');
+      expect(screen.getByText('Contact').closest('a')).toHaveAttribute('href', '/contact');
+    });
+
+    it('should have GitHub link with correct attributes', () => {
+      render(<LandingContent />);
+      const githubLink = screen.getByLabelText('GitHub');
       expect(githubLink).toHaveAttribute('href', 'https://github.com/MeghOffical/Task_Scheduler');
       expect(githubLink).toHaveAttribute('target', '_blank');
       expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer');
     });
   });
 
-  describe('theme functionality', () => {
-    it('should initialize theme from localStorage', () => {
-      (window.localStorage.getItem as jest.Mock).mockReturnValue('dark');
-      
-      render(<LandingContent />);
-      
-      expect(window.localStorage.getItem).toHaveBeenCalledWith('theme');
-    });
-
-    it('should use system preference when no saved theme', () => {
-      (window.localStorage.getItem as jest.Mock).mockReturnValue(null);
-      
-      render(<LandingContent />);
-      
-      expect(window.matchMedia).toHaveBeenCalledWith('(prefers-color-scheme: dark)');
-    });
-
-    it('should apply dark mode class', () => {
-      (window.localStorage.getItem as jest.Mock).mockReturnValue('dark');
-      
-      render(<LandingContent />);
-      
-      // Check if dark class would be applied
-      expect(window.localStorage.getItem).toHaveBeenCalled();
-    });
-  });
-
-  describe('responsive design', () => {
-    it('should have responsive grid for features', () => {
-      const { container } = render(<LandingContent />);
-      
-      const grid = container.querySelector('.grid');
-      expect(grid).toHaveClass('md:grid-cols-2', 'lg:grid-cols-3');
-    });
-
-    it('should have responsive text sizes', () => {
-      render(<LandingContent />);
-      
-      const heading = screen.getByText(/Transform How You/i);
-      expect(heading).toHaveClass('text-5xl', 'sm:text-6xl', 'lg:text-7xl');
-    });
-
-    it('should have responsive padding', () => {
-      const { container } = render(<LandingContent />);
-      
-      // Check that the main container has max-w which provides responsive layout
-      const main = container.querySelector('main');
-      expect(main).toBeInTheDocument();
-      
-      // Check that at least one section has padding classes
-      const sections = container.querySelectorAll('section');
-      expect(sections.length).toBeGreaterThan(0);
-      
-      // Verify sections exist and have content
-      const heroSection = container.querySelector('.max-w-7xl');
-      expect(heroSection).toBeInTheDocument();
-    });
-  });
-
-  describe('accessibility', () => {
-    it('should have proper heading hierarchy', () => {
-      const { container } = render(<LandingContent />);
-      
-      const h1 = container.querySelector('h1');
-      expect(h1).toBeInTheDocument();
-    });
-
-    it('should have aria-labels for buttons', () => {
-      render(<LandingContent />);
-      
-      const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
-        if (button.getAttribute('aria-label')) {
-          expect(button).toHaveAttribute('aria-label');
-        }
-      });
-    });
-
-    it('should have aria-expanded for accordions', () => {
-      render(<LandingContent />);
-      
-      const faqButtons = screen.getAllByRole('button').filter(btn => 
-        btn.getAttribute('aria-expanded') !== null
-      );
-      
-      expect(faqButtons.length).toBeGreaterThan(0);
-    });
-
-    it('should have proper link accessibility', () => {
-      render(<LandingContent />);
-      
-      const externalLinks = screen.getAllByRole('link').filter(link => 
-        link.getAttribute('target') === '_blank'
-      );
-      
-      externalLinks.forEach(link => {
-        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-      });
-    });
-  });
-
-  describe('animations and transitions', () => {
-    it('should have transition classes', () => {
-      const { container } = render(<LandingContent />);
-      
-      const cards = container.querySelectorAll('[class*="transition"]');
-      expect(cards.length).toBeGreaterThan(0);
-    });
-
-    it('should have hover effects', () => {
-      const { container } = render(<LandingContent />);
-      
-      const hoverElements = container.querySelectorAll('[class*="hover:"]');
-      expect(hoverElements.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('visual branding', () => {
-    it('should display "Built for productivity" badge', () => {
-      render(<LandingContent />);
-      expect(screen.getByText('Built for productivity')).toBeInTheDocument();
-    });
-
-    it('should have animated pulse on badge', () => {
-      const { container } = render(<LandingContent />);
-      
-      const pulse = container.querySelector('.animate-ping');
-      expect(pulse).toBeInTheDocument();
-    });
-
-    it('should use brand colors', () => {
-      const { container } = render(<LandingContent />);
-      
-      const blueElements = container.querySelectorAll('[class*="blue"]');
-      expect(blueElements.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('edge cases', () => {
-    it('should handle missing FAQ data gracefully', () => {
+  describe('Error Handling', () => {
+    it('should handle FAQ loading error gracefully', () => {
+      // This test ensures the component doesn't crash if FAQ data fails to load
       jest.resetModules();
       jest.doMock('@/app/faqs/faqs.json', () => {
-        throw new Error('File not found');
+        throw new Error('Failed to load');
       });
       
-      render(<LandingContent />);
-      
-      // Should still render with fallback FAQ
-      expect(screen.getByText(/Frequently Asked Questions/i)).toBeInTheDocument();
-    });
-
-    it('should handle empty FAQ data', () => {
-      jest.resetModules();
-      jest.doMock('@/app/faqs/faqs.json', () => []);
-      
-      render(<LandingContent />);
-      
-      expect(screen.getByText(/Frequently Asked Questions/i)).toBeInTheDocument();
+      const { container } = render(<LandingContent />);
+      expect(container).toBeInTheDocument();
     });
   });
 
-  describe('performance', () => {
-    it('should not re-render unnecessarily', () => {
-      const { rerender } = render(<LandingContent />);
-      
-      rerender(<LandingContent />);
-      
-      expect(screen.getByText(/Transform How You/i)).toBeInTheDocument();
+  describe('Accessibility', () => {
+    it('should have proper ARIA labels for testimonial navigation', () => {
+      render(<LandingContent />);
+      expect(screen.getByLabelText('Testimonial 1')).toBeInTheDocument();
+      expect(screen.getByLabelText('Testimonial 2')).toBeInTheDocument();
+      expect(screen.getByLabelText('Testimonial 3')).toBeInTheDocument();
     });
 
-    it('should clean up testimonial timer on unmount', () => {
-      const { unmount } = render(<LandingContent />);
+    it('should have proper ARIA attributes for accordion', () => {
+      render(<LandingContent />);
+      const faqButtons = screen.getAllByRole('button');
+      const faqButton = faqButtons.find(btn => btn.textContent?.includes('How do I sign up?'));
       
-      unmount();
-      
-      // Timer should be cleaned up
-      expect(true).toBe(true);
+      expect(faqButton).toHaveAttribute('aria-expanded');
+      expect(faqButton).toHaveAttribute('aria-controls');
+    });
+
+    it('should have proper GitHub link aria-label', () => {
+      render(<LandingContent />);
+      const githubLink = screen.getByLabelText('GitHub');
+      expect(githubLink).toBeInTheDocument();
     });
   });
 });

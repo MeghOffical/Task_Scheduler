@@ -15,7 +15,7 @@ const customJestConfig = {
     '^@heroicons/react/24/outline/(.*)$': '<rootDir>/__mocks__/@heroicons/react/24/outline/index.tsx',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(jose)/)',
+    'node_modules/(?!(jose|@heroicons)/)',
   ],
   globals: {
     'ts-jest': {

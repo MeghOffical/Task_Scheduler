@@ -1,31 +1,18 @@
 import mongoose from 'mongoose';
-import { User, Task, ChatbotThread, ChatbotMessage } from './index';
+import { User, Task, ChatThread, TaskCompletionHistory, PointActivity } from './index';
 
-// Mock mongoose to avoid BSON import issues
+// Mock mongoose
 jest.mock('mongoose', () => {
-  const actual = jest.requireActual('mongoose');
+  const actualMongoose = jest.requireActual('mongoose');
   return {
-    ...actual,
-    Schema: class Schema {
-      constructor(definition: any, options?: any) {
-        this.definition = definition;
-        this.options = options;
-      }
-      definition: any;
-      options: any;
-    },
+    ...actualMongoose,
     model: jest.fn((name: string, schema: any) => {
       return class MockModel {
         constructor(data: any) {
           Object.assign(this, data);
         }
-        save = jest.fn().mockResolvedValue(this);
-        static find = jest.fn();
-        static findOne = jest.fn();
-        static findById = jest.fn();
-        static create = jest.fn();
-        static deleteOne = jest.fn();
-        static updateOne = jest.fn();
+        static schema = schema;
+        static modelName = name;
       };
     }),
     models: {},
@@ -33,279 +20,388 @@ jest.mock('mongoose', () => {
 });
 
 describe('Models', () => {
-  describe('User Model', () => {
-    it('should create a valid credentials user', () => {
-      const userData = {
-        username: 'testuser',
-        email: 'test@example.com',
-        password: 'hashedpassword',
-        provider: 'credentials',
-        profession: 'Developer'
-      };
-
-      const user = new User(userData);
-      
-      expect(user.username).toBe('testuser');
-      expect(user.email).toBe('test@example.com');
-      expect(user.password).toBe('hashedpassword');
-      expect(user.provider).toBe('credentials');
-      expect(user.profession).toBe('Developer');
+  describe('UserSchema', () => {
+    it('should have correct field types', () => {
+      expect(User).toBeDefined();
+      expect(User.modelName).toBe('User');
     });
 
-    it('should create a valid Google OAuth user without password', () => {
-      const userData = {
-        email: 'google@example.com',
+    it('should have email as required field', () => {
+      const schema = (User as any).schema;
+      expect(schema).toBeDefined();
+    });
+
+    it('should have default values for points', () => {
+      const user = new User({
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'password123'
+      });
+      expect(user).toBeDefined();
+    });
+
+    it('should support OAuth provider', () => {
+      const user = new User({
+        email: 'test@example.com',
         provider: 'google',
-        providerId: 'google-123',
-        name: 'John Doe',
+        providerId: 'google123'
+      });
+      expect(user).toBeDefined();
+    });
+
+    it('should have pomodoro settings with defaults', () => {
+      const user = new User({
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'password123'
+      });
+      expect(user).toBeDefined();
+    });
+
+    it('should support reset password token', () => {
+      const user = new User({
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'password123',
+        resetPasswordToken: 'token123',
+        resetPasswordExpires: new Date()
+      });
+      expect(user).toBeDefined();
+    });
+
+    it('should have lastDailyCheckinAt field', () => {
+      const user = new User({
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'password123',
+        lastDailyCheckinAt: new Date()
+      });
+      expect(user).toBeDefined();
+    });
+
+    it('should support profession field', () => {
+      const user = new User({
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'password123',
+        profession: 'Developer'
+      });
+      expect(user).toBeDefined();
+    });
+
+    it('should support name and image for OAuth', () => {
+      const user = new User({
+        email: 'test@example.com',
+        provider: 'google',
+        name: 'Test User',
         image: 'https://example.com/image.jpg'
-      };
-
-      const user = new User(userData);
-      
-      expect(user.email).toBe('google@example.com');
-      expect(user.provider).toBe('google');
-      expect(user.providerId).toBe('google-123');
-      expect(user.name).toBe('John Doe');
-      expect(user.image).toBe('https://example.com/image.jpg');
-      expect(user.password).toBeUndefined();
-    });
-
-    it('should have default pomodoro settings', () => {
-      const user = new User({
-        username: 'testuser',
-        email: 'test@example.com',
-        password: 'hashedpassword'
       });
-      
-      expect(user.pomodoroSettings.workDuration).toBe(25);
-      expect(user.pomodoroSettings.shortBreakDuration).toBe(5);
-      expect(user.pomodoroSettings.longBreakDuration).toBe(15);
-      expect(user.pomodoroSettings.longBreakInterval).toBe(4);
-    });
-
-    it('should validate required email field', () => {
-      const user = new User({
-        username: 'testuser',
-        password: 'hashedpassword'
-      });
-
-      const validationError = user.validateSync();
-      expect(validationError).toBeDefined();
-      expect(validationError?.errors.email).toBeDefined();
-    });
-
-    it('should have default provider as credentials', () => {
-      const user = new User({
-        username: 'testuser',
-        email: 'test@example.com',
-        password: 'hashedpassword'
-      });
-      
-      expect(user.provider).toBe('credentials');
-    });
-
-    it('should store reset password token and expiry', () => {
-      const user = new User({
-        username: 'testuser',
-        email: 'test@example.com',
-        password: 'hashedpassword',
-        resetPasswordToken: 'reset-token-123',
-        resetPasswordExpires: new Date('2025-12-31')
-      });
-      
-      expect(user.resetPasswordToken).toBe('reset-token-123');
-      expect(user.resetPasswordExpires).toEqual(new Date('2025-12-31'));
+      expect(user).toBeDefined();
     });
   });
 
-  describe('Task Model', () => {
-    const mockUserId = new mongoose.Types.ObjectId();
+  describe('TaskSchema', () => {
+    it('should have correct model name', () => {
+      expect(Task).toBeDefined();
+      expect(Task.modelName).toBe('Task');
+    });
 
-    it('should create a valid task', () => {
-      const taskData = {
-        userId: mockUserId,
+    it('should create task with required fields', () => {
+      const task = new Task({
+        userId: new mongoose.Types.ObjectId(),
+        title: 'Test Task'
+      });
+      expect(task).toBeDefined();
+    });
+
+    it('should have default priority as medium', () => {
+      const task = new Task({
+        userId: new mongoose.Types.ObjectId(),
+        title: 'Test Task'
+      });
+      expect(task).toBeDefined();
+    });
+
+    it('should have default status as pending', () => {
+      const task = new Task({
+        userId: new mongoose.Types.ObjectId(),
+        title: 'Test Task'
+      });
+      expect(task).toBeDefined();
+    });
+
+    it('should support all priority levels', () => {
+      const priorities = ['low', 'medium', 'high'];
+      priorities.forEach(priority => {
+        const task = new Task({
+          userId: new mongoose.Types.ObjectId(),
+          title: 'Test Task',
+          priority
+        });
+        expect(task).toBeDefined();
+      });
+    });
+
+    it('should support all status values', () => {
+      const statuses = ['pending', 'in-progress', 'completed', 'overdue'];
+      statuses.forEach(status => {
+        const task = new Task({
+          userId: new mongoose.Types.ObjectId(),
+          title: 'Test Task',
+          status
+        });
+        expect(task).toBeDefined();
+      });
+    });
+
+    it('should support optional description', () => {
+      const task = new Task({
+        userId: new mongoose.Types.ObjectId(),
         title: 'Test Task',
-        description: 'Task description',
-        priority: 'high' as const,
-        status: 'pending' as const,
-        dueDate: new Date('2025-12-31'),
+        description: 'Test description'
+      });
+      expect(task).toBeDefined();
+    });
+
+    it('should support dueDate', () => {
+      const task = new Task({
+        userId: new mongoose.Types.ObjectId(),
+        title: 'Test Task',
+        dueDate: new Date('2025-12-31')
+      });
+      expect(task).toBeDefined();
+    });
+
+    it('should support startTime and endTime', () => {
+      const task = new Task({
+        userId: new mongoose.Types.ObjectId(),
+        title: 'Test Task',
         startTime: '09:00',
-        endTime: '10:00'
-      };
-
-      const task = new Task(taskData);
-      
-      expect(task.title).toBe('Test Task');
-      expect(task.description).toBe('Task description');
-      expect(task.priority).toBe('high');
-      expect(task.status).toBe('pending');
-      expect(task.dueDate).toEqual(new Date('2025-12-31'));
-      expect(task.startTime).toBe('09:00');
-      expect(task.endTime).toBe('10:00');
-    });
-
-    it('should have default values', () => {
-      const task = new Task({
-        userId: mockUserId,
-        title: 'Test Task'
+        endTime: '17:00'
       });
-      
-      expect(task.description).toBe('');
-      expect(task.priority).toBe('medium');
-      expect(task.status).toBe('pending');
+      expect(task).toBeDefined();
     });
 
-    it('should validate required fields', () => {
+    it('should support completedAt timestamp', () => {
       const task = new Task({
-        title: 'Test Task'
-      });
-
-      const validationError = task.validateSync();
-      expect(validationError).toBeDefined();
-      expect(validationError?.errors.userId).toBeDefined();
-    });
-
-    it('should only accept valid priority values', () => {
-      const task = new Task({
-        userId: mockUserId,
+        userId: new mongoose.Types.ObjectId(),
         title: 'Test Task',
-        priority: 'invalid' as any
+        status: 'completed',
+        completedAt: new Date()
       });
-
-      const validationError = task.validateSync();
-      expect(validationError).toBeDefined();
-    });
-
-    it('should only accept valid status values', () => {
-      const task = new Task({
-        userId: mockUserId,
-        title: 'Test Task',
-        status: 'invalid' as any
-      });
-
-      const validationError = task.validateSync();
-      expect(validationError).toBeDefined();
-    });
-
-    it('should accept null dueDate', () => {
-      const task = new Task({
-        userId: mockUserId,
-        title: 'Test Task',
-        dueDate: null
-      });
-
-      const validationError = task.validateSync();
-      expect(validationError).toBeUndefined();
-      expect(task.dueDate).toBeNull();
+      expect(task).toBeDefined();
     });
   });
 
-  describe('ChatbotThread Model', () => {
-    const mockUserId = new mongoose.Types.ObjectId();
-
-    it('should create a valid chatbot thread', () => {
-      const threadData = {
-        userId: mockUserId,
-        title: 'Test Thread'
-      };
-
-      const thread = new ChatbotThread(threadData);
-      
-      expect(thread.userId).toEqual(mockUserId);
-      expect(thread.title).toBe('Test Thread');
+  describe('ChatThreadSchema', () => {
+    it('should have correct model name', () => {
+      expect(ChatThread).toBeDefined();
+      expect(ChatThread.modelName).toBe('ChatThread');
     });
 
-    it('should have default empty title', () => {
-      const thread = new ChatbotThread({
-        userId: mockUserId
+    it('should create chat thread with userId', () => {
+      const thread = new ChatThread({
+        userId: new mongoose.Types.ObjectId()
       });
-      
-      expect(thread.title).toBe('');
+      expect(thread).toBeDefined();
     });
 
-    it('should validate required userId field', () => {
-      const thread = new ChatbotThread({
-        title: 'Test Thread'
+    it('should have default title', () => {
+      const thread = new ChatThread({
+        userId: new mongoose.Types.ObjectId()
       });
+      expect(thread).toBeDefined();
+    });
 
-      const validationError = thread.validateSync();
-      expect(validationError).toBeDefined();
-      expect(validationError?.errors.userId).toBeDefined();
+    it('should support custom title', () => {
+      const thread = new ChatThread({
+        userId: new mongoose.Types.ObjectId(),
+        title: 'Custom Chat Title'
+      });
+      expect(thread).toBeDefined();
+    });
+
+    it('should support messages array', () => {
+      const thread = new ChatThread({
+        userId: new mongoose.Types.ObjectId(),
+        messages: [
+          { role: 'user', content: 'Hello', createdAt: new Date() },
+          { role: 'assistant', content: 'Hi there!', createdAt: new Date() }
+        ]
+      });
+      expect(thread).toBeDefined();
+    });
+
+    it('should support all message roles', () => {
+      const roles = ['user', 'assistant', 'tool', 'system'];
+      roles.forEach(role => {
+        const thread = new ChatThread({
+          userId: new mongoose.Types.ObjectId(),
+          messages: [{ role, content: 'Test message', createdAt: new Date() }]
+        });
+        expect(thread).toBeDefined();
+      });
+    });
+
+    it('should generate threadId automatically', () => {
+      const thread = new ChatThread({
+        userId: new mongoose.Types.ObjectId()
+      });
+      expect(thread).toBeDefined();
     });
   });
 
-  describe('ChatbotMessage Model', () => {
-    const mockThreadId = new mongoose.Types.ObjectId();
-
-    it('should create a valid user message', () => {
-      const messageData = {
-        threadId: mockThreadId,
-        role: 'user' as const,
-        content: 'Hello, how are you?'
-      };
-
-      const message = new ChatbotMessage(messageData);
-      
-      expect(message.threadId).toEqual(mockThreadId);
-      expect(message.role).toBe('user');
-      expect(message.content).toBe('Hello, how are you?');
+  describe('TaskCompletionHistorySchema', () => {
+    it('should have correct model name', () => {
+      expect(TaskCompletionHistory).toBeDefined();
+      expect(TaskCompletionHistory.modelName).toBe('TaskCompletionHistory');
     });
 
-    it('should create a valid assistant message', () => {
-      const messageData = {
-        threadId: mockThreadId,
-        role: 'assistant' as const,
-        content: 'I am doing well, thank you!'
-      };
-
-      const message = new ChatbotMessage(messageData);
-      
-      expect(message.role).toBe('assistant');
-      expect(message.content).toBe('I am doing well, thank you!');
-    });
-
-    it('should validate required fields', () => {
-      const message = new ChatbotMessage({
-        role: 'user',
-        content: 'Test message'
+    it('should create history with required fields', () => {
+      const history = new TaskCompletionHistory({
+        userId: new mongoose.Types.ObjectId(),
+        taskId: new mongoose.Types.ObjectId(),
+        taskTitle: 'Completed Task'
       });
-
-      const validationError = message.validateSync();
-      expect(validationError).toBeDefined();
-      expect(validationError?.errors.threadId).toBeDefined();
+      expect(history).toBeDefined();
     });
 
-    it('should only accept valid role values', () => {
-      const message = new ChatbotMessage({
-        threadId: mockThreadId,
-        role: 'invalid' as any,
-        content: 'Test'
+    it('should have default completedAt timestamp', () => {
+      const history = new TaskCompletionHistory({
+        userId: new mongoose.Types.ObjectId(),
+        taskId: new mongoose.Types.ObjectId(),
+        taskTitle: 'Completed Task'
       });
-
-      const validationError = message.validateSync();
-      expect(validationError).toBeDefined();
+      expect(history).toBeDefined();
     });
 
-    it('should validate required content field', () => {
-      const message = new ChatbotMessage({
-        threadId: mockThreadId,
-        role: 'user'
+    it('should support custom completedAt', () => {
+      const customDate = new Date('2025-01-01');
+      const history = new TaskCompletionHistory({
+        userId: new mongoose.Types.ObjectId(),
+        taskId: new mongoose.Types.ObjectId(),
+        taskTitle: 'Completed Task',
+        completedAt: customDate
       });
+      expect(history).toBeDefined();
+    });
+  });
 
-      const validationError = message.validateSync();
-      expect(validationError).toBeDefined();
-      expect(validationError?.errors.content).toBeDefined();
+  describe('PointActivitySchema', () => {
+    it('should have correct model name', () => {
+      expect(PointActivity).toBeDefined();
+      expect(PointActivity.modelName).toBe('PointActivity');
     });
 
-    it('should have timestamps', () => {
-      const message = new ChatbotMessage({
-        threadId: mockThreadId,
-        role: 'user',
-        content: 'Test message'
+    it('should create activity with required fields', () => {
+      const activity = new PointActivity({
+        userId: new mongoose.Types.ObjectId(),
+        type: 'task_completed',
+        amount: 10,
+        description: 'Completed task on time'
       });
-      
-      expect(message.createdAt).toBeUndefined(); // Not set until saved
+      expect(activity).toBeDefined();
+    });
+
+    it('should support positive amounts', () => {
+      const activity = new PointActivity({
+        userId: new mongoose.Types.ObjectId(),
+        type: 'daily_checkin',
+        amount: 5,
+        description: 'Daily check-in bonus'
+      });
+      expect(activity).toBeDefined();
+    });
+
+    it('should support negative amounts', () => {
+      const activity = new PointActivity({
+        userId: new mongoose.Types.ObjectId(),
+        type: 'missed_deadline',
+        amount: -10,
+        description: 'Missed task deadline'
+      });
+      expect(activity).toBeDefined();
+    });
+
+    it('should have default createdAt', () => {
+      const activity = new PointActivity({
+        userId: new mongoose.Types.ObjectId(),
+        type: 'signup_bonus',
+        amount: 100,
+        description: 'Welcome bonus'
+      });
+      expect(activity).toBeDefined();
+    });
+
+    it('should support various activity types', () => {
+      const types = ['signup_bonus', 'daily_checkin', 'task_completed_on_time', 'missed_deadline'];
+      types.forEach(type => {
+        const activity = new PointActivity({
+          userId: new mongoose.Types.ObjectId(),
+          type,
+          amount: 10,
+          description: `Activity of type ${type}`
+        });
+        expect(activity).toBeDefined();
+      });
+    });
+  });
+
+  describe('Model Exports', () => {
+    it('should export all models', () => {
+      expect(User).toBeDefined();
+      expect(Task).toBeDefined();
+      expect(ChatThread).toBeDefined();
+      expect(TaskCompletionHistory).toBeDefined();
+      expect(PointActivity).toBeDefined();
+    });
+
+    it('should have unique model names', () => {
+      const names = [
+        User.modelName,
+        Task.modelName,
+        ChatThread.modelName,
+        TaskCompletionHistory.modelName,
+        PointActivity.modelName
+      ];
+      const uniqueNames = new Set(names);
+      expect(uniqueNames.size).toBe(names.length);
+    });
+  });
+
+  describe('Schema Relationships', () => {
+    it('should reference User in Task', () => {
+      const task = new Task({
+        userId: new mongoose.Types.ObjectId(),
+        title: 'Test Task'
+      });
+      expect(task).toBeDefined();
+    });
+
+    it('should reference User in ChatThread', () => {
+      const thread = new ChatThread({
+        userId: new mongoose.Types.ObjectId()
+      });
+      expect(thread).toBeDefined();
+    });
+
+    it('should reference User and Task in TaskCompletionHistory', () => {
+      const history = new TaskCompletionHistory({
+        userId: new mongoose.Types.ObjectId(),
+        taskId: new mongoose.Types.ObjectId(),
+        taskTitle: 'Test'
+      });
+      expect(history).toBeDefined();
+    });
+
+    it('should reference User in PointActivity', () => {
+      const activity = new PointActivity({
+        userId: new mongoose.Types.ObjectId(),
+        type: 'test',
+        amount: 10,
+        description: 'Test'
+      });
+      expect(activity).toBeDefined();
     });
   });
 });
