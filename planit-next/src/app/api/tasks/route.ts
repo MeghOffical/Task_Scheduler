@@ -33,6 +33,7 @@ export async function GET(request: Request) {
       let isOverdue = false;
       
       if (task.dueDate) {
+        // Create date in local timezone
         const dueDate = new Date(task.dueDate);
         
         if (task.endTime) {
@@ -41,17 +42,23 @@ export async function GET(request: Request) {
           const dueDateTime = new Date(dueDate);
           dueDateTime.setHours(hours, minutes, 0, 0);
           
+          console.log(`[OVERDUE CHECK] Task: ${task.title}, Now: ${now.toISOString()}, Due: ${dueDateTime.toISOString()}, IsOverdue: ${now > dueDateTime}`);
+          
           // Task is overdue if current time is past the due date + end time
           isOverdue = now > dueDateTime;
         } else {
           // No end time specified, consider overdue after the due date (at midnight)
           const dueDateMidnight = new Date(dueDate);
           dueDateMidnight.setHours(23, 59, 59, 999);
+          
+          console.log(`[OVERDUE CHECK] Task: ${task.title} (no end time), Now: ${now.toISOString()}, Due: ${dueDateMidnight.toISOString()}, IsOverdue: ${now > dueDateMidnight}`);
+          
           isOverdue = now > dueDateMidnight;
         }
       }
       
       if (isOverdue) {
+        console.log(`[MARKING OVERDUE] Task: ${task.title} - Deducting 5 coins`);
         await Task.findByIdAndUpdate(task._id, { status: 'overdue' });
         
         // Deduct 5 coins for missing deadline
