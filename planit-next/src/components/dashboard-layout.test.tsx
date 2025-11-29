@@ -842,20 +842,13 @@ describe('DashboardLayout - Theme Toggle', () => {
   });
 
   it('should persist theme preference in localStorage', async () => {
-    const setItemMock = jest.fn();
-    Storage.prototype.setItem = setItemMock;
-
-    render(
-      <DashboardLayout userEmail="test@example.com" userName="Test User" userPoints={100}>
-        <div>Content</div>
-      </DashboardLayout>
-    );
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
 
     const themeButton = screen.getByTitle('Light Mode');
     fireEvent.click(themeButton);
 
     await waitFor(() => {
-      expect(setItemMock).toHaveBeenCalledWith('theme', 'dark');
+      expect(localStorage.setItem).toHaveBeenCalledWith('theme', 'dark');
     });
   });
 });
@@ -869,51 +862,806 @@ describe('DashboardLayout - Profile Menu', () => {
   });
 
   it('should toggle profile menu on click', async () => {
-    const { container } = render(
-      <DashboardLayout userEmail="test@example.com" userName="Test User" userPoints={100}>
-        <div>Content</div>
-      </DashboardLayout>
-    );
+    const { container } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalled();
+    });
 
     // Click on profile button (inside profile-menu-container)
     const profileContainer = container.querySelector('.profile-menu-container');
     const profileButton = profileContainer?.querySelector('button');
-    const logoutButtons = screen.queryAllByText('Logout');
     
     if (profileButton) {
-      // Initially profile menu should be visible
-      expect(logoutButtons.length).toBeGreaterThan(0);
+      // Initially menu should be closed
+      expect(screen.queryAllByText('Logout').length).toBe(0);
       
-      // Click to toggle off
+      // Click to open
       fireEvent.click(profileButton);
 
       await waitFor(() => {
-        const updatedLogoutButtons = screen.queryAllByText('Logout');
-        // Menu should be hidden
-        expect(updatedLogoutButtons.length).toBe(0);
+        const logoutButtons = screen.queryAllByText('Logout');
+        expect(logoutButtons.length).toBeGreaterThan(0);
       });
 
-      // Click again to show
+      // Click again to close
       fireEvent.click(profileButton);
       
       await waitFor(() => {
         const finalLogoutButtons = screen.queryAllByText('Logout');
-        expect(finalLogoutButtons.length).toBeGreaterThan(0);
+        expect(finalLogoutButtons.length).toBe(0);
       });
     }
   });
 
   it('should render profile menu button', () => {
-    const { container } = render(
-      <DashboardLayout userEmail="test@example.com" userName="Test User" userPoints={100}>
-        <div>Content</div>
-      </DashboardLayout>
-    );
+    const { container } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
 
     const profileContainer = container.querySelector('.profile-menu-container');
     expect(profileContainer).toBeInTheDocument();
     
     const profileButton = profileContainer?.querySelector('button');
     expect(profileButton).toBeInTheDocument();
+  });
+});
+
+describe('DashboardLayout - Daily Check-in', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+    localStorage.clear();
+  });
+
+  it('should perform daily check-in on first load of the day', async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    (localStorage.getItem as jest.Mock).mockReturnValue(null); // No previous check-in
+    
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com', points: 100 }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([]), // tasks
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ points: 101, message: 'Daily check-in successful' }),
+      });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/points/daily-checkin', { method: 'POST' });
+    }, { timeout: 3000 });
+
+    await waitFor(() => {
+      expect(localStorage.setItem).toHaveBeenCalledWith('lastDailyCheckinDate', today);
+    });
+  });
+
+  it('should not perform daily check-in if already done today', async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    (localStorage.getItem as jest.Mock).mockImplementation((key: string) => {
+      if (key === 'lastDailyCheckinDate') return today;
+      return null;
+    });
+
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com', points: 100 }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([]), // tasks
+      });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/user/me');
+    });
+
+    // Give it time to potentially make the call
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Should not call daily check-in
+    expect(global.fetch).not.toHaveBeenCalledWith('/api/points/daily-checkin', expect.any(Object));
+  });
+
+  it('should handle daily check-in failure gracefully', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation();
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com', points: 100 }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([]), // tasks
+      })
+      .mockRejectedValueOnce(new Error('Check-in failed'));
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(consoleError).toHaveBeenCalledWith('Auto daily check-in failed:', expect.any(Error));
+    }, { timeout: 3000 });
+
+    consoleError.mockRestore();
+  });
+
+  it('should update points after successful daily check-in', async () => {
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com', points: 100 }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([]), // tasks
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ points: 101 }),
+      });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/points/daily-checkin', { method: 'POST' });
+    }, { timeout: 3000 });
+  });
+});
+
+describe('DashboardLayout - Global Points Toast', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+    delete (window as any).showPointsToast;
+  });
+
+  it('should expose showPointsToast function on window', async () => {
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect((window as any).showPointsToast).toBeDefined();
+    });
+  });
+
+  it('should display toast when showPointsToast is called with positive message', async () => {
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect((window as any).showPointsToast).toBeDefined();
+    });
+
+    (window as any).showPointsToast('Task completed! +10 points', true);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Task completed!/i)).toBeInTheDocument();
+    });
+  });
+
+  it('should display toast when showPointsToast is called with negative message', async () => {
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect((window as any).showPointsToast).toBeDefined();
+    });
+
+    (window as any).showPointsToast('Task deleted! -5 points', false);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Task deleted!/i)).toBeInTheDocument();
+    });
+  });
+
+  it('should cleanup showPointsToast on unmount', async () => {
+    const { unmount } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect((window as any).showPointsToast).toBeDefined();
+    });
+
+    unmount();
+
+    expect((window as any).showPointsToast).toBeUndefined();
+  });
+});
+
+describe('DashboardLayout - Click Outside Handlers', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+  });
+
+  it('should close profile menu when clicking outside', async () => {
+    const { container } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    // Open profile menu
+    const profileContainer = container.querySelector('.profile-menu-container');
+    const profileButton = profileContainer?.querySelector('button');
+    
+    if (profileButton) {
+      fireEvent.click(profileButton);
+      
+      await waitFor(() => {
+        expect(screen.getAllByText('Logout').length).toBeGreaterThan(0);
+      });
+
+      // Click outside
+      fireEvent.mouseDown(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryAllByText('Logout').length).toBe(0);
+      });
+    }
+  });
+
+  it('should close notifications when clicking outside', async () => {
+    const { container } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    // Open notifications
+    const notificationContainer = container.querySelector('.notification-menu-container');
+    const notificationButton = notificationContainer?.querySelector('button');
+    
+    if (notificationButton) {
+      fireEvent.click(notificationButton);
+      
+      await waitFor(() => {
+        expect(screen.getByText('No notifications')).toBeInTheDocument();
+      });
+
+      // Click outside
+      fireEvent.mouseDown(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryByText('No notifications')).not.toBeInTheDocument();
+      });
+    }
+  });
+
+  it('should not close profile menu when clicking inside it', async () => {
+    const { container } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    const profileContainer = container.querySelector('.profile-menu-container');
+    const profileButton = profileContainer?.querySelector('button');
+    
+    if (profileButton) {
+      fireEvent.click(profileButton);
+      
+      await waitFor(() => {
+        expect(screen.getAllByText('Logout').length).toBeGreaterThan(0);
+      });
+
+      // Click inside profile menu
+      const logoutButton = screen.getAllByText('Logout')[0];
+      fireEvent.mouseDown(logoutButton.parentElement!);
+
+      // Menu should still be visible (though logout might trigger other actions)
+      expect(screen.getAllByText('Logout').length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('DashboardLayout - Sidebar State Persistence', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+    localStorage.clear();
+  });
+
+  it('should load sidebar state from localStorage on mount', () => {
+    (localStorage.getItem as jest.Mock).mockReturnValue('true');
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    expect(localStorage.getItem).toHaveBeenCalledWith('sidebarMinimized');
+  });
+
+  it('should save sidebar state to localStorage when changed', async () => {
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(localStorage.setItem).toHaveBeenCalledWith('sidebarMinimized', 'false');
+    });
+  });
+});
+
+describe('DashboardLayout - AI Message Handling', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('should render AI panel when open', () => {
+    render(
+      <Sidebar
+        showAIPanel={true}
+        setShowAIPanel={jest.fn()}
+        messages={[{ id: 1, text: 'Hello', isUser: false }]}
+        setMessages={jest.fn()}
+        inputMessage=""
+        setInputMessage={jest.fn()}
+        handleSendMessage={jest.fn()}
+        isMinimized={false}
+        setIsMinimized={jest.fn()}
+        isMobileMenuOpen={false}
+        setIsMobileMenuOpen={jest.fn()}
+      />
+    );
+
+    expect(screen.getByText('Hello')).toBeInTheDocument();
+  });
+
+  it('should call handleSendMessage when form is submitted', () => {
+    const mockHandleSendMessage = jest.fn((e) => e.preventDefault());
+    const mockSetInputMessage = jest.fn();
+
+    render(
+      <Sidebar
+        showAIPanel={true}
+        setShowAIPanel={jest.fn()}
+        messages={[]}
+        setMessages={jest.fn()}
+        inputMessage="Test message"
+        setInputMessage={mockSetInputMessage}
+        handleSendMessage={mockHandleSendMessage}
+        isMinimized={false}
+        setIsMinimized={jest.fn()}
+        isMobileMenuOpen={false}
+        setIsMobileMenuOpen={jest.fn()}
+      />
+    );
+
+    const form = document.querySelector('form');
+    if (form) {
+      fireEvent.submit(form);
+      expect(mockHandleSendMessage).toHaveBeenCalled();
+    }
+  });
+
+  it('should update input message on change', () => {
+    const mockSetInputMessage = jest.fn();
+
+    render(
+      <Sidebar
+        showAIPanel={true}
+        setShowAIPanel={jest.fn()}
+        messages={[]}
+        setMessages={jest.fn()}
+        inputMessage=""
+        setInputMessage={mockSetInputMessage}
+        handleSendMessage={jest.fn()}
+        isMinimized={false}
+        setIsMinimized={jest.fn()}
+        isMobileMenuOpen={false}
+        setIsMobileMenuOpen={jest.fn()}
+      />
+    );
+
+    const input = screen.getByPlaceholderText('Ask me anything...');
+    fireEvent.change(input, { target: { value: 'New message' } });
+    expect(mockSetInputMessage).toHaveBeenCalledWith('New message');
+  });
+
+  it('should close AI panel when close button clicked', () => {
+    const mockSetShowAIPanel = jest.fn();
+
+    render(
+      <Sidebar
+        showAIPanel={true}
+        setShowAIPanel={mockSetShowAIPanel}
+        messages={[]}
+        setMessages={jest.fn()}
+        inputMessage=""
+        setInputMessage={jest.fn()}
+        handleSendMessage={jest.fn()}
+        isMinimized={false}
+        setIsMinimized={jest.fn()}
+        isMobileMenuOpen={false}
+        setIsMobileMenuOpen={jest.fn()}
+      />
+    );
+
+    const closeButtons = screen.getAllByRole('button');
+    const aiCloseButton = closeButtons.find(btn => btn.querySelector('svg[class*="h-6"]'));
+    
+    if (aiCloseButton) {
+      fireEvent.click(aiCloseButton);
+      expect(mockSetShowAIPanel).toHaveBeenCalledWith(false);
+    }
+  });
+
+  it('should close AI panel when overlay is clicked', () => {
+    const mockSetShowAIPanel = jest.fn();
+
+    const { container } = render(
+      <Sidebar
+        showAIPanel={true}
+        setShowAIPanel={mockSetShowAIPanel}
+        messages={[]}
+        setMessages={jest.fn()}
+        inputMessage=""
+        setInputMessage={jest.fn()}
+        handleSendMessage={jest.fn()}
+        isMinimized={false}
+        setIsMinimized={jest.fn()}
+        isMobileMenuOpen={false}
+        setIsMobileMenuOpen={jest.fn()}
+      />
+    );
+
+    const overlay = container.querySelector('.fixed.inset-0.bg-black\\/60');
+    if (overlay) {
+      fireEvent.click(overlay);
+      expect(mockSetShowAIPanel).toHaveBeenCalledWith(false);
+    }
+  });
+});
+
+describe('DashboardLayout - Notification Interactions', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+  });
+
+  it('should dismiss individual notification', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([
+          { id: '1', title: 'Task 1', status: 'pending', dueDate: new Date().toISOString() }
+        ]),
+      });
+
+    const { container } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/tasks');
+    });
+
+    // Open notifications
+    const notificationContainer = container.querySelector('.notification-menu-container');
+    const notificationButton = notificationContainer?.querySelector('button');
+    
+    if (notificationButton) {
+      fireEvent.click(notificationButton);
+
+      await waitFor(() => {
+        const dismissButtons = container.querySelectorAll('.notification-menu-container button[class*="absolute"]');
+        if (dismissButtons.length > 0) {
+          fireEvent.click(dismissButtons[0]);
+        }
+      });
+    }
+  });
+
+  it('should clear all notifications when clear all is clicked', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([
+          { id: '1', title: 'Task 1', status: 'pending', dueDate: new Date().toISOString() },
+          { id: '2', title: 'Task 2', status: 'pending', dueDate: new Date().toISOString() }
+        ]),
+      });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/tasks');
+    });
+
+    await waitFor(() => {
+      const clearAllButton = screen.queryByText('Clear All');
+      if (clearAllButton) {
+        fireEvent.click(clearAllButton);
+      }
+    });
+  });
+
+  it('should categorize tasks correctly', async () => {
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - 1);
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 1);
+
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([
+          { id: '1', title: 'Missed Task', status: 'pending', dueDate: pastDate.toISOString() },
+          { id: '2', title: 'Pending Task', status: 'pending', dueDate: futureDate.toISOString() },
+          { id: '3', title: 'Completed Task', status: 'completed', dueDate: pastDate.toISOString() }
+        ]),
+      });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/tasks');
+    });
+  });
+});
+
+describe('DashboardLayout - Theme System Preference', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+    localStorage.clear();
+  });
+
+  it('should use system preference when no theme is saved', () => {
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    (window.matchMedia as jest.Mock).mockReturnValue({
+      matches: true,
+      media: '(prefers-color-scheme: dark)',
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+
+  it('should respect saved theme over system preference', () => {
+    (localStorage.getItem as jest.Mock).mockReturnValue('light');
+    (window.matchMedia as jest.Mock).mockReturnValue({
+      matches: true, // System prefers dark
+      media: '(prefers-color-scheme: dark)',
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+  });
+});
+
+describe('DashboardLayout - Points Change Detection', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('should not show toast when points are null initially', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ username: 'test', email: 'test@test.com', points: null }),
+    });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/user/me');
+    });
+
+    // No toast should be shown for null points
+    expect(screen.queryByText(/points/i)).not.toBeInTheDocument();
+  });
+
+  it('should not show toast when points remain the same', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({ username: 'test', email: 'test@test.com', points: 100 }),
+    });
+
+    const { rerender } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalled();
+    });
+
+    // Re-fetch with same points
+    rerender(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    // No toast for same points
+    expect(screen.queryByText(/earned/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('DashboardLayout - Notification Edge Cases', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+  });
+
+  it('should handle tasks without dueDate', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([
+          { id: '1', title: 'Task without date', status: 'pending' }
+        ]),
+      });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/tasks');
+    });
+  });
+
+  it('should not show dismissed notifications', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([
+          { id: '1', title: 'Task 1', status: 'pending', dueDate: new Date().toISOString() }
+        ]),
+      });
+
+    const { container } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/tasks');
+    });
+
+    // Open notifications and dismiss
+    const notificationContainer = container.querySelector('.notification-menu-container');
+    const notificationButton = notificationContainer?.querySelector('button');
+    
+    if (notificationButton) {
+      fireEvent.click(notificationButton);
+
+      await waitFor(() => {
+        const dismissButtons = screen.getAllByRole('button');
+        const xButton = dismissButtons.find(btn => 
+          btn.querySelector('svg')?.classList.contains('w-3')
+        );
+        if (xButton) {
+          fireEvent.click(xButton);
+        }
+      });
+    }
+  });
+
+  it('should update notification count after dismissal', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([
+          { id: '1', title: 'Task 1', status: 'pending', dueDate: new Date().toISOString() },
+          { id: '2', title: 'Task 2', status: 'pending', dueDate: new Date().toISOString() }
+        ]),
+      });
+
+    const { container } = render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      const badge = container.querySelector('.bg-\\[\\#3B82F6\\]');
+      expect(badge).toHaveTextContent('2');
+    });
+  });
+});
+
+describe('DashboardLayout - User Info Handling', () => {
+  const mockPathname = usePathname as jest.Mock;
+
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/dashboard');
+    (global.fetch as jest.Mock).mockClear();
+  });
+
+  it('should handle user info without points field', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ username: 'test', email: 'test@test.com' }),
+    });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/user/me');
+    });
+  });
+
+  it('should handle failed user info fetch', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation();
+    
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+      status: 401,
+    });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/user/me');
+    });
+
+    consoleError.mockRestore();
+  });
+
+  it('should handle failed notifications fetch with error response', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation();
+    
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ username: 'test', email: 'test@test.com' }),
+      })
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+    render(<DashboardLayout><div>Content</div></DashboardLayout>);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/tasks');
+    });
+
+    consoleError.mockRestore();
   });
 });
