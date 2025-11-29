@@ -89,8 +89,17 @@ export default function RegisterPage() {
     }
   };
 
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      router.push('/');
+    }
+  };
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 sm:px-6 lg:px-8 py-12 transition-colors duration-300">
+    <main 
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 sm:px-6 lg:px-8 py-12 transition-colors duration-300"
+      onClick={handleBackdropClick}
+    >
       {/* Modal Container */}
       <div className="bg-white dark:bg-slate-950 rounded-3xl w-full max-w-md p-8 sm:p-9 shadow-2xl border border-gray-100 dark:border-slate-800/80 transition-colors duration-300">
         {/* Header */}
