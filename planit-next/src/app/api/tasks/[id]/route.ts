@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { ObjectId } from 'mongodb';
 import { Task, TaskCompletionHistory } from '@/models';
 import { awardPoints } from '@/lib/points';
 import { getAuthenticatedUserId } from '@/lib/auth-utils';
@@ -6,7 +7,12 @@ import dbConnect from '@/lib/db';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-import { ObjectId } from 'mongodb';
+
+const endOfDay = (date: Date) => {
+  const copy = new Date(date);
+  copy.setHours(23, 59, 59, 999);
+  return copy;
+};
 
 export async function DELETE(
   request: Request,
@@ -85,6 +91,9 @@ export async function PUT(
       endTime: endTime || null,
     };
 
+    const dueDateValue = task.dueDate ? new Date(task.dueDate) : null;
+    const dueDateEndOfDay = dueDateValue ? endOfDay(dueDateValue) : null;
+
   // Set completedAt when task is marked as completed
     if (status === 'completed' && task.status !== 'completed') {
       updateData.completedAt = new Date();
@@ -101,8 +110,8 @@ export async function PUT(
         { upsert: true, new: true }
       );
 
-      // Award points for on-time completion (completedAt <= dueDate)
-      if (task.dueDate && updateData.completedAt <= task.dueDate) {
+      // Award points for on-time completion (completedAt <= end of due date)
+      if (dueDateEndOfDay && updateData.completedAt <= dueDateEndOfDay) {
         try {
           await awardPoints({
             userId: userId.toString(),
@@ -122,6 +131,21 @@ export async function PUT(
         userId,
         taskId: task._id
       });
+    }
+
+    const hasMissedDeadline = dueDateEndOfDay ? new Date() > dueDateEndOfDay : false;
+
+    if (status === 'pending' && task.status !== 'pending' && hasMissedDeadline) {
+      try {
+        await awardPoints({
+          userId: userId.toString(),
+          type: 'missed_deadline',
+          amount: -5,
+          description: `Missed deadline: ${title || task.title}`,
+        });
+      } catch (e) {
+        console.error('Error applying missed deadline penalty (PUT pending fallback):', e);
+      }
     }
 
     // Update the task
@@ -182,8 +206,11 @@ export async function PATCH(
       );
     }
 
-    // If status is being changed to completed, set completedAt
-  const updateData = { ...body };
+    // If status is being changed to completed,    // Prepare update data
+    const updateData = { ...body };
+    const dueDateValue = task.dueDate ? new Date(task.dueDate) : null;
+    const dueDateEndOfDay = dueDateValue ? endOfDay(dueDateValue) : null;
+
   if (body.status === 'completed' && task.status !== 'completed') {
       updateData.completedAt = new Date();
       
@@ -199,8 +226,8 @@ export async function PATCH(
         { upsert: true, new: true }
       );
 
-      // Award points for on-time completion (completedAt <= dueDate)
-      if (task.dueDate && updateData.completedAt <= task.dueDate) {
+      // Award points for on-time completion (completedAt <= end of due date)
+      if (dueDateEndOfDay && updateData.completedAt <= dueDateEndOfDay) {
         try {
           await awardPoints({
             userId: userId.toString(),
@@ -220,6 +247,21 @@ export async function PATCH(
         userId,
         taskId: task._id
       });
+    }
+
+    const hasMissedDeadline = dueDateEndOfDay ? new Date() > dueDateEndOfDay : false;
+
+    if (body.status === 'pending' && task.status !== 'pending' && hasMissedDeadline) {
+      try {
+        await awardPoints({
+          userId: userId.toString(),
+          type: 'missed_deadline',
+          amount: -5,
+          description: `Missed deadline: ${body.title || task.title}`,
+        });
+      } catch (e) {
+        console.error('Error applying missed deadline penalty (PATCH pending fallback):', e);
+      }
     }
 
     // Update only the provided fields
