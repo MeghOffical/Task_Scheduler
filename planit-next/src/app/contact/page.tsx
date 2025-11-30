@@ -21,7 +21,7 @@ export default function ContactPage() {
     const subject = encodeURIComponent('Plan-It Contact: ' + (name || 'Anonymous'));
     const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
     // mailto fallback
-    window.location.href = `mailto:support@planit.app?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:devsatplanit@gmail.com?subject=${subject}&body=${body}`;
     setSubmitting(false);
     setResult('Opening your email client...');
   };
@@ -33,7 +33,7 @@ export default function ContactPage() {
       <div className="px-6 py-12 flex flex-col items-center">
         <section className="max-w-3xl w-full bg-white/80 dark:bg-slate-900/80 rounded-xl shadow-lg p-8 border border-gray-100 dark:border-white/10">
         <h1 className="text-3xl font-extrabold mb-2 text-gray-900 dark:text-white">Contact Plan-It</h1>
-        <p className="text-gray-700 dark:text-gray-300 mb-6">We’re happy to help — please provide your contact details and a brief message describing your query or suggestion. For urgent issues, email <a className="underline text-blue-600 dark:text-blue-400" href="mailto:support@planit.app">support@planit.app</a>.</p>
+        <p className="text-gray-700 dark:text-gray-300 mb-6">We’re happy to help — please provide your contact details and a brief message describing your query or suggestion. For urgent issues, email <a className="underline text-blue-600 dark:text-blue-400" href="mailto:devsatplanit@gmail.com">devsatplanit@gmail.com</a>.</p>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
           <div className="flex gap-3 flex-wrap">
