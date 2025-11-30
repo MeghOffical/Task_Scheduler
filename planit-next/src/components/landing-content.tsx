@@ -60,7 +60,7 @@ const testimonials = [
     }
   };
 
-useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 5000);
