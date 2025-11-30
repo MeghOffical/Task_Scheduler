@@ -81,11 +81,14 @@ export async function PUT(
     }
 
     // Prepare update data
+    // If task is already overdue and trying to mark as completed, keep it as overdue
+    const finalStatus = (status === 'completed' && task.status === 'overdue') ? 'overdue' : status;
+    
     const updateData: any = {
       title,
       description,
       priority,
-      status,
+      status: finalStatus,
       dueDate: dueDate ? new Date(dueDate) : null,
       startTime: startTime || null,
       endTime: endTime || null,
@@ -96,10 +99,6 @@ export async function PUT(
 
   // Set completedAt when task is marked as completed
     if (status === 'completed' && task.status !== 'completed') {
-      // If task is already overdue, don't allow status change to completed
-      if (task.status === 'overdue') {
-        updateData.status = 'overdue'; // Keep it as overdue
-      }
       
       updateData.completedAt = new Date();
       
@@ -213,14 +212,16 @@ export async function PATCH(
 
     // If status is being changed to completed,    // Prepare update data
     const updateData = { ...body };
+    
+    // If task is already overdue and trying to mark as completed, keep it as overdue
+    if (body.status === 'completed' && task.status === 'overdue') {
+      updateData.status = 'overdue';
+    }
+    
     const dueDateValue = task.dueDate ? new Date(task.dueDate) : null;
     const dueDateEndOfDay = dueDateValue ? endOfDay(dueDateValue) : null;
 
   if (body.status === 'completed' && task.status !== 'completed') {
-      // If task is already overdue, don't allow status change to completed
-      if (task.status === 'overdue') {
-        updateData.status = 'overdue'; // Keep it as overdue
-      }
       
       updateData.completedAt = new Date();
       
