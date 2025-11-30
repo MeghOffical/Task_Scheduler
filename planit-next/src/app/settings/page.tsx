@@ -162,6 +162,27 @@ export default function SettingsPage() {
       [field]: numValue
     }));
   };
+
+  const incrementValue = (field: keyof PomodoroSettings) => {
+    const maxValues = {
+      workDuration: 60,
+      shortBreakDuration: 30,
+      longBreakDuration: 45,
+      longBreakInterval: 10
+    };
+    
+    setSettings(prev => ({
+      ...prev,
+      [field]: Math.min(prev[field] + 1, maxValues[field])
+    }));
+  };
+
+  const decrementValue = (field: keyof PomodoroSettings) => {
+    setSettings(prev => ({
+      ...prev,
+      [field]: Math.max(prev[field] - 1, 1)
+    }));
+  };
   
   const handleUsernameEdit = () => {
     setNewUsername(user?.username || '');
@@ -324,56 +345,144 @@ export default function SettingsPage() {
         <h2 className='text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6'>Pomodoro Timer Settings</h2>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div>
-            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>
+            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
               Work Duration (minutes)
             </label>
-            <input
-              type='number'
-              min='1'
-              max='60'
-              value={settings.workDuration}
-              onChange={(e) => handleInputChange('workDuration', e.target.value)}
-              className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => decrementValue('workDuration')}
+                className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Decrease work duration"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              <input
+                type='number'
+                min='1'
+                max='60'
+                value={settings.workDuration}
+                readOnly
+                className='flex-1 text-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 cursor-default'
+              />
+              <button
+                type="button"
+                onClick={() => incrementValue('workDuration')}
+                className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Increase work duration"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
           </div>
           <div>
-            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>
+            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
               Short Break Duration (minutes)
             </label>
-            <input
-              type='number'
-              min='1'
-              max='30'
-              value={settings.shortBreakDuration}
-              onChange={(e) => handleInputChange('shortBreakDuration', e.target.value)}
-              className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => decrementValue('shortBreakDuration')}
+                className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Decrease short break duration"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              <input
+                type='number'
+                min='1'
+                max='30'
+                value={settings.shortBreakDuration}
+                readOnly
+                className='flex-1 text-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 cursor-default'
+              />
+              <button
+                type="button"
+                onClick={() => incrementValue('shortBreakDuration')}
+                className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Increase short break duration"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
           </div>
           <div>
-            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>
+            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
               Long Break Duration (minutes)
             </label>
-            <input
-              type='number'
-              min='1'
-              max='45'
-              value={settings.longBreakDuration}
-              onChange={(e) => handleInputChange('longBreakDuration', e.target.value)}
-              className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => decrementValue('longBreakDuration')}
+                className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Decrease long break duration"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              <input
+                type='number'
+                min='1'
+                max='45'
+                value={settings.longBreakDuration}
+                readOnly
+                className='flex-1 text-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 cursor-default'
+              />
+              <button
+                type="button"
+                onClick={() => incrementValue('longBreakDuration')}
+                className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Increase long break duration"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
           </div>
           <div>
-            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>
+            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
               Sessions Before Long Break
             </label>
-            <input
-              type='number'
-              min='1'
-              max='10'
-              value={settings.longBreakInterval}
-              onChange={(e) => handleInputChange('longBreakInterval', e.target.value)}
-              className='mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => decrementValue('longBreakInterval')}
+                className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Decrease sessions before long break"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              <input
+                type='number'
+                min='1'
+                max='10'
+                value={settings.longBreakInterval}
+                readOnly
+                className='flex-1 text-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 cursor-default'
+              />
+              <button
+                type="button"
+                onClick={() => incrementValue('longBreakInterval')}
+                className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Increase sessions before long break"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
