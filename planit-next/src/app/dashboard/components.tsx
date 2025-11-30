@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Task } from '@/types';
 
 export const LoadingSpinner = () => (
@@ -47,6 +47,78 @@ type TaskCardProps = Readonly<{
 
 export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [swipeX, setSwipeX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const deleteThreshold = 150; // pixels to swipe for delete
+
+  useEffect(() => {
+    if (swipeX < -deleteThreshold && onDelete) {
+      // Auto-delete when threshold reached
+      const timer = setTimeout(() => {
+        if (window.confirm('Delete this task?')) {
+          onDelete(task.id);
+        } else {
+          setSwipeX(0);
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [swipeX, onDelete, task.id]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setStartX(e.touches[0].clientX);
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - startX;
+    // Only allow left swipe
+    if (diff < 0) {
+      setSwipeX(diff);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    // Reset if not reaching threshold
+    if (swipeX > -deleteThreshold) {
+      setSwipeX(0);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setStartX(e.clientX);
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const currentX = e.clientX;
+    const diff = currentX - startX;
+    // Only allow left swipe
+    if (diff < 0) {
+      setSwipeX(diff);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    // Reset if not reaching threshold
+    if (swipeX > -deleteThreshold) {
+      setSwipeX(0);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      setSwipeX(0);
+    }
+  };
 
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
@@ -86,82 +158,114 @@ export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
   };
 
   return (
-    <div className="group glass-panel p-4 rounded-xl transition-all duration-300 hover:-translate-y-1">
-      <div className="flex justify-between items-start gap-4">
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 truncate">{task.title}</h3>
-          <div className="flex flex-wrap gap-2 mb-2">
-            <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getPriorityStyles(task.priority)}`}>
-              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-              {task.priority}
-            </span>
-            <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getStatusStyles(task.status)}`}>
-              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {task.status}
-            </span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-sm text-gray-900 dark:text-gray-400 flex items-center">
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
-            </p>
-            {(task.startTime || task.endTime) && (
-              <p className="text-xs text-gray-800 dark:text-gray-500 flex items-center">
+    <div 
+      ref={cardRef}
+      className="relative overflow-hidden touch-pan-y"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Delete background indicator */}
+      <div 
+        className="absolute inset-0 bg-red-500 flex items-center justify-end pr-6 rounded-xl"
+        style={{
+          opacity: Math.min(Math.abs(swipeX) / deleteThreshold, 1)
+        }}
+      >
+        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        <span className="ml-2 text-white font-semibold">Delete</span>
+      </div>
+
+      {/* Main card content */}
+      <div 
+        className="group glass-panel p-4 rounded-xl transition-all duration-300 hover:-translate-y-1 relative"
+        style={{
+          transform: `translateX(${swipeX}px)`,
+          transition: isDragging ? 'none' : 'transform 0.3s ease-out'
+        }}
+      >
+        <div className="flex justify-between items-start gap-4">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 truncate">{task.title}</h3>
+            <div className="flex flex-wrap gap-2 mb-2">
+              <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getPriorityStyles(task.priority)}`}>
                 <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
-                {task.startTime && `Start: ${task.startTime}`}
-                {task.startTime && task.endTime && ' | '}
-                {task.endTime && `End: ${task.endTime}`}
+                {task.priority}
+              </span>
+              <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getStatusStyles(task.status)}`}>
+                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {task.status}
+              </span>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-gray-900 dark:text-gray-400 flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
               </p>
+              {(task.startTime || task.endTime) && (
+                <p className="text-xs text-gray-800 dark:text-gray-500 flex items-center">
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {task.startTime && `Start: ${task.startTime}`}
+                  {task.startTime && task.endTime && ' | '}
+                  {task.endTime && `End: ${task.endTime}`}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            {task.status !== 'completed' && onComplete && (
+              <button
+                onClick={handleComplete}
+                disabled={isUpdating}
+                className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
+                  isUpdating 
+                    ? 'bg-gray-100 dark:bg-gray-700 cursor-wait' 
+                    : 'bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50 hover:shadow-md'
+                }`}
+                title="Mark as completed"
+              >
+                {isUpdating ? (
+                  <svg className="w-5 h-5 animate-spin text-gray-500 dark:text-gray-400" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to delete this task?')) {
+                    onDelete(task.id);
+                  }
+                }}
+                className="flex-shrink-0 p-2 rounded-lg transition-all duration-300 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-800/50 hover:shadow-md text-red-600 dark:text-red-400"
+                title="Delete task"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
             )}
           </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          {task.status !== 'completed' && onComplete && (
-            <button
-              onClick={handleComplete}
-              disabled={isUpdating}
-              className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
-                isUpdating 
-                  ? 'bg-gray-100 dark:bg-gray-700 cursor-wait' 
-                  : 'bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50 hover:shadow-md'
-              }`}
-              title="Mark as completed"
-            >
-              {isUpdating ? (
-                <svg className="w-5 h-5 animate-spin text-gray-500 dark:text-gray-400" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </button>
-          )}
-          {onDelete && (
-            <button
-              onClick={() => {
-                if (window.confirm('Are you sure you want to delete this task?')) {
-                  onDelete(task.id);
-                }
-              }}
-              className="flex-shrink-0 p-2 rounded-lg transition-all duration-300 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-800/50 hover:shadow-md text-red-600 dark:text-red-400"
-              title="Delete task"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-          )}
         </div>
       </div>
     </div>
