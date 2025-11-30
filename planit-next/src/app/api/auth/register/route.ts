@@ -3,6 +3,7 @@ import { User } from '@/models';
 import { awardPoints } from '@/lib/points';
 import { hashPassword } from '@/lib/auth';
 import dbConnect from '@/lib/db';
+import { validateEmail } from '@/lib/emailValidator';
 
 export async function POST(request: Request) {
   try {
@@ -12,6 +13,15 @@ export async function POST(request: Request) {
     if (!username || !email || !password) {
       return NextResponse.json(
         { message: 'Username, email, and password are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate email domain
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      return NextResponse.json(
+        { message: emailValidation.error || 'Invalid email domain' },
         { status: 400 }
       );
     }

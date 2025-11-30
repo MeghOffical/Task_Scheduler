@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import MainHeader from '@/components/main-header';
+import { validateEmail } from '@/lib/emailValidator';
 
 export default function ContactPage() {
   const [name, setName] = useState('');
@@ -17,6 +18,14 @@ export default function ContactPage() {
       setResult('Please provide your email and a brief message.');
       return;
     }
+
+    // Validate email domain
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      setResult(emailValidation.error || 'Invalid email');
+      return;
+    }
+
     setSubmitting(true);
     const subject = encodeURIComponent('Plan-It Contact: ' + (name || 'Anonymous'));
     const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);

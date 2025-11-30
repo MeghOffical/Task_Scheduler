@@ -3,6 +3,7 @@ import { User } from '@/models';
 import dbConnect from '@/lib/db';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import { validateEmail } from '@/lib/emailValidator';
 
 export async function POST(request: Request) {
   try {
@@ -11,6 +12,15 @@ export async function POST(request: Request) {
     if (!email) {
       return NextResponse.json(
         { message: 'Email is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate email domain
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      return NextResponse.json(
+        { message: emailValidation.error || 'Invalid email domain' },
         { status: 400 }
       );
     }
