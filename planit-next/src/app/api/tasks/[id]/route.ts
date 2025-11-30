@@ -96,6 +96,11 @@ export async function PUT(
 
   // Set completedAt when task is marked as completed
     if (status === 'completed' && task.status !== 'completed') {
+      // If task is already overdue, don't allow status change to completed
+      if (task.status === 'overdue') {
+        updateData.status = 'overdue'; // Keep it as overdue
+      }
+      
       updateData.completedAt = new Date();
       
       // Record completion in history for persistent tracking
@@ -212,6 +217,11 @@ export async function PATCH(
     const dueDateEndOfDay = dueDateValue ? endOfDay(dueDateValue) : null;
 
   if (body.status === 'completed' && task.status !== 'completed') {
+      // If task is already overdue, don't allow status change to completed
+      if (task.status === 'overdue') {
+        updateData.status = 'overdue'; // Keep it as overdue
+      }
+      
       updateData.completedAt = new Date();
       
       // Record completion in history for persistent tracking
