@@ -1,13 +1,13 @@
 <p align="center">
-  <img 
-    src="https://github.com/user-attachments/assets/e3a2f4a5-eac0-4c5e-8dbe-5bbd387d2f4d" 
-    alt="PlanIT-Logo/Banner"
-    width="684"
-    height="194"
-  />
+  <a href="https://task-scheduler-01.vercel.app/">
+    <img 
+      src="https://github.com/user-attachments/assets/e3a2f4a5-eac0-4c5e-8dbe-5bbd387d2f4d" 
+      alt="PlanIT-Logo/Banner"
+      width="684"
+      height="194" 
+    />
+  </a>
 </p>
-
-
 
 ---
 
@@ -22,7 +22,7 @@ Our goal is to create a distraction-free tool that helps you focus on what truly
 * **Lightweight & Fast:** Built to be responsive and not hog your system's resources.
 * **Smart & Efficient:** An built-in AI assistant to make task management faster than ever.
 
----
+--
 
 ## ✨ Features
 
